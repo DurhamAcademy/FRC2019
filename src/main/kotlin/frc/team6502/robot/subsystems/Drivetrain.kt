@@ -1,10 +1,9 @@
 package frc.team6502.robot.subsystems
 
-import edu.wpi.first.wpilibj.command.PIDSubsystem
+import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.drive.IDrivetrain
-import frc.team6502.robot.commands.DefaultDrive
 
-class Drivetrain() : IDrivetrain, PIDSubsystem(0.0, 0.0, 0.0) {
+class Drivetrain : IDrivetrain, Subsystem() {
 
     init {
         // probably going to be a wcd
@@ -20,18 +19,8 @@ class Drivetrain() : IDrivetrain, PIDSubsystem(0.0, 0.0, 0.0) {
         TODO("not implemented")
     }
 
-    override fun usePIDOutput(output: Double) {
-        // set correction
-        TODO("not implemented")
-    }
-
-    override fun returnPIDInput(): Double {
-        // calculate gyro error
-        TODO("not implemented")
-    }
-
     override fun initDefaultCommand() {
-        defaultCommand = DefaultDrive()
+        defaultCommand = null
     }
 
 }

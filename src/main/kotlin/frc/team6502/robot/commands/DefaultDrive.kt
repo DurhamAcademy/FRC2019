@@ -1,9 +1,13 @@
 package frc.team6502.robot.commands
 
 import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.command.PIDCommand
 import frc.team6502.robot.RobotMap
 
-class DefaultDrive : Command() {
+class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStraightPID.i, RobotMap.driveStraightPID.d) {
+
+    var correction = 0.0
+    var drivingStraight = false
 
     init {
         requires(RobotMap.kDrivetrain)
@@ -14,13 +18,26 @@ class DefaultDrive : Command() {
     }
 
     override fun execute() {
-        println("spam")
+        // if driving straight
+            // apply correction
+        // else if not driving straight and commanded to
+            // zero gyro, start correcting
+        // drive
     }
-
-    //TODO("not implemented")
 
     override fun isFinished(): Boolean {
         return false
+    }
+
+    // TODO('define curvaturedrive')
+
+    override fun usePIDOutput(output: Double) {
+        correction = output
+    }
+
+    override fun returnPIDInput(): Double {
+        // do gyro stuff
+        return 0.0
     }
 
 }
