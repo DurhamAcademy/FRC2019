@@ -3,6 +3,7 @@ package frc.team6502.robot.commands
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
 import frc.team6502.robot.*
+import frc.team6502.robot.subsystems.Drivetrain
 import java.lang.Math.abs
 
 class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStraightPID.i, RobotMap.driveStraightPID.d) {
@@ -17,7 +18,7 @@ class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStrai
     private val holdTimer = Timer()
 
     init {
-        requires(RobotMap.kDrivetrain)
+        requires(Drivetrain)
     }
 
     override fun initialize() {
@@ -34,7 +35,7 @@ class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStrai
         }
 
         if(drivingStraight){
-             RobotMap.kDrivetrain.setDriveVelocities(throttle - correction, throttle + correction)
+            Drivetrain.setDriveVelocities(throttle - correction, throttle + correction)
         } else {
             curvatureDrive(throttle, rotation, true)
         }
@@ -114,7 +115,7 @@ class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStrai
             }
         }
 
-        RobotMap.kDrivetrain.setDriveVelocities(leftMotorOutput, rightMotorOutput)
+        Drivetrain.setDriveVelocities(leftMotorOutput, rightMotorOutput)
     }
 
     override fun usePIDOutput(output: Double) {

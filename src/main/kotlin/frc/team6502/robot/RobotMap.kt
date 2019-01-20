@@ -9,17 +9,22 @@ import frc.team6502.robot.subsystems.Elevator
 object RobotMap {
 
     // PORTS //
-    val imuDevNum = 0
+    val leftTalonId = 0
+    val leftVictorIds = arrayOf(1,2)
+
+    val rightTalonId = 3
+    val rightVictorIds = arrayOf(4,5)
+
+    val imuId = 6
 
     // SUBSYSTEMS //
-    val kDrivetrain = Drivetrain()
     val kElevator = Elevator()
     // val kIntake = Intake()
 
     // SENSORS //
     // TODO('update stream format')
-    val kJevois = Jevois()
-    val kIMU = PigeonIMU(imuDevNum)
+//    val kJevois = Jevois()
+    val kIMU = PigeonIMU(imuId)
 
     // TUNING //
     val driveStraightPID = PIDConfig(0.0, 0.0, 0.0)
