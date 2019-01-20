@@ -7,6 +7,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
+import frc.team6502.kyberlib.util.units.feetPerSecond
+import frc.team6502.kyberlib.util.units.inches
+import frc.team6502.kyberlib.util.units.rotations
 import frc.team6502.robot.RobotMap
 
 object Drivetrain :  Subsystem() {
@@ -16,6 +19,8 @@ object Drivetrain :  Subsystem() {
 
     val kV = 0.0
     val vI = 0.0
+    val maxSpeed = 13.30.feetPerSecond
+    val wheelRatio = (Math.PI * 6.0).inches.meters / 1.rotations.radians
 
     init {
         // probably going to be a wcd
@@ -58,14 +63,16 @@ object Drivetrain :  Subsystem() {
 
     }
 
-    fun setDriveVelocities(left: Double, right: Double){
-        // native velocities are encoder counts per 100ms
-        // 1 count = 4
-        val leftNative = ((left / 0.5) / 10) * (1024 * 4)
-        val rightNative = ((right / 0.5) / 10) * (1024 * 4)
+    fun setDriveVelocities(l: Double, r: Double) {
 
-        leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward, (kV * left + vI) / 12.0)
-        leftTalon.set(ControlMode.Velocity, rightNative, DemandType.ArbitraryFeedForward, (kV * right + vI) / 12.0)
+        val left = (l * maxSpeed.feetPerSecond).feetPerSecond
+        val right = (r * maxSpeed.feetPerSecond).feetPerSecond
+
+        val leftNative = left.toAngularVelocity(wheelRatio).encoder2048PerDecisecond
+        val rightNative = right.toAngularVelocity(wheelRatio).encoder2048PerDecisecond
+
+        leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward, (kV * left.feetPerSecond + vI) / 12.0)
+        rightTalon.set(ControlMode.Velocity, rightNative, DemandType.ArbitraryFeedForward, (kV * right.feetPerSecond + vI) / 12.0)
     }
 
     // neutral mode switching

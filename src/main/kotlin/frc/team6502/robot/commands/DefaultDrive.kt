@@ -5,32 +5,32 @@ import edu.wpi.first.wpilibj.PIDController
 import edu.wpi.first.wpilibj.PIDSourceType
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.*
 import frc.team6502.robot.subsystems.Drivetrain
-import java.lang.Math.abs
 import kotlin.math.absoluteValue
 
 class DefaultDrive : Command() {
 
-    private var driveStraightCorrection = 0.0
-    private var drivingStraight = false
+    // YAW CORRECTION
+    private var yawCorrection = 0.0
+    private var yawCorrecting = false
+    private val yawTimer = Timer()
+    private val yawController = PIDController(0.0, 0.0, 0.0, ArbitraryPIDSource(PIDSourceType.kDisplacement) { RobotMap.kIMU.getYaw().halfDegrees }) {
+        yawCorrection = it.coerceIn(-0.1, 0.1)
+    }
 
-    private var tipCorrection = 0.0
+    // PITCH CORRECTION
+    private var pitchCorrection = 0.0
+    private var pitchCorrecting = true
+    private val pitchController = PIDController(0.0, 0.0, 0.0, ArbitraryPIDSource(PIDSourceType.kDisplacement) { RobotMap.kIMU.getPitch().halfDegrees }) {
+        pitchCorrection = it.coerceIn(-0.1, 0.1)
+    }
 
+    // CURVATURE PARAMS
     private var quickStopAccumulator = 0.0
     private val quickStopThreshold = 0.2
     private val quickStopAlpha = 0.1
-
-    private val holdTimer = Timer()
-
-
-    private val driveStraightController = PIDController(0.0, 0.0, 0.0, ArbitraryPIDSource(PIDSourceType.kDisplacement) { RobotMap.kIMU.getYaw().halfDegrees }) {
-        driveStraightCorrection = it.coerceIn(-0.1, 0.1)
-    }
-
-    private val tipController = PIDController(0.0, 0.0, 0.0, ArbitraryPIDSource(PIDSourceType.kDisplacement) { RobotMap.kIMU.getPitch().halfDegrees }) {
-        tipCorrection = it.coerceIn(-0.1, 0.1)
-    }
 
     init {
         requires(Drivetrain)
@@ -41,38 +41,38 @@ class DefaultDrive : Command() {
     }
 
     override fun execute() {
-
         val throttle = OI.controller.y
         val rotation = OI.controller.x
 
-        if (abs(driveStraightCorrection) < 0.05 && throttle == 0.0) {
-            driveStraightCorrection = 0.0
+        if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
+            yawCorrection = 0.0
         }
-        if (tipCorrection.absoluteValue < 0.05 && throttle == 0.0) {
-            tipCorrection = 0.0
+        if (pitchCorrection.absoluteValue < 0.05 && throttle == 0.0) {
+            pitchCorrection = 0.0
         }
-
-        if(drivingStraight){
-            Drivetrain.setDriveVelocities(throttle + tipCorrection - driveStraightCorrection, throttle + tipCorrection + driveStraightCorrection)
+        SmartDashboard.putNumber("Pitch Correction", pitchCorrection)
+        if (yawCorrecting) {
+            Drivetrain.setDriveVelocities(throttle + pitchCorrection - yawCorrection, throttle + pitchCorrection + yawCorrection)
+            SmartDashboard.putNumber("Yaw Correction", yawCorrection)
         } else {
             curvatureDrive(throttle, rotation, true)
+            SmartDashboard.putNumber("Yaw Correction", 0.0)
         }
 
         if (OI.commandingStraight) {
-            holdTimer.reset()
-            holdTimer.start()
-            drivingStraight = false
-        } else if (holdTimer.get() > 0.25 && !drivingStraight) {
-            drivingStraight = true
+            yawTimer.reset()
+            yawTimer.start()
+            yawCorrecting = false
+        } else if (yawTimer.get() > 0.25 && !yawCorrecting) {
+            yawCorrecting = true
             RobotMap.kIMU.zero()
         }
 
         Drivetrain.brakeMode = !OI.controller.getBumper(GenericHID.Hand.kLeft)
     }
 
-    override fun isFinished(): Boolean {
-        return false
-    }
+
+    override fun isFinished() = false
 
     /**
      * Curvature drive method for differential drive platform.
@@ -85,13 +85,13 @@ class DefaultDrive : Command() {
      * @param rotation The robot's rotation rate around the Z axis [-1.0..1.0]. Clockwise is positive.
      * @param isQuickTurn If set, overrides constant-curvature turning for turn-in-place maneuvers.
      */
-    fun curvatureDrive(speed: Double, rotation: Double, isQuickTurn: Boolean) {
+    private fun curvatureDrive(speed: Double, rotation: Double, isQuickTurn: Boolean) {
 
         val angularPower: Double
         val overPower: Boolean
 
         if (isQuickTurn) {
-            if (abs(speed) < quickStopThreshold) {
+            if (speed.absoluteValue < quickStopThreshold) {
                 quickStopAccumulator = (1 - quickStopAlpha) * quickStopAccumulator + quickStopAlpha * rotation * 2.0
             }
             overPower = true
@@ -99,7 +99,7 @@ class DefaultDrive : Command() {
 
         } else {
             overPower = false
-            angularPower = abs(speed) * rotation - quickStopAccumulator
+            angularPower = speed.absoluteValue * rotation - quickStopAccumulator
 
             when {
                 quickStopAccumulator > 1 -> quickStopAccumulator -= 1.0
