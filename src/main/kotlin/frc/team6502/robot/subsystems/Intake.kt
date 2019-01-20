@@ -2,7 +2,7 @@ package frc.team6502.robot.subsystems
 
 import edu.wpi.first.wpilibj.command.Subsystem
 
-class Intake: Subsystem() {
+object Intake : Subsystem() {
     override fun initDefaultCommand() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

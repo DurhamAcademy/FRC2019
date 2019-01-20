@@ -2,9 +2,6 @@ package frc.team6502.robot
 
 import com.ctre.phoenix.sensors.PigeonIMU
 import frc.team6502.kyberlib.motorcontrol.PIDConfig
-import frc.team6502.kyberlib.vision.Jevois
-import frc.team6502.robot.subsystems.Drivetrain
-import frc.team6502.robot.subsystems.Elevator
 
 object RobotMap {
 
@@ -17,9 +14,8 @@ object RobotMap {
 
     val imuId = 6
 
-    // SUBSYSTEMS //
-    val kElevator = Elevator()
-    // val kIntake = Intake()
+    val elevatorTalonId = 7
+    val elevtatorVictorIds = arrayOf(8, 9, 10)
 
     // SENSORS //
     // TODO('update stream format')

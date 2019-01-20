@@ -1,15 +1,21 @@
 package frc.team6502.robot.commands
 
+import edu.wpi.first.wpilibj.GenericHID
+import edu.wpi.first.wpilibj.PIDController
+import edu.wpi.first.wpilibj.PIDSourceType
 import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.command.PIDCommand
+import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.robot.*
 import frc.team6502.robot.subsystems.Drivetrain
 import java.lang.Math.abs
+import kotlin.math.absoluteValue
 
-class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStraightPID.i, RobotMap.driveStraightPID.d) {
+class DefaultDrive : Command() {
 
-    private var correction = 0.0
+    private var driveStraightCorrection = 0.0
     private var drivingStraight = false
+
+    private var tipCorrection = 0.0
 
     private var quickStopAccumulator = 0.0
     private val quickStopThreshold = 0.2
@@ -17,12 +23,21 @@ class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStrai
 
     private val holdTimer = Timer()
 
+
+    private val driveStraightController = PIDController(0.0, 0.0, 0.0, ArbitraryPIDSource(PIDSourceType.kDisplacement) { RobotMap.kIMU.getYaw().halfDegrees }) {
+        driveStraightCorrection = it.coerceIn(-0.1, 0.1)
+    }
+
+    private val tipController = PIDController(0.0, 0.0, 0.0, ArbitraryPIDSource(PIDSourceType.kDisplacement) { RobotMap.kIMU.getPitch().halfDegrees }) {
+        tipCorrection = it.coerceIn(-0.1, 0.1)
+    }
+
     init {
         requires(Drivetrain)
     }
 
     override fun initialize() {
-
+        RobotMap.kIMU.zero()
     }
 
     override fun execute() {
@@ -30,12 +45,15 @@ class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStrai
         val throttle = OI.controller.y
         val rotation = OI.controller.x
 
-        if(abs(correction) < 0.1 && throttle == 0.0){
-            correction = 0.0
+        if (abs(driveStraightCorrection) < 0.05 && throttle == 0.0) {
+            driveStraightCorrection = 0.0
+        }
+        if (tipCorrection.absoluteValue < 0.05 && throttle == 0.0) {
+            tipCorrection = 0.0
         }
 
         if(drivingStraight){
-            Drivetrain.setDriveVelocities(throttle - correction, throttle + correction)
+            Drivetrain.setDriveVelocities(throttle + tipCorrection - driveStraightCorrection, throttle + tipCorrection + driveStraightCorrection)
         } else {
             curvatureDrive(throttle, rotation, true)
         }
@@ -47,9 +65,9 @@ class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStrai
         } else if (holdTimer.get() > 0.25 && !drivingStraight) {
             drivingStraight = true
             RobotMap.kIMU.zero()
-            println("reset pigeon")
         }
 
+        Drivetrain.brakeMode = !OI.controller.getBumper(GenericHID.Hand.kLeft)
     }
 
     override fun isFinished(): Boolean {
@@ -117,13 +135,4 @@ class DefaultDrive : PIDCommand(RobotMap.driveStraightPID.p, RobotMap.driveStrai
 
         Drivetrain.setDriveVelocities(leftMotorOutput, rightMotorOutput)
     }
-
-    override fun usePIDOutput(output: Double) {
-        correction = output
-    }
-
-    override fun returnPIDInput(): Double {
-        return RobotMap.kIMU.getYaw()
-    }
-
 }
