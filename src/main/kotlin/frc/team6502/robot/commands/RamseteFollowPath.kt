@@ -11,6 +11,7 @@ import frc.team6502.robot.subsystems.Drivetrain
 import jaci.pathfinder.Trajectory
 import java.lang.Math.cos
 import java.lang.Math.sin
+import kotlin.math.PI
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -58,10 +59,10 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
         val wc = wd + b * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k3 * (thd - th)
 
-        val difference = wc * drivebase.feet
+        val difference = wc.radiansPerSecond.toLinearVelocity((PI * 4.0.feet.meters) / 1.rotations.radians)
 
         //TODO: revisit kinematic calculations here
-        return vc + difference to vc - difference
+        return vc + difference.feetPerSecond to vc - difference.feetPerSecond
     }
 
     fun k13gains(vd: Double, wd: Double) = 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))
