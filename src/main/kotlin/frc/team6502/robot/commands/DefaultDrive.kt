@@ -34,32 +34,36 @@ class DefaultDrive : Command() {
     }
 
     override fun execute() {
-        val throttle = OI.controller.y
-        val rotation = OI.controller.x
+        val throttle = -OI.commandedY
+        val rotation = OI.commandedX
 
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
         }
+        yawCorrection = 0.0
 
         if (yawCorrecting) {
             Drivetrain.setDriveVelocities(throttle - yawCorrection, throttle + yawCorrection)
             SmartDashboard.putNumber("Yaw Correction", yawCorrection)
         } else {
+//            println(rotation)
             curvatureDrive(throttle, rotation, true)
             SmartDashboard.putNumber("Yaw Correction", 0.0)
         }
 
-        if (OI.commandingStraight) {
+        if (!OI.commandingStraight) {
             yawTimer.reset()
             yawTimer.start()
             yawCorrecting = false
-        } else if (yawTimer.get() > 0.25 && !yawCorrecting) {
+        } else if (yawTimer.get() > 0.3 && !yawCorrecting) {
             yawCorrecting = true
-            RobotMap.kIMU.zero()
+            RobotMap.kIMU.setYaw(0.0)
+            yawCorrection = 0.0
+            println("reset pigeon")
         }
 
         // tip warning
-        OI.setControllerRumble(OI.deadband((RobotMap.kIMU.getPitch().absoluteValue / 45.0).coerceIn(0.0, 1.0), 0.05))
+        OI.setControllerRumble(OI.deadband((RobotMap.kIMU.getPitch().absoluteValue / 45.0).coerceIn(0.0, 1.0), 0.5))
 
         // allow for sliding
         Drivetrain.brakeMode = !OI.controller.getBumper(GenericHID.Hand.kLeft)
@@ -127,6 +131,8 @@ class DefaultDrive : Command() {
             }
         }
 
+//        println("COMMANDED LEFT: $leftMotorOutput COMMANDED RIGHT: $rightMotorOutput")
         Drivetrain.setDriveVelocities(leftMotorOutput, rightMotorOutput)
+        println("left out=${leftMotorOutput}")
     }
 }

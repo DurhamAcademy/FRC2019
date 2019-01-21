@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.LinearVelocity
 import frc.team6502.kyberlib.util.units.feetPerSecond
 import frc.team6502.kyberlib.util.units.inches
@@ -30,28 +31,33 @@ object Drivetrain :  Subsystem() {
         for(id in RobotMap.leftVictorIds){
             WPI_VictorSPX(id).run {
                 follow(leftTalon)
+
             }
         }
 
         for (id in RobotMap.rightVictorIds) {
             WPI_VictorSPX(id).run {
                 follow(rightTalon)
+                inverted = true
             }
         }
 
+        rightTalon.inverted = true
         arrayOf(leftTalon, rightTalon).forEach {
             it.run {
                 // setup feedback
+                configFactoryDefault()
                 configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 5)
-
+                setSensorPhase(true)
+                configContinuousCurrentLimit(30)
 
                 // configure PID controllers
-                config_kP(0, 0.0)
+                config_kP(0, 0.1)
                 config_kI(0, 0.0)
                 config_kD(0, 0.0)
 
                 // ramp
-                configClosedloopRamp(0.5)
+                configClosedloopRamp(0.25)
 
                 // neutral mode
                 setNeutralMode(NeutralMode.Brake)
@@ -80,9 +86,18 @@ object Drivetrain :  Subsystem() {
         val left = (l * maxSpeed.feetPerSecond).feetPerSecond
         val right = (r * maxSpeed.feetPerSecond).feetPerSecond
 
+//        println("left=${left.feetPerSecond} right=${right.feetPerSecond}")
+
         val leftNative = left.toAngularVelocity(wheelRatio).encoder1024PerDecisecond
         val rightNative = right.toAngularVelocity(wheelRatio).encoder1024PerDecisecond
 
+        SmartDashboard.putNumber("left tgt", leftTalon.closedLoopTarget.toDouble())
+        SmartDashboard.putNumber("right tgt", rightTalon.closedLoopTarget.toDouble())
+
+        println("left=${leftNative} right=${rightNative}")
+
+//        leftTalon.set(ControlMode.Velocity, l)
+//        rightTalon.set(ControlMode.Velocity, rightNative)
         leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward, (kV * left.feetPerSecond + vI) / 12.0)
         rightTalon.set(ControlMode.Velocity, rightNative, DemandType.ArbitraryFeedForward, (kV * right.feetPerSecond + vI) / 12.0)
     }
