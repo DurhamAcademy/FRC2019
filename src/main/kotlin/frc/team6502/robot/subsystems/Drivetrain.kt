@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
+import frc.team6502.kyberlib.util.units.LinearVelocity
 import frc.team6502.kyberlib.util.units.feetPerSecond
 import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.kyberlib.util.units.rotations
@@ -62,6 +63,11 @@ object Drivetrain :  Subsystem() {
 
     fun setDrivePercentages(left: Double, right: Double){
 
+    }
+
+    fun getVelocity(): LinearVelocity {
+        //TODO:
+        return 0.feetPerSecond
     }
 
     /**

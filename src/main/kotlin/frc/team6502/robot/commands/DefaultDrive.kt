@@ -58,8 +58,10 @@ class DefaultDrive : Command() {
             RobotMap.kIMU.zero()
         }
 
+        // tip warning
         OI.setControllerRumble(OI.deadband((RobotMap.kIMU.getPitch().absoluteValue / 45.0).coerceIn(0.0, 1.0), 0.05))
 
+        // allow for sliding
         Drivetrain.brakeMode = !OI.controller.getBumper(GenericHID.Hand.kLeft)
     }
 

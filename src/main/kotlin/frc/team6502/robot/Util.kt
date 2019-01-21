@@ -4,6 +4,10 @@ import com.ctre.phoenix.sensors.PigeonIMU
 import edu.wpi.first.wpilibj.PIDOutput
 import edu.wpi.first.wpilibj.PIDSource
 import edu.wpi.first.wpilibj.PIDSourceType
+import frc.team6502.kyberlib.util.units.Angle
+import frc.team6502.kyberlib.util.units.AngularVelocity
+import frc.team6502.kyberlib.util.units.Length
+import frc.team6502.kyberlib.util.units.LinearVelocity
 import jaci.pathfinder.Pathfinder
 
 
@@ -44,3 +48,6 @@ class ArbitraryPIDOutput() : PIDOutput {
     }
 
 }
+
+data class Pose(var x: Length, var y: Length, var theta: Angle)
+data class Odometry(val pose: Pose, var velocity: LinearVelocity, var angularVelocity: AngularVelocity)
