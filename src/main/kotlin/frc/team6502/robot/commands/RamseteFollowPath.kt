@@ -18,8 +18,8 @@ import kotlin.math.sqrt
 
 class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
 
-    var currentIndex = 0
-    val drivebase = 2.feet
+    private var currentIndex = 0
+    private val drivebase = 2.feet
 
     override fun start() {
         println("Staring ramsete follow")
@@ -39,7 +39,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         currentIndex++
     }
 
-    fun ramsete(odometry: Odometry, desired: Odometry): Pair<Double, Double> {
+    private fun ramsete(odometry: Odometry, desired: Odometry): Pair<Double, Double> {
         val v = odometry.velocity.feetPerSecond
         val w = odometry.angularVelocity.radiansPerSecond
         val x = odometry.pose.x.feet
@@ -54,10 +54,9 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
         val k1 = k13gains(desired.velocity.feetPerSecond, desired.angularVelocity.radiansPerSecond)
         val k2 = b * vd.absoluteValue
-        val k3 = k1
 
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
-        val wc = wd + b * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k3 * (thd - th)
+        val wc = wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
 
         val difference = wc.radiansPerSecond.toLinearVelocity((PI * 4.0.feet.meters) / 1.rotations.radians)
 
