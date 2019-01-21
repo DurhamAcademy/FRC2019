@@ -20,13 +20,6 @@ class DefaultDrive : Command() {
         yawCorrection = it.coerceIn(-0.1, 0.1)
     }
 
-    // PITCH CORRECTION
-    private var pitchCorrection = 0.0
-    private var pitchCorrecting = true
-    private val pitchController = PIDController(0.0, 0.0, 0.0, ArbitraryPIDSource(PIDSourceType.kDisplacement) { RobotMap.kIMU.getPitch().halfDegrees }) {
-        pitchCorrection = it.coerceIn(-0.1, 0.1)
-    }
-
     // CURVATURE PARAMS
     private var quickStopAccumulator = 0.0
     private val quickStopThreshold = 0.2
@@ -47,12 +40,9 @@ class DefaultDrive : Command() {
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
         }
-        if (pitchCorrection.absoluteValue < 0.05 && throttle == 0.0) {
-            pitchCorrection = 0.0
-        }
-        SmartDashboard.putNumber("Pitch Correction", pitchCorrection)
+
         if (yawCorrecting) {
-            Drivetrain.setDriveVelocities(throttle + pitchCorrection - yawCorrection, throttle + pitchCorrection + yawCorrection)
+            Drivetrain.setDriveVelocities(throttle - yawCorrection, throttle + yawCorrection)
             SmartDashboard.putNumber("Yaw Correction", yawCorrection)
         } else {
             curvatureDrive(throttle, rotation, true)
@@ -67,6 +57,8 @@ class DefaultDrive : Command() {
             yawCorrecting = true
             RobotMap.kIMU.zero()
         }
+
+        OI.setControllerRumble(OI.deadband((RobotMap.kIMU.getPitch().absoluteValue / 45.0).coerceIn(0.0, 1.0), 0.05))
 
         Drivetrain.brakeMode = !OI.controller.getBumper(GenericHID.Hand.kLeft)
     }

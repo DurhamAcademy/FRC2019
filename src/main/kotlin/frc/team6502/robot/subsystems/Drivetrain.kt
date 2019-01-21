@@ -11,17 +11,18 @@ import frc.team6502.kyberlib.util.units.feetPerSecond
 import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.kyberlib.util.units.rotations
 import frc.team6502.robot.RobotMap
+import frc.team6502.robot.commands.DefaultDrive
 
 object Drivetrain :  Subsystem() {
 
     val leftTalon = WPI_TalonSRX(RobotMap.leftTalonId)
     val rightTalon = WPI_TalonSRX(RobotMap.rightTalonId)
 
-    val kV = 0.0
-    val vI = 0.0
     val maxSpeed = 13.30.feetPerSecond
     val wheelRatio = (Math.PI * 6.0).inches.meters / 1.rotations.radians
 
+    val kV = 12.0 / maxSpeed.feetPerSecond
+    val vI = 0.0
     init {
         // probably going to be a wcd
         // two ktalon objects needed, config tbd
@@ -63,13 +64,18 @@ object Drivetrain :  Subsystem() {
 
     }
 
+    /**
+     * Sets each side of the drivetrain's velocities as percentages of the maximum
+     * @param l Left percent velocity
+     * @param r Right percent velocity
+     */
     fun setDriveVelocities(l: Double, r: Double) {
 
         val left = (l * maxSpeed.feetPerSecond).feetPerSecond
         val right = (r * maxSpeed.feetPerSecond).feetPerSecond
 
-        val leftNative = left.toAngularVelocity(wheelRatio).encoder2048PerDecisecond
-        val rightNative = right.toAngularVelocity(wheelRatio).encoder2048PerDecisecond
+        val leftNative = left.toAngularVelocity(wheelRatio).encoder1024PerDecisecond
+        val rightNative = right.toAngularVelocity(wheelRatio).encoder1024PerDecisecond
 
         leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward, (kV * left.feetPerSecond + vI) / 12.0)
         rightTalon.set(ControlMode.Velocity, rightNative, DemandType.ArbitraryFeedForward, (kV * right.feetPerSecond + vI) / 12.0)
@@ -92,7 +98,7 @@ object Drivetrain :  Subsystem() {
         }
 
     override fun initDefaultCommand() {
-        defaultCommand = null
+        defaultCommand = DefaultDrive()
     }
 
 }

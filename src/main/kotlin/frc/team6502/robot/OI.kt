@@ -1,5 +1,6 @@
 package frc.team6502.robot
 
+import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import java.lang.Math.abs
@@ -12,5 +13,10 @@ object OI {
 
     fun deadband(input: Double, deadband: Double): Double {
         return if(abs(input) < deadband) 0.0 else input
+    }
+
+    fun setControllerRumble(rumble: Double) {
+        controller.setRumble(GenericHID.RumbleType.kLeftRumble, rumble)
+        controller.setRumble(GenericHID.RumbleType.kRightRumble, rumble)
     }
 }

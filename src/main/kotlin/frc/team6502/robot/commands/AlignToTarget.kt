@@ -1,14 +1,14 @@
 package frc.team6502.robot.commands
 
 import edu.wpi.first.wpilibj.command.PIDCommand
-import frc.team6502.robot.RobotMap
+import frc.team6502.robot.subsystems.Drivetrain
 
 class AlignToTarget: PIDCommand(0.0, 0.0, 0.0){
 
     var correction = 0.0
 
     init {
-        requires(RobotMap.kDrivetrain)
+        requires(Drivetrain)
     }
 
     override fun initialize() {
