@@ -10,7 +10,7 @@ FYI: Touching `build.gradle` or `Main.kt` will probably break things.
   - Velocity-based control (characterization coming soon)
 - Ramsete-based spline following which is untested btw :)
 
-## Planned features
+## Planned Features
 - Elevator
   - Position control and preset action heights
 - Cargo Intake
