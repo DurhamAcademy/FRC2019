@@ -1,20 +1,15 @@
 package frc.team6502.robot.commands
 
+import edu.wpi.first.wpilibj.Notifier
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.*
-import frc.team6502.robot.Odometry
-import frc.team6502.robot.Pose
-import frc.team6502.robot.RobotMap
-import frc.team6502.robot.getYaw
+import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
 import jaci.pathfinder.Trajectory
 import java.lang.Math.cos
 import java.lang.Math.sin
-import kotlin.math.PI
-import kotlin.math.absoluteValue
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
 
@@ -24,9 +19,10 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     override fun start() {
         println("Staring ramsete follow")
         RobotOdometry.zero()
+        Notifier(this::nextSegment).startPeriodic(0.05)
     }
 
-    override fun execute() {
+    fun nextSegment() {
         println("Segment $currentIndex/${traj.segments.size}")
 
         val seg = traj.segments[currentIndex]

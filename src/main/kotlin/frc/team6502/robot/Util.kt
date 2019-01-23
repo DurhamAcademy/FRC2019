@@ -1,13 +1,8 @@
 package frc.team6502.robot
 
 import com.ctre.phoenix.sensors.PigeonIMU
-import edu.wpi.first.wpilibj.PIDOutput
-import edu.wpi.first.wpilibj.PIDSource
-import edu.wpi.first.wpilibj.PIDSourceType
-import frc.team6502.kyberlib.util.units.Angle
-import frc.team6502.kyberlib.util.units.AngularVelocity
-import frc.team6502.kyberlib.util.units.Length
-import frc.team6502.kyberlib.util.units.LinearVelocity
+import edu.wpi.first.wpilibj.*
+import frc.team6502.kyberlib.util.units.*
 import jaci.pathfinder.Pathfinder
 
 
@@ -15,12 +10,6 @@ fun PigeonIMU.getYaw() : Double {
     var ypr = doubleArrayOf(0.0, 0.0, 0.0)
     this.getYawPitchRoll(ypr)
     return ypr[0]
-}
-
-fun PigeonIMU.getPitch(): Double {
-    var ypr = doubleArrayOf(0.0, 0.0, 0.0)
-    this.getYawPitchRoll(ypr)
-    return ypr[1]
 }
 
 fun PigeonIMU.zero() {

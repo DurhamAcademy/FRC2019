@@ -1,54 +1,70 @@
 package frc.team6502.robot.commands
 
 import edu.wpi.first.wpilibj.GenericHID
-import edu.wpi.first.wpilibj.PIDController
-import edu.wpi.first.wpilibj.PIDSourceType
 import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.command.Command
+import edu.wpi.first.wpilibj.command.PIDCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.*
 import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
-class DefaultDrive : Command() {
+// decent gains P=0.02 I=0.0 D=0.02
+class DefaultDrive : PIDCommand(0.02, 0.0, 0.03) {
+    private val correctionLimit = 0.33
+    override fun returnPIDInput(): Double {
+        return RobotMap.kIMU.getYaw()
+    }
+
+    override fun usePIDOutput(output: Double) {
+        yawCorrection = output.coerceIn(-correctionLimit, correctionLimit)
+    }
 
     // YAW CORRECTION
     private var yawCorrection = 0.0
     private var yawCorrecting = false
     private val yawTimer = Timer()
-    private val yawController = PIDController(0.0, 0.0, 0.0, ArbitraryPIDSource(PIDSourceType.kDisplacement) { RobotMap.kIMU.getYaw().halfDegrees }) {
-        yawCorrection = it.coerceIn(-0.1, 0.1)
-    }
 
     // CURVATURE PARAMS
     private var quickStopAccumulator = 0.0
     private val quickStopThreshold = 0.2
     private val quickStopAlpha = 0.1
 
+    // FRONT TOGGLE
+    private var frontIsFront = true
+
     init {
         requires(Drivetrain)
     }
 
     override fun initialize() {
-        RobotMap.kIMU.zero()
+        yawTimer.start()
+        RobotMap.kIMU.setYaw(0.0)
+        yawCorrection = 0.0
+        yawCorrecting = true
+        println("reset pigeon")
     }
 
     override fun execute() {
-        val throttle = -OI.commandedY
+        val throttle = OI.commandedY * if (frontIsFront) -1 else 1
         val rotation = OI.commandedX
 
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
         }
-        yawCorrection = 0.0
 
+        if (yawTimer.get() < 0.35) {
+            yawCorrection = 0.0
+            RobotMap.kIMU.setYaw(0.0)
+        }
+
+        SmartDashboard.putBoolean("Correcting", yawCorrecting)
         if (yawCorrecting) {
             Drivetrain.setDriveVelocities(throttle - yawCorrection, throttle + yawCorrection)
-            SmartDashboard.putNumber("Yaw Correction", yawCorrection)
+            SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
 //            println(rotation)
             curvatureDrive(throttle, rotation, true)
-            SmartDashboard.putNumber("Yaw Correction", 0.0)
+            SmartDashboard.putNumber("Heading Correction", 0.0)
         }
 
         if (!OI.commandingStraight) {
@@ -56,17 +72,23 @@ class DefaultDrive : Command() {
             yawTimer.start()
             yawCorrecting = false
         } else if (yawTimer.get() > 0.3 && !yawCorrecting) {
-            yawCorrecting = true
             RobotMap.kIMU.setYaw(0.0)
             yawCorrection = 0.0
-            println("reset pigeon")
+            yawCorrecting = true
         }
 
         // tip warning
-        OI.setControllerRumble(OI.deadband((RobotMap.kIMU.getPitch().absoluteValue / 45.0).coerceIn(0.0, 1.0), 0.5))
+//        OI.setControllerRumble(OI.deadband((RobotMap.kIMU.getPitch().absoluteValue / 45.0).coerceIn(0.0, 1.0), 0.5))
 
         // allow for sliding
         Drivetrain.brakeMode = !OI.controller.getBumper(GenericHID.Hand.kLeft)
+
+        if (OI.controller.xButtonPressed) {
+            frontIsFront = true
+        }
+        if (OI.controller.yButtonPressed) {
+            frontIsFront = false
+        }
     }
 
 
@@ -133,6 +155,6 @@ class DefaultDrive : Command() {
 
 //        println("COMMANDED LEFT: $leftMotorOutput COMMANDED RIGHT: $rightMotorOutput")
         Drivetrain.setDriveVelocities(leftMotorOutput, rightMotorOutput)
-        println("left out=${leftMotorOutput}")
+//        println("left out=${leftMotorOutput}")
     }
 }
