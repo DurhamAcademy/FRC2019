@@ -1,7 +1,6 @@
 package frc.team6502.robot
 
 import com.ctre.phoenix.sensors.PigeonIMU
-import edu.wpi.first.wpilibj.*
 import frc.team6502.kyberlib.util.units.*
 import jaci.pathfinder.Pathfinder
 
@@ -18,25 +17,6 @@ fun PigeonIMU.zero() {
 
 val Double.halfDegrees: Double
     get() = Pathfinder.boundHalfDegrees(this)
-
-class ArbitraryPIDSource(val type: PIDSourceType, val lambda: () -> Double) : PIDSource {
-    override fun getPIDSourceType() = type
-
-    override fun setPIDSourceType(pidSource: PIDSourceType?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun pidGet(): Double = lambda()
-}
-
-class ArbitraryPIDOutput() : PIDOutput {
-
-    var output = 0.0
-    override fun pidWrite(output: Double) {
-        this.output = output
-    }
-
-}
 
 data class Pose(var x: Length, var y: Length, var theta: Angle)
 data class Odometry(val pose: Pose, var velocity: LinearVelocity, var angularVelocity: AngularVelocity)

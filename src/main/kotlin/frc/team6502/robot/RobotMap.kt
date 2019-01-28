@@ -14,8 +14,8 @@ object RobotMap {
 
     val imuId = 6
 
-    val elevatorTalonId = 7
-    val elevtatorVictorIds = arrayOf(8, 9, 10)
+    val intakeVictorID = 7
+//    val elevtatorVictorIds = arrayOf(8, 9, 10)
 
     // SENSORS //
     // TODO('update stream format')

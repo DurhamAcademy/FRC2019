@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.subsystems.Drivetrain
+import frc.team6502.robot.subsystems.Intake
 
 class Robot : TimedRobot() {
 
@@ -15,15 +16,17 @@ class Robot : TimedRobot() {
     override fun robotInit() {
 
         // report kotlin as the language (unofficially)
-        HAL.report(FRCNetComm.tResourceType.kResourceType_Language, 6)
+        val kLanguageKotlin = 6
+        HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
 
         RobotMap // lazy init all the RobotMap vars
         Drivetrain // create the drive boi
+        Intake
 
         println("Hello, 2019 season!")
 
         // setup auto chooser
-        chooser.name = "Station Position"
+        chooser.name = "Robot Position"
         chooser.addOption("Left", "LEFT")
         chooser.addOption("Center", "CENTER")
         chooser.addOption("Right", "RIGHT")

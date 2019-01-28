@@ -11,10 +11,16 @@ import java.lang.Math.cos
 import java.lang.Math.sin
 import kotlin.math.*
 
+/**
+ * Ramsete path follower
+ * @property traj The trajectory to follow
+ * @property b Ramsete tuning value (similar to P in PID)
+ * @property zeta Ramsete tuning value (similar to D in PID)
+ */
 class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
 
     private var currentIndex = 0
-    private val drivebase = 2.feet
+    private val drivebase = 3.feet
 
     override fun start() {
         println("Staring ramsete follow")
@@ -22,7 +28,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         Notifier(this::nextSegment).startPeriodic(0.05)
     }
 
-    fun nextSegment() {
+    private fun nextSegment() {
         println("Segment $currentIndex/${traj.segments.size}")
 
         val seg = traj.segments[currentIndex]
