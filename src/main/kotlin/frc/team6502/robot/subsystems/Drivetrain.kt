@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.RobotMap
 import frc.team6502.robot.commands.DefaultDrive
+import kotlin.math.sign
 
 object Drivetrain :  Subsystem() {
 
@@ -17,8 +18,8 @@ object Drivetrain :  Subsystem() {
     private val maxSpeed = 13.30.feetPerSecond
     private val wheelRatio = (Math.PI * 6.0).inches.meters / 1.rotations.radians
 
-    private val kV = 12.0 / maxSpeed.feetPerSecond
-    private val vI = 0.0
+    private val kV = .80482
+    private val vI = 0.11607
 
     init {
         // probably going to be a wcd
@@ -26,18 +27,17 @@ object Drivetrain :  Subsystem() {
         for(id in RobotMap.leftVictorIds){
             WPI_VictorSPX(id).run {
                 follow(leftTalon)
-
+                inverted = true
             }
         }
 
         for (id in RobotMap.rightVictorIds) {
             WPI_VictorSPX(id).run {
                 follow(rightTalon)
-                inverted = true
             }
         }
 
-        rightTalon.inverted = true
+        leftTalon.inverted = true
         arrayOf(leftTalon, rightTalon).forEach {
             it.run {
                 // setup feedback
@@ -47,9 +47,9 @@ object Drivetrain :  Subsystem() {
                 configContinuousCurrentLimit(30)
 
                 // THE DANGER ZONE
-                config_kP(0, 0.1)
+                config_kP(0, 0.05)
                 config_kI(0, 0.0)
-                config_kD(0, 0.1)
+                config_kD(0, 0.05)
 //                config_IntegralZone(0, 4)
 
                 // ramp
@@ -64,13 +64,17 @@ object Drivetrain :  Subsystem() {
     }
 
     fun setDrivePercentages(left: Double, right: Double){
-        leftTalon.set(left)
-        rightTalon.set(right)
+        leftTalon.set(left.coerceIn(-1.0, 1.0))
+        rightTalon.set(right.coerceIn(-1.0, 1.0))
     }
 
-    fun getVelocity(): LinearVelocity {
-        //TODO:
-        return 0.feetPerSecond
+    fun getVelocities(): Pair<LinearVelocity, LinearVelocity> {
+        return leftTalon.selectedSensorVelocity.encoder1024PerDecisecond.toLinearVelocity(wheelRatio) to
+                rightTalon.selectedSensorVelocity.encoder1024PerDecisecond.toLinearVelocity(wheelRatio)
+    }
+
+    fun getVoltages(): Pair<Double, Double> {
+        return leftTalon.motorOutputVoltage to rightTalon.motorOutputVoltage
     }
 
     /**
@@ -86,37 +90,14 @@ object Drivetrain :  Subsystem() {
         val left = (l * maxSpeed.feetPerSecond).feetPerSecond
         val right = (r * maxSpeed.feetPerSecond).feetPerSecond
 
-//        println("left=${left.feetPerSecond} right=${right.feetPerSecond}")
-
         val leftNative = left.toAngularVelocity(wheelRatio).encoder1024PerDecisecond
         val rightNative = right.toAngularVelocity(wheelRatio).encoder1024PerDecisecond
 
-//        SmartDashboard.putNumber("left tgt", leftTalon.closedLoopTarget.toDouble())
-//        SmartDashboard.putNumber("right tgt", rightTalon.closedLoopTarget.toDouble())
-
-//        println("left=${leftNative} right=${rightNative}")
-
-//        leftTalon.set(ControlMode.Velocity, l)
-//        rightTalon.set(ControlMode.Velocity, rightNative)
-        leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward, (kV * left.feetPerSecond + vI) / 12.0)
-        rightTalon.set(ControlMode.Velocity, rightNative, DemandType.ArbitraryFeedForward, (kV * right.feetPerSecond + vI) / 12.0)
+        leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward,
+                (kV * left.feetPerSecond + vI * left.feetPerSecond.sign) / 12.0)
+        rightTalon.set(ControlMode.Velocity, rightNative, DemandType.ArbitraryFeedForward,
+                (kV * right.feetPerSecond + vI * right.feetPerSecond.sign) / 12.0)
     }
-
-    // deja vu i've just been in this place before higher on the streets
-    private var m_brakeMode = true
-    var brakeMode
-        get() = m_brakeMode
-        set(value) {
-            if (value != m_brakeMode) {
-                arrayOf(leftTalon, rightTalon).forEach {
-                    it.setNeutralMode(when (value) {
-                        true -> NeutralMode.Brake
-                        false -> NeutralMode.Coast
-                    })
-                }
-                m_brakeMode = value
-            }
-        }
 
     override fun initDefaultCommand() {
         defaultCommand = DefaultDrive()

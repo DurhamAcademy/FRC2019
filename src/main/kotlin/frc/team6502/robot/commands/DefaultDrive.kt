@@ -1,6 +1,5 @@
 package frc.team6502.robot.commands
 
-import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
@@ -9,10 +8,12 @@ import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
 // decent gains P=0.02 I=0.0 D=0.02
-class DefaultDrive : PIDCommand(0.02, 0.0, 0.03) {
+class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
     private val correctionLimit = 0.33
+    private var correctionZero = 0.0
+
     override fun returnPIDInput(): Double {
-        return RobotMap.kIMU.getYaw()
+        return RobotMap.kIMU.getYaw() - correctionZero
     }
 
     override fun usePIDOutput(output: Double) {
@@ -38,7 +39,7 @@ class DefaultDrive : PIDCommand(0.02, 0.0, 0.03) {
 
     override fun initialize() {
         yawTimer.start()
-        RobotMap.kIMU.setYaw(0.0)
+        correctionZero = RobotMap.kIMU.getYaw()
         yawCorrection = 0.0
         yawCorrecting = true
         println("reset pigeon")
@@ -54,7 +55,7 @@ class DefaultDrive : PIDCommand(0.02, 0.0, 0.03) {
 
         if (yawTimer.get() < 0.35) {
             yawCorrection = 0.0
-            RobotMap.kIMU.setYaw(0.0)
+            correctionZero = RobotMap.kIMU.getYaw()
         }
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
@@ -72,16 +73,12 @@ class DefaultDrive : PIDCommand(0.02, 0.0, 0.03) {
             yawTimer.start()
             yawCorrecting = false
         } else if (yawTimer.get() > 0.3 && !yawCorrecting) {
-            RobotMap.kIMU.setYaw(0.0)
+            correctionZero = RobotMap.kIMU.getYaw()
             yawCorrection = 0.0
             yawCorrecting = true
         }
 
-        // tip warning
-//        OI.setControllerRumble(OI.deadband((RobotMap.kIMU.getPitch().absoluteValue / 45.0).coerceIn(0.0, 1.0), 0.5))
-
-        // allow for sliding
-        Drivetrain.brakeMode = !OI.controller.getBumper(GenericHID.Hand.kLeft)
+        SmartDashboard.putNumber("pitch", RobotMap.kIMU.getPitch())
 
         if (OI.controller.xButtonPressed) {
             frontIsFront = true

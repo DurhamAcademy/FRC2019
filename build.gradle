@@ -35,6 +35,9 @@ dependencies {
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile 'junit:junit:4.12'
 
+    compile 'org.nield:kotlin-statistics:1.2.1'
+    implementation "com.google.code.gson:gson:2.8.5"
+
     // kyber
     compile "frc.team6502:kyberlib:2019.1.4"
 

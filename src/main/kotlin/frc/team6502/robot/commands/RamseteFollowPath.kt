@@ -35,8 +35,8 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         val w = if (currentIndex > 0) (seg.heading - traj.segments[currentIndex - 1].heading) / 0.05 else 0.0
 
         val commanded = ramsete(RobotOdometry.odometry, Odometry(Pose(seg.x.feet, seg.y.feet, seg.heading.radians), seg.velocity.feetPerSecond, w.radiansPerSecond))
-        Drivetrain.setDriveVelocities(commanded.first, commanded.second)
-        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, Drivetrain.getVelocity())
+        Drivetrain.setDriveVelocities(commanded.first.coerceIn(-0.5, 0.5), commanded.second.coerceIn(-0.5, 0.5))
+        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
 
         currentIndex++
     }

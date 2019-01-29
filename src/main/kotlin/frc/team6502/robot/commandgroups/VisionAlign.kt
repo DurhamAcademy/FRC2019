@@ -1,19 +1,17 @@
 package frc.team6502.robot.commandgroups
 
 import edu.wpi.first.wpilibj.command.CommandGroup
-import frc.team6502.robot.commands.vision.CollectVisionData
-import frc.team6502.robot.commands.vision.GenerateVisionSpline
+import frc.team6502.robot.commands.RamseteFollowPath
+import frc.team6502.robot.commands.vision.*
 import frc.team6502.robot.subsystems.Drivetrain
 
 class VisionAlign : CommandGroup() {
     init {
         requires(Drivetrain)
-//        setElevatorUp
-//        addSequential(SetLEDRing(true))
-        addSequential(CollectVisionData())
-//        addSequential(SetLEDRing(false))
+        addSequential(SetLEDRing(true))
+        addSequential(CollectVisionData(1.0, 10))
+        addSequential(SetLEDRing(false))
         addSequential(GenerateVisionSpline())
-//        addSequential(RamseteFollowPath(traj, 3, 0.6))
-//        set elevator down if needed
+        addSequential(RamseteFollowPath(GenerateVisionSpline.visionSpline!!, 3.0, 0.6))
     }
 }
