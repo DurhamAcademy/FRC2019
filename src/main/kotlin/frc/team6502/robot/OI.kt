@@ -3,12 +3,12 @@ package frc.team6502.robot
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
+import frc.team6502.robot.commandgroups.VisionAlign
 import java.lang.Math.abs
 import kotlin.math.pow
 
 object OI {
     val controller = XboxController(0)
-    val buttons = arrayOf<Int>().associate { it to JoystickButton(controller, it) }
     val commandingStraight: Boolean
         get() = deadband(controller.x, 0.1) == 0.0
 
@@ -25,5 +25,10 @@ object OI {
     fun setControllerRumble(rumble: Double) {
         controller.setRumble(GenericHID.RumbleType.kLeftRumble, rumble)
         controller.setRumble(GenericHID.RumbleType.kRightRumble, rumble)
+    }
+
+    init {
+        JoystickButton(controller, 0).whenPressed(VisionAlign)
+        JoystickButton(controller, 1).cancelWhenPressed(VisionAlign)
     }
 }

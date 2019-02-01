@@ -60,7 +60,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
         if (yawCorrecting) {
-            Drivetrain.setDriveVelocities(throttle - yawCorrection, throttle + yawCorrection)
+            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, Modes.drivetrainMode.selected)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
 //            println(rotation)
@@ -151,7 +151,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
         }
 
 //        println("COMMANDED LEFT: $leftMotorOutput COMMANDED RIGHT: $rightMotorOutput")
-        Drivetrain.setDriveVelocities(leftMotorOutput, rightMotorOutput)
+        Drivetrain.set(leftMotorOutput, rightMotorOutput, Modes.drivetrainMode.selected)
 //        println("left out=${leftMotorOutput}")
     }
 }

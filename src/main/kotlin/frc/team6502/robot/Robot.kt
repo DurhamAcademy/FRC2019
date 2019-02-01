@@ -23,6 +23,7 @@ class Robot : TimedRobot() {
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
 
         RobotMap // lazy init all the RobotMap vars
+        Modes // sicko mode
         Drivetrain // create the drive boi
         Intake
 

@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.*
+import frc.team6502.robot.DrivetrainMode
 import frc.team6502.robot.RobotMap
 import frc.team6502.robot.commands.DefaultDrive
 import kotlin.math.sign
@@ -15,8 +16,8 @@ object Drivetrain :  Subsystem() {
     private val leftTalon = WPI_TalonSRX(RobotMap.leftTalonId)
     private val rightTalon = WPI_TalonSRX(RobotMap.rightTalonId)
 
-    private val maxSpeed = 13.30.feetPerSecond
-    private val wheelRatio = (Math.PI * 6.0).inches.meters / 1.rotations.radians
+    val maxSpeed = 13.30.feetPerSecond
+    val wheelRatio = (Math.PI * 6.0).inches.meters / 1.rotations.radians
 
     private val kV = .80482
     private val vI = 0.11607
@@ -51,6 +52,8 @@ object Drivetrain :  Subsystem() {
                 config_kI(0, 0.0)
                 config_kD(0, 0.05)
 //                config_IntegralZone(0, 4)
+                enableVoltageCompensation(true)
+                configVoltageCompSaturation(12.0)
 
                 // ramp
                 configOpenloopRamp(0.25)
@@ -63,7 +66,16 @@ object Drivetrain :  Subsystem() {
 
     }
 
-    fun setDrivePercentages(left: Double, right: Double){
+    fun set(left: Double, right: Double, mode: DrivetrainMode) {
+        when (mode) {
+            DrivetrainMode.DISABLED -> setDrivePercentages(0.0, 0.0)
+            DrivetrainMode.DEMO -> setDriveVelocities(left * 0.33, right * 0.33)
+            DrivetrainMode.OPEN_LOOP -> setDrivePercentages(left, right)
+            DrivetrainMode.CLOSED_LOOP -> setDriveVelocities(left, right)
+        }
+    }
+
+    private fun setDrivePercentages(left: Double, right: Double) {
         leftTalon.set(left.coerceIn(-1.0, 1.0))
         rightTalon.set(right.coerceIn(-1.0, 1.0))
     }
@@ -82,7 +94,7 @@ object Drivetrain :  Subsystem() {
      * @param l Left percent velocity
      * @param r Right percent velocity
      */
-    fun setDriveVelocities(l: Double, r: Double) {
+    private fun setDriveVelocities(l: Double, r: Double) {
 
         SmartDashboard.putNumber("Left Error", leftTalon.closedLoopError.toDouble())
         SmartDashboard.putNumber("Right Error", rightTalon.closedLoopError.toDouble())

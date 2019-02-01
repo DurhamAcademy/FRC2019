@@ -5,7 +5,7 @@ import frc.team6502.robot.commands.RamseteFollowPath
 import frc.team6502.robot.commands.vision.*
 import frc.team6502.robot.subsystems.Drivetrain
 
-class VisionAlign : CommandGroup() {
+object VisionAlign : CommandGroup() {
     init {
         requires(Drivetrain)
         addSequential(SetLEDRing(true))
