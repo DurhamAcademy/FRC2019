@@ -6,8 +6,9 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.kyberlib.util.units.degrees
+import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.commands.CharacterizeDrivetrain
+import frc.team6502.robot.commands.SetElevatorHeight
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
 import frc.team6502.robot.subsystems.Elevator
@@ -15,6 +16,7 @@ import frc.team6502.robot.subsystems.Elevator
 class Robot : TimedRobot() {
 
     private val chooser = SendableChooser<String>()
+    private val heights = mapOf<Length, String>(0.feet to "Zero", 1.feet to "Test")
 
     override fun robotInit() {
 
@@ -28,6 +30,10 @@ class Robot : TimedRobot() {
         Elevator
 
         SmartDashboard.putData(CharacterizeDrivetrain())
+
+        for (height in heights) {
+            SmartDashboard.putBoolean(height.value, false)
+        }
 
         println("Hello, 2019 season!")
 
@@ -51,6 +57,14 @@ class Robot : TimedRobot() {
     override fun robotPeriodic() {
         // do everything
         Scheduler.getInstance().run()
+
+        for (height in heights) {
+            if (SmartDashboard.getBoolean(height.value, false)) {
+                SmartDashboard.putBoolean(height.value, false)
+                SetElevatorHeight(height.key).start()
+                println("Set height to ${height.key.feet}ft")
+            }
+        }
     }
 
     override fun autonomousInit() {

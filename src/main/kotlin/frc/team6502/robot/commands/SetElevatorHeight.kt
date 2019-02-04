@@ -1,15 +1,15 @@
 package frc.team6502.robot.commands
 
-import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.InstantCommand
-import frc.team6502.robot.RobotMap
+import frc.team6502.kyberlib.util.units.Length
+import frc.team6502.robot.subsystems.Elevator
 
-class SetElevatorHeight(height: Double): InstantCommand() {
+class SetElevatorHeight(private val height: Length) : InstantCommand() {
 
     init {
-//        requires(RobotMap.kElevator)
+        requires(Elevator)
     }
     override fun execute() {
-//        RobotMap.kElevator.height = height
+        Elevator.height = height.feet
     }
 }
