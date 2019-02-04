@@ -10,7 +10,7 @@ import frc.team6502.kyberlib.util.units.degrees
 import frc.team6502.robot.commands.CharacterizeDrivetrain
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
-import frc.team6502.robot.subsystems.Intake
+import frc.team6502.robot.subsystems.Elevator
 
 class Robot : TimedRobot() {
 
@@ -25,7 +25,7 @@ class Robot : TimedRobot() {
         RobotMap // lazy init all the RobotMap vars
         Modes // sicko mode
         Drivetrain // create the drive boi
-        Intake
+        Elevator
 
         SmartDashboard.putData(CharacterizeDrivetrain())
 
@@ -76,6 +76,7 @@ class Robot : TimedRobot() {
         SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
         SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
         SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
+        SmartDashboard.putNumber("elevator error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 
     override fun testInit() {}

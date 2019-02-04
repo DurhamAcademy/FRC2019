@@ -17,7 +17,8 @@ object RobotMap {
 
     val imuId = 6
 
-    val intakeVictorID = 7
+    val elevatorTalonId = 7
+    val elevatorVictorIds = arrayOf(8, 9, 10)
 //    val elevtatorVictorIds = arrayOf(8, 9, 10)
 
     // SENSORS //
