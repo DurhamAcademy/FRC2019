@@ -3,7 +3,9 @@ package frc.team6502.robot
 import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commandgroups.VisionAlign
+import frc.team6502.robot.commands.SetElevatorHeight
 import java.lang.Math.abs
 import kotlin.math.pow
 
@@ -25,6 +27,22 @@ object OI {
     fun setControllerRumble(rumble: Double) {
         controller.setRumble(GenericHID.RumbleType.kLeftRumble, rumble)
         controller.setRumble(GenericHID.RumbleType.kRightRumble, rumble)
+    }
+
+    fun pollElevatorButtons() {
+        for (height in RobotMap.heights) {
+            if (SmartDashboard.getBoolean(height.value, false)) {
+                SmartDashboard.putBoolean(height.value, false)
+                SetElevatorHeight(height.key).start()
+                println("Set height to ${height.key.feet}ft")
+            }
+        }
+    }
+
+    fun createElevatorButtons() {
+        for (height in RobotMap.heights) {
+            SmartDashboard.putBoolean(height.value, false)
+        }
     }
 
     init {
