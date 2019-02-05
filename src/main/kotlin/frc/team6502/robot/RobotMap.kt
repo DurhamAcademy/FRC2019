@@ -23,7 +23,8 @@ object RobotMap {
     val elevatorVictorIds = arrayOf(8, 9, 10)
 
     val heights = mapOf<Length, String>(0.feet to "Zero", 1.feet to "Test")
-//    val elevtatorVictorIds = arrayOf(8, 9, 10)
+
+    val intakeVictorId = 0
 
     // SENSORS //
     // TODO('update stream format')

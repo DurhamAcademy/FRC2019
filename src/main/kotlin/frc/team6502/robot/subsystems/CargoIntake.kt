@@ -5,18 +5,18 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.robot.RobotMap
-import frc.team6502.robot.commands.DefaultIntake
+import frc.team6502.robot.commands.defaults.DefaultCargoIntake
 
-object Intake : Subsystem() {
+object CargoIntake : Subsystem() {
 
-    private val intakeVictor = VictorSPX(RobotMap.intakeVictorID)
+    private val intakeVictor = VictorSPX(RobotMap.intakeVictorId)
 
     init {
         intakeVictor.setNeutralMode(NeutralMode.Brake)
     }
 
     override fun initDefaultCommand() {
-        defaultCommand = DefaultIntake()
+        defaultCommand = DefaultCargoIntake()
     }
 
     var speed: Double = 0.0

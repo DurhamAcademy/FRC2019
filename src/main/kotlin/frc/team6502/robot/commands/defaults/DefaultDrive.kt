@@ -1,4 +1,4 @@
-package frc.team6502.robot.commands
+package frc.team6502.robot.commands.defaults
 
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand

@@ -6,10 +6,6 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.kyberlib.util.units.degrees
-import frc.team6502.robot.commands.CharacterizeDrivetrain
-import frc.team6502.robot.sensor.RobotOdometry
-import frc.team6502.robot.subsystems.Drivetrain
 import frc.team6502.robot.subsystems.Elevator
 
 class Robot : TimedRobot() {
@@ -24,11 +20,14 @@ class Robot : TimedRobot() {
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
 
         RobotMap // lazy init all the RobotMap vars
+//        RobotOdometry
         Modes // sicko mode
-        Drivetrain // create the drive boi
+//        Drivetrain // create the drive boi
         Elevator
+//        HatchPanelIntake
+//        CargoIntake
 
-        SmartDashboard.putData(CharacterizeDrivetrain())
+//        SmartDashboard.putData(CharacterizeDrivetrain())
         OI.createElevatorButtons()
 
 //        // setup auto chooser
@@ -69,15 +68,15 @@ class Robot : TimedRobot() {
     override fun autonomousPeriodic() {}
 
     override fun teleopInit() {
-        RobotOdometry.zero()
+//        RobotOdometry.zero()
     }
 
     override fun teleopPeriodic() {
-        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
-        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
-        SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
-        SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
-        SmartDashboard.putNumber("elevator error", Elevator.elevatorTalon.closedLoopError.toDouble())
+//        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
+//        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
+//        SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
+//        SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
+//        SmartDashboard.putNumber("elevator error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 
     override fun testInit() {}

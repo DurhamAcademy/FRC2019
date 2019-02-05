@@ -1,12 +1,13 @@
 
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.RobotMap
+import frc.team6502.robot.commands.defaults.DefaultElevator
 
 object Elevator : Subsystem() {
 
@@ -26,13 +27,13 @@ object Elevator : Subsystem() {
     init {
         elevatorTalon.run {
             expiration = 0.25
-            configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0)
-            setSelectedSensorPosition(0, 0, 5)
-            config_kP(0, 0.1)
-            config_kI(0, 0.0)
-            config_kD(0, 0.0)
-            configMotionCruiseVelocity(cruiseVelocity.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
-            configMotionAcceleration(maxAcceleration.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+//            configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0)
+//            setSelectedSensorPosition(0, 0, 5)
+//            config_kP(0, 0.1)
+//            config_kI(0, 0.0)
+//            config_kD(0, 0.0)
+//            configMotionCruiseVelocity(cruiseVelocity.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+//            configMotionAcceleration(maxAcceleration.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
         }
 
         for (id in RobotMap.elevatorVictorIds) {
@@ -43,14 +44,20 @@ object Elevator : Subsystem() {
         }
     }
 
-    var height
-        get() = (elevatorTalon.getSelectedSensorPosition(0).encoder1024.radians * wheelRatio).meters.feet
+//    var height
+//        get() = (elevatorTalon.getSelectedSensorPosition(0).encoder1024.radians * wheelRatio).meters.feet
+//        set(value) {
+//            elevatorTalon.set(ControlMode.MotionMagic, (value.feet.meters / wheelRatio).radians.encoder1024, DemandType.ArbitraryFeedForward, holdVoltage / 12.0)
+//        }
+
+    var percentVoltage
+        get() = elevatorTalon.motorOutputPercent
         set(value) {
-            elevatorTalon.set(ControlMode.MotionMagic, (value.feet.meters / wheelRatio).radians.encoder1024, DemandType.ArbitraryFeedForward, holdVoltage / 12.0)
+            elevatorTalon.set(ControlMode.PercentOutput, value * 0.5)
         }
 
     override fun initDefaultCommand() {
-        defaultCommand = null
+        defaultCommand = DefaultElevator()
     }
 
 }

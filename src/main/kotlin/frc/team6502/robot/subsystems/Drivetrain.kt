@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.DrivetrainMode
 import frc.team6502.robot.RobotMap
-import frc.team6502.robot.commands.DefaultDrive
+import frc.team6502.robot.commands.defaults.DefaultDrive
 import kotlin.math.sign
 
 object Drivetrain :  Subsystem() {
