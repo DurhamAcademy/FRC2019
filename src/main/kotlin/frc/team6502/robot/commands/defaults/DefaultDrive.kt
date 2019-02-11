@@ -8,12 +8,12 @@ import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
 // decent gains P=0.02 I=0.0 D=0.02
-class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
-    private val correctionLimit = 0.33
-    private var correctionZero = 0.0
+class DefaultDrive : PIDCommand(0.02, 0.0, 0.02) {
+    private val correctionLimit = 0.0
+    private var correctionZero = 0.33
 
     override fun returnPIDInput(): Double {
-        return RobotMap.kIMU.getYaw() - correctionZero
+        return -RobotMap.kIMU.getYaw() - correctionZero
     }
 
     override fun usePIDOutput(output: Double) {
@@ -39,7 +39,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
 
     override fun initialize() {
         yawTimer.start()
-        correctionZero = RobotMap.kIMU.getYaw()
+        correctionZero = -RobotMap.kIMU.getYaw()
         yawCorrection = 0.0
         yawCorrecting = true
         println("reset pigeon")
@@ -55,7 +55,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
 
         if (yawTimer.get() < 0.35) {
             yawCorrection = 0.0
-            correctionZero = RobotMap.kIMU.getYaw()
+            correctionZero = -RobotMap.kIMU.getYaw()
         }
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
@@ -73,12 +73,12 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
             yawTimer.start()
             yawCorrecting = false
         } else if (yawTimer.get() > 0.3 && !yawCorrecting) {
-            correctionZero = RobotMap.kIMU.getYaw()
+            correctionZero = -RobotMap.kIMU.getYaw()
             yawCorrection = 0.0
             yawCorrecting = true
         }
 
-        SmartDashboard.putNumber("pitch", RobotMap.kIMU.getPitch())
+        SmartDashboard.putNumber("pitch", -RobotMap.kIMU.getPitch())
 
         if (OI.controller.xButtonPressed) {
             frontIsFront = true

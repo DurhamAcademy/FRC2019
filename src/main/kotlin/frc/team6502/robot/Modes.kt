@@ -22,12 +22,13 @@ object Modes {
         drivetrainMode.addOption("Disabled", DrivetrainMode.DISABLED)
 
         elevatorMode.setDefaultOption("Disabled", ElevatorMode.DISABLED)
-        elevatorMode.setDefaultOption("Manual", ElevatorMode.MANUAL)
-        elevatorMode.setDefaultOption("Positional", ElevatorMode.POSITIONAL)
-        elevatorMode.setDefaultOption("Motion Magic", ElevatorMode.MOTIONMAGIC)
+        elevatorMode.addOption("Manual", ElevatorMode.MANUAL)
+        elevatorMode.addOption("Positional", ElevatorMode.POSITIONAL)
+        elevatorMode.addOption("Motion Magic", ElevatorMode.MOTIONMAGIC)
 
-        SmartDashboard.putData(drivetrainMode)
-        SmartDashboard.putData(elevatorMode)
+
+        SmartDashboard.putData("Drivetrain Mode", drivetrainMode)
+        SmartDashboard.putData("Elevator Mode", elevatorMode)
     }
 }
 

@@ -10,6 +10,6 @@ class SetElevatorHeight(private val height: Length) : InstantCommand() {
         requires(Elevator)
     }
     override fun execute() {
-//        Elevator.height = height.feet
+        Elevator.height = height.feet
     }
 }

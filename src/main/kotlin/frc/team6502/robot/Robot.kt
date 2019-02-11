@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.subsystems.Elevator
+import frc.team6502.robot.sensor.RobotOdometry
+import frc.team6502.robot.subsystems.*
 
 class Robot : TimedRobot() {
 
@@ -20,12 +21,12 @@ class Robot : TimedRobot() {
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
 
         RobotMap // lazy init all the RobotMap vars
-//        RobotOdometry
+        RobotOdometry
         Modes // sicko mode
-//        Drivetrain // create the drive boi
+        Drivetrain // create the drive boi
         Elevator
 //        HatchPanelIntake
-//        CargoIntake
+        CargoIntake
 
 //        SmartDashboard.putData(CharacterizeDrivetrain())
         OI.createElevatorButtons()
@@ -51,6 +52,8 @@ class Robot : TimedRobot() {
         // do everything
         Scheduler.getInstance().run()
         OI.pollElevatorButtons()
+        SmartDashboard.putNumber("height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
+        SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 
     override fun autonomousInit() {
@@ -69,6 +72,7 @@ class Robot : TimedRobot() {
 
     override fun teleopInit() {
 //        RobotOdometry.zero()
+        Elevator.zeroHeight()
     }
 
     override fun teleopPeriodic() {

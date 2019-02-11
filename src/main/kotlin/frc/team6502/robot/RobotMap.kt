@@ -4,8 +4,7 @@ import com.ctre.phoenix.sensors.PigeonIMU
 import edu.wpi.cscore.VideoMode
 import edu.wpi.first.wpilibj.DigitalOutput
 import frc.team6502.kyberlib.motorcontrol.PIDConfig
-import frc.team6502.kyberlib.util.units.Length
-import frc.team6502.kyberlib.util.units.feet
+import frc.team6502.kyberlib.util.units.*
 import frc.team6502.kyberlib.vision.Jevois
 
 object RobotMap {
@@ -22,9 +21,11 @@ object RobotMap {
     val elevatorTalonId = 7
     val elevatorVictorIds = arrayOf(8, 9, 10)
 
-    val heights = mapOf<Length, String>(0.feet to "Zero", 1.feet to "Test")
+    val heights = mapOf<Length, String>(0.feet to "Zero", 1.feet to "Test", 4.feet to "4ft", 60.inches to "Full")
 
-    val intakeVictorId = 0
+    val intakeTalonId = 11
+    val intakeVictorId = 12
+    val frontIntakeTalonId = 13
 
     // SENSORS //
     // TODO('update stream format')

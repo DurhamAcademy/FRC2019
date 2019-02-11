@@ -28,17 +28,17 @@ object Drivetrain :  Subsystem() {
         for(id in RobotMap.leftVictorIds){
             WPI_VictorSPX(id).run {
                 follow(leftTalon)
-                inverted = true
             }
         }
 
         for (id in RobotMap.rightVictorIds) {
             WPI_VictorSPX(id).run {
                 follow(rightTalon)
+                inverted = true
             }
         }
 
-        leftTalon.inverted = true
+        rightTalon.inverted = true
         arrayOf(leftTalon, rightTalon).forEach {
             it.run {
                 // setup feedback
