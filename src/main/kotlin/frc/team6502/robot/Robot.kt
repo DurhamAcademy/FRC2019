@@ -8,11 +8,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.degrees
 import frc.team6502.robot.commands.CharacterizeDrivetrain
-import frc.team6502.robot.commands.RamseteFollowPath
+import frc.team6502.robot.commands.auto.RamseteFollowPath
 import frc.team6502.robot.commands.defaults.DefaultDrive
 import frc.team6502.robot.sensor.RobotOdometry
-import frc.team6502.robot.subsystems.*
-import jaci.pathfinder.*
+import frc.team6502.robot.subsystems.CargoIntake
+import frc.team6502.robot.subsystems.Drivetrain
+import frc.team6502.robot.subsystems.Elevator
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.Trajectory
+import jaci.pathfinder.Waypoint
 
 class Robot : TimedRobot() {
 
@@ -65,7 +69,7 @@ class Robot : TimedRobot() {
         RobotOdometry.zero()
 
         println("Generating spline")
-        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 3.0, 1.0, 18.0)
+        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_LOW, RobotMap.TIMESTEP, 3.0, 1.0, 18.0)
          val waypoints = arrayOf(
                  Waypoint(0.0,0.0, Pathfinder.d2r(0.0)),
                  Waypoint(5.0, 0.0, 0.0)

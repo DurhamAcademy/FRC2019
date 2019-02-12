@@ -4,7 +4,9 @@ import com.ctre.phoenix.sensors.PigeonIMU
 import edu.wpi.cscore.VideoMode
 import edu.wpi.first.wpilibj.DigitalOutput
 import frc.team6502.kyberlib.motorcontrol.PIDConfig
-import frc.team6502.kyberlib.util.units.*
+import frc.team6502.kyberlib.util.units.Length
+import frc.team6502.kyberlib.util.units.feet
+import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.kyberlib.vision.Jevois
 
 object RobotMap {
@@ -40,5 +42,6 @@ object RobotMap {
     val elevatorPID      = PIDConfig(0.0, 0.0, 0.0)
 
     // AUTOS //
+    val TIMESTEP = 0.02
 
 }
