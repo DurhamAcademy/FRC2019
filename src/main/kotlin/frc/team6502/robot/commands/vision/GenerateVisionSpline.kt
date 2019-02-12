@@ -1,8 +1,11 @@
 package frc.team6502.robot.commands.vision
 
 import edu.wpi.first.wpilibj.command.InstantCommand
+import frc.team6502.robot.RobotMap
 import frc.team6502.robot.stringify
-import jaci.pathfinder.*
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.Trajectory
+import jaci.pathfinder.Waypoint
 
 class GenerateVisionSpline() : InstantCommand() {
 
@@ -11,7 +14,7 @@ class GenerateVisionSpline() : InstantCommand() {
     }
 
     override fun execute() {
-        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, 0.05, 5.0, 2.0, 18.0)
+        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, RobotMap.TIMESTEP, 5.0, 2.0, 18.0)
         val waypoints = arrayOf(
                 Waypoint(0.0, 0.0, Pathfinder.d2r(0.0)),
                 Waypoint(CollectVisionData.avgY, CollectVisionData.avgX, Pathfinder.d2r(CollectVisionData.avgH))

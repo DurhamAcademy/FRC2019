@@ -1,4 +1,4 @@
-package frc.team6502.robot.commands
+package frc.team6502.robot.commands.drive
 
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
@@ -8,7 +8,7 @@ import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
 // decent gains P=0.02 I=0.0 D=0.02
-class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
+class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     private val correctionLimit = 0.33
     private var correctionZero = 0.0
 
@@ -18,6 +18,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
 
     override fun usePIDOutput(output: Double) {
         yawCorrection = output.coerceIn(-correctionLimit, correctionLimit)
+//        yawCorrection = OI.deadband(yawCorrection, 0.025)
     }
 
     // YAW CORRECTION
@@ -52,6 +53,10 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.03) {
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
         }
+//        println(throttle)
+//        if (yawCorrection.absoluteValue < 0.05 && throttle < 0.15 && throttle > 0.0){
+//            yawCorrection = 0.0
+//        }
 
         if (yawTimer.get() < 0.35) {
             yawCorrection = 0.0
