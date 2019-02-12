@@ -5,16 +5,14 @@ FYI: Touching `build.gradle` or `Main.kt` will probably break things.
 
 ## Current Features
 - Drivetrain
-  - Drive straight assistance
-  - Controller rumble on tip
-  - Velocity-based control (characterization coming soon)
-- Ramsete-based spline following which is untested btw :)
-
-## Planned Features
+  - Drive straight assist
+  - Velocity drive
+  - On-RIO characterization (kV and kS)
+  - Ramsete-based spline following (in theory)
 - Elevator
-  - Position control and preset action heights
-- Cargo Intake
-  - Deployment and interaction with Cargo
-  - Safety mechanism to make sure elevator is ready to receive Cargo
-- Hatch Intake
-  - Deployment and interaction with Hatches
+  - Trapezoidal height control for maximum smoothness
+- Cargo intake
+  - Automatic shutoff when cargo has been acquired
+  - Three point turn rocket level 3 scoring with vision
+- Hatch intake
+  - Moves hatch panels around. 'Nuff said.
