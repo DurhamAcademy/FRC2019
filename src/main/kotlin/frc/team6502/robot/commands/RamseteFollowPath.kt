@@ -22,6 +22,10 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     private var currentIndex = 0
     private val drivebase = 3.feet
 
+    init {
+        requires(Drivetrain)
+    }
+
     override fun start() {
         println("Staring ramsete follow")
         RobotOdometry.zero()
@@ -35,7 +39,10 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         val w = if (currentIndex > 0) (seg.heading - traj.segments[currentIndex - 1].heading) / 0.05 else 0.0
 
         val commanded = ramsete(RobotOdometry.odometry, Odometry(Pose(seg.x.feet, seg.y.feet, seg.heading.radians), seg.velocity.feetPerSecond, w.radiansPerSecond))
-        Drivetrain.set((commanded.first / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-0.5, 0.5), (commanded.second / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-0.5, 0.5), DrivetrainMode.CLOSED_LOOP)
+        Drivetrain.set(
+                (commanded.first / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-0.5, 0.5),
+                (commanded.second / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-0.5, 0.5),
+                DrivetrainMode.CLOSED_LOOP)
         RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
 
         currentIndex++
@@ -57,10 +64,12 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         val k1 = k13gains(desired.velocity.feetPerSecond, desired.angularVelocity.radiansPerSecond)
         val k2 = b * vd.absoluteValue
 
+        println(thd - th)
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
         val wc = wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
 
-        val difference = wc.radiansPerSecond.toLinearVelocity((PI * 4.0.feet.meters) / 1.rotations.radians)
+//        val difference = 0.feetPerSecond
+        val difference = wc.radiansPerSecond.toLinearVelocity((PI * 3.0.feet.meters) / 1.rotations.radians) * 0.1
         //TODO: revisit kinematic calculations here
         return vc + difference.feetPerSecond to vc - difference.feetPerSecond
     }
@@ -68,6 +77,6 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     fun k13gains(vd: Double, wd: Double) = 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))
     fun sinc(theta: Double, thetad: Double) = sin(thetad - theta) / (thetad - theta)
 
-    override fun isFinished() = currentIndex == traj.segments.size
+    override fun isFinished() = currentIndex == traj.segments.size - 1
 
 }

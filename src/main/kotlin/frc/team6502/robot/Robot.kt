@@ -6,8 +6,13 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team6502.kyberlib.util.units.degrees
+import frc.team6502.robot.commands.CharacterizeDrivetrain
+import frc.team6502.robot.commands.RamseteFollowPath
+import frc.team6502.robot.commands.defaults.DefaultDrive
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.*
+import jaci.pathfinder.*
 
 class Robot : TimedRobot() {
 
@@ -28,7 +33,7 @@ class Robot : TimedRobot() {
 //        HatchPanelIntake
         CargoIntake
 
-//        SmartDashboard.putData(CharacterizeDrivetrain())
+        SmartDashboard.putData(CharacterizeDrivetrain())
         OI.createElevatorButtons()
 
 //        // setup auto chooser
@@ -57,29 +62,37 @@ class Robot : TimedRobot() {
     }
 
     override fun autonomousInit() {
-        /* println("Generating spline")
-         val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, 0.05, 5.0, 2.0, 18.0)
+        RobotOdometry.zero()
+
+        println("Generating spline")
+        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 3.0, 1.0, 18.0)
          val waypoints = arrayOf(
                  Waypoint(0.0,0.0, Pathfinder.d2r(0.0)),
                  Waypoint(5.0, 0.0, 0.0)
          )
          val t = Pathfinder.generate(waypoints, cfg)
          println("Running path")
-         RamseteFollowPath(t, 3.0, 0.7).start()*/
+        RamseteFollowPath(t, 3.0, 0.5).start()
     }
 
-    override fun autonomousPeriodic() {}
+    override fun autonomousPeriodic() {
+//        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
+        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
+        SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
+        SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
+    }
 
     override fun teleopInit() {
-//        RobotOdometry.zero()
+        RobotOdometry.zero()
         Elevator.zeroHeight()
+        DefaultDrive().start()
     }
 
     override fun teleopPeriodic() {
-//        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
-//        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
-//        SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
-//        SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
+        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
+        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
+        SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
+        SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
 //        SmartDashboard.putNumber("elevator error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 

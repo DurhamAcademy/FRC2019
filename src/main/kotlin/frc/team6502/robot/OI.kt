@@ -15,10 +15,10 @@ object OI {
         get() = deadband(controller.x, 0.1) == 0.0
 
     val commandedY: Double
-        get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.1).pow(3)
+        get() = deadband(controller.getY(GenericHID.Hand.kLeft).pow(3), 0.04)
 
     val commandedX: Double
-        get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.1).pow(3)
+        get() = deadband(controller.getX(GenericHID.Hand.kRight).pow(3), 0.04)
 
     fun deadband(input: Double, deadband: Double): Double {
         return if (abs(input) < deadband) 0.0 else input

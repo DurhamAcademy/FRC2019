@@ -8,16 +8,17 @@ import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
 // decent gains P=0.02 I=0.0 D=0.02
-class DefaultDrive : PIDCommand(0.02, 0.0, 0.02) {
-    private val correctionLimit = 0.0
-    private var correctionZero = 0.33
+class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
+    private val correctionLimit = 0.33
+    private var correctionZero = 0.0
 
     override fun returnPIDInput(): Double {
-        return -RobotMap.kIMU.getYaw() - correctionZero
+        return RobotMap.kIMU.getYaw() - correctionZero
     }
 
     override fun usePIDOutput(output: Double) {
         yawCorrection = output.coerceIn(-correctionLimit, correctionLimit)
+//        yawCorrection = OI.deadband(yawCorrection, 0.025)
     }
 
     // YAW CORRECTION
@@ -39,7 +40,7 @@ class DefaultDrive : PIDCommand(0.02, 0.0, 0.02) {
 
     override fun initialize() {
         yawTimer.start()
-        correctionZero = -RobotMap.kIMU.getYaw()
+        correctionZero = RobotMap.kIMU.getYaw()
         yawCorrection = 0.0
         yawCorrecting = true
         println("reset pigeon")
@@ -52,10 +53,14 @@ class DefaultDrive : PIDCommand(0.02, 0.0, 0.02) {
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
         }
+//        println(throttle)
+//        if (yawCorrection.absoluteValue < 0.05 && throttle < 0.15 && throttle > 0.0){
+//            yawCorrection = 0.0
+//        }
 
         if (yawTimer.get() < 0.35) {
             yawCorrection = 0.0
-            correctionZero = -RobotMap.kIMU.getYaw()
+            correctionZero = RobotMap.kIMU.getYaw()
         }
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
@@ -73,12 +78,12 @@ class DefaultDrive : PIDCommand(0.02, 0.0, 0.02) {
             yawTimer.start()
             yawCorrecting = false
         } else if (yawTimer.get() > 0.3 && !yawCorrecting) {
-            correctionZero = -RobotMap.kIMU.getYaw()
+            correctionZero = RobotMap.kIMU.getYaw()
             yawCorrection = 0.0
             yawCorrecting = true
         }
 
-        SmartDashboard.putNumber("pitch", -RobotMap.kIMU.getPitch())
+        SmartDashboard.putNumber("pitch", RobotMap.kIMU.getPitch())
 
         if (OI.controller.xButtonPressed) {
             frontIsFront = true

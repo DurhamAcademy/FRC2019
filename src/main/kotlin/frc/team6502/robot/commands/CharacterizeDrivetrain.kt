@@ -6,7 +6,7 @@ import frc.team6502.robot.subsystems.Drivetrain
 import org.nield.kotlinstatistics.simpleRegression
 import java.io.File
 
-class CharacterizeDrivetrain() : TimedCommand(3.5) {
+class CharacterizeDrivetrain() : TimedCommand(5.9) {
 
     val rampSpeed = 1.0 / 500
     private var currentSpeed = 0.0
