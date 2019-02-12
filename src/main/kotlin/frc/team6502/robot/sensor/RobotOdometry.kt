@@ -13,10 +13,10 @@ object RobotOdometry {
     val odometry = Odometry(Pose(0.feet, 0.feet, 0.radians), 0.feetPerSecond, 0.radiansPerSecond)
 
     fun addPose(theta: Angle, vel: LinearVelocity) {
-        odometry.angularVelocity = ((theta.radians - odometry.pose.theta.radians) / 0.05).radiansPerSecond
+        odometry.angularVelocity = ((theta.radians - odometry.pose.theta.radians) / RobotMap.TIMESTEP).radiansPerSecond
         odometry.pose.theta = theta
-        odometry.pose.x += (cos(theta.radians) * vel.feetPerSecond * 0.05).feet
-        odometry.pose.y += (sin(theta.radians) * vel.feetPerSecond * 0.05).feet
+        odometry.pose.x += (cos(theta.radians) * vel.feetPerSecond * RobotMap.TIMESTEP).feet
+        odometry.pose.y += (sin(theta.radians) * vel.feetPerSecond * RobotMap.TIMESTEP).feet
     }
 
     fun zero() {

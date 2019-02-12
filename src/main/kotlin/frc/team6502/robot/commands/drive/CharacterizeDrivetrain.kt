@@ -1,11 +1,12 @@
-package frc.team6502.robot.commands
+package frc.team6502.robot.commands.drive
 
 import edu.wpi.first.wpilibj.command.TimedCommand
+import frc.team6502.robot.DrivetrainMode
 import frc.team6502.robot.subsystems.Drivetrain
 import org.nield.kotlinstatistics.simpleRegression
 import java.io.File
 
-class CharacterizeDrivetrain() : TimedCommand(3.5) {
+class CharacterizeDrivetrain() : TimedCommand(5.9) {
 
     val rampSpeed = 1.0 / 500
     private var currentSpeed = 0.0
@@ -20,7 +21,7 @@ class CharacterizeDrivetrain() : TimedCommand(3.5) {
     }
 
     override fun initialize() {
-        Drivetrain.setDrivePercentages(0.0, 0.0)
+        Drivetrain.set(0.0, 0.0, DrivetrainMode.OPEN_LOOP)
         f.writeText("")
     }
 
@@ -28,7 +29,7 @@ class CharacterizeDrivetrain() : TimedCommand(3.5) {
         currentSpeed += rampSpeed
         currentSpeed.coerceAtMost(1.0)
 
-        Drivetrain.setDrivePercentages(currentSpeed, currentSpeed)
+        Drivetrain.set(currentSpeed, currentSpeed, DrivetrainMode.OPEN_LOOP)
 
         val velocities = Drivetrain.getVelocities()
         val voltages = Drivetrain.getVoltages()
@@ -40,7 +41,7 @@ class CharacterizeDrivetrain() : TimedCommand(3.5) {
     }
 
     override fun end() {
-        Drivetrain.setDrivePercentages(0.0, 0.0)
+        Drivetrain.set(0.0, 0.0, DrivetrainMode.OPEN_LOOP)
         val lReg = leftPoints.simpleRegression()
         val rReg = rightPoints.simpleRegression()
         f.appendText("LEFT kV=${lReg.slope} vI=${lReg.intercept} r^2=${lReg.sumSquaredErrors}\n")

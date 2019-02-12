@@ -17,20 +17,23 @@ object Elevator : Subsystem() {
 
     val elevatorTalon = WPI_TalonSRX(RobotMap.elevatorTalonId)
 
-    private val cruiseVelocity = 3.feetPerSecond
-    private val maxAcceleration = 3.feetPerSecond
-    private val holdVoltage = 0.1
+    private val cruiseVelocity = 2.feetPerSecond
+    private val maxAcceleration = 1.feetPerSecond
+    private val holdVoltage = 1.0
 
     private val wheelRatio = (Math.PI * 1.05).inches.meters / 1.rotations.radians
 
     init {
         elevatorTalon.run {
             expiration = 0.25
+            configFactoryDefault()
             configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0)
+            setSensorPhase(true)
             setSelectedSensorPosition(0, 0, 5)
-            config_kP(0, 0.1)
-            config_kI(0, 0.0)
-            config_kD(0, 0.0)
+            config_kP(0, 0.04)
+            config_kI(0, 0.004)
+            config_IntegralZone(0, 64)
+            config_kD(0, 0.005)
             configMotionCruiseVelocity(cruiseVelocity.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
             configMotionAcceleration(maxAcceleration.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
         }
@@ -43,14 +46,24 @@ object Elevator : Subsystem() {
         }
     }
 
+    fun zeroHeight() {
+        elevatorTalon.setSelectedSensorPosition(0, 0, 5)
+    }
+
     var height
         get() = (elevatorTalon.getSelectedSensorPosition(0).encoder1024.radians * wheelRatio).meters.feet
         set(value) {
             elevatorTalon.set(ControlMode.MotionMagic, (value.feet.meters / wheelRatio).radians.encoder1024, DemandType.ArbitraryFeedForward, holdVoltage / 12.0)
         }
 
+    var percentVoltage
+        get() = elevatorTalon.motorOutputPercent
+        set(value) {
+            elevatorTalon.set(ControlMode.PercentOutput, value * 0.5)
+        }
+
     override fun initDefaultCommand() {
-        defaultCommand = null
+        defaultCommand = null//DefaultElevator()
     }
 
 }
