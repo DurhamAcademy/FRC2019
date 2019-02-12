@@ -1,4 +1,4 @@
-package frc.team6502.robot.commands
+package frc.team6502.robot.commands.drive
 
 import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team6502.robot.DrivetrainMode

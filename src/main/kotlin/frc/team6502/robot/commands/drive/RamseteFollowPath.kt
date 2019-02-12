@@ -1,4 +1,4 @@
-package frc.team6502.robot.commands.auto
+package frc.team6502.robot.commands.drive
 
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.*

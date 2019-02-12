@@ -1,6 +1,9 @@
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.DemandType
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
@@ -8,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.DrivetrainMode
 import frc.team6502.robot.RobotMap
+import frc.team6502.robot.commands.drive.DefaultDrive
 import kotlin.math.sign
 
 object Drivetrain :  Subsystem() {
@@ -116,7 +120,7 @@ object Drivetrain :  Subsystem() {
     }
 
     override fun initDefaultCommand() {
-        defaultCommand = null
+        defaultCommand = DefaultDrive()
     }
 
 }

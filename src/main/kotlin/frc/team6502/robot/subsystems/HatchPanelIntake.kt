@@ -3,7 +3,7 @@ package frc.team6502.robot.subsystems
 import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.command.Subsystem
-import frc.team6502.robot.commands.defaults.DefaultHatchPanelIntake
+import frc.team6502.robot.commands.manip.DefaultHatchPanelIntake
 
 object HatchPanelIntake : Subsystem() {
     private val solenoidA = DoubleSolenoid(0, 1)

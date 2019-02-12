@@ -1,4 +1,4 @@
-package frc.team6502.robot.commands.defaults
+package frc.team6502.robot.commands.manip
 
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.robot.OI

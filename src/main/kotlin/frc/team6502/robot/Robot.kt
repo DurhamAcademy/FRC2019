@@ -7,9 +7,8 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.degrees
-import frc.team6502.robot.commands.CharacterizeDrivetrain
-import frc.team6502.robot.commands.auto.RamseteFollowPath
-import frc.team6502.robot.commands.defaults.DefaultDrive
+import frc.team6502.robot.commands.drive.CharacterizeDrivetrain
+import frc.team6502.robot.commands.drive.RamseteFollowPath
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.CargoIntake
 import frc.team6502.robot.subsystems.Drivetrain
@@ -89,7 +88,6 @@ class Robot : TimedRobot() {
     override fun teleopInit() {
         RobotOdometry.zero()
         Elevator.zeroHeight()
-        DefaultDrive().start()
     }
 
     override fun teleopPeriodic() {

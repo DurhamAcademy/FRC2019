@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.commands.IntakeCargo
-import frc.team6502.robot.commands.SetElevatorHeight
+import frc.team6502.robot.commands.manip.IntakeCargo
+import frc.team6502.robot.commands.manip.SetElevatorHeight
 import java.lang.Math.abs
 import kotlin.math.pow
 
