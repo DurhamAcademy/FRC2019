@@ -6,12 +6,10 @@ import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
 import jaci.pathfinder.Trajectory
+import java.io.File
 import java.lang.Math.cos
 import java.lang.Math.sin
-import kotlin.math.PI
-import kotlin.math.absoluteValue
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 /**
  * Ramsete path follower
@@ -22,14 +20,16 @@ import kotlin.math.sqrt
 class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
 
     private var currentIndex = 0
-    private val drivebase = 3.feet
+    private val drivebase = 31.inches
+    private val logFile = File("/U/RamseteLog.txt")
 
     init {
         requires(Drivetrain)
     }
 
-    override fun start() {
+    override fun initialize() {
         println("Staring ramsete follow")
+        logFile.writeText("vel_a, vel_d, avel_a, avel_d, x_a, x_d, y_a, y_d, th_a, th_d, k1k3, k2, vel_c, avel_c\n")
         RobotOdometry.zero()
     }
 
@@ -55,12 +55,15 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     }
 
     private fun ramsete(odometry: Odometry, desired: Odometry): Pair<Double, Double> {
+
+        // actual
         val v = odometry.velocity.feetPerSecond
         val w = odometry.angularVelocity.radiansPerSecond
         val x = odometry.pose.x.feet
         val y = odometry.pose.y.feet
         val th = odometry.pose.theta.radians
 
+        // desired
         val vd = desired.velocity.feetPerSecond
         val wd = desired.angularVelocity.radiansPerSecond
         val xd = desired.pose.x.feet
@@ -68,21 +71,30 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         val thd = desired.pose.theta.radians
 
         val k1 = k13gains(desired.velocity.feetPerSecond, desired.angularVelocity.radiansPerSecond)
-        val k2 = b * vd.absoluteValue
+        val k2 = b// * vd.absoluteValue
 
 //        println(thd - th)
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
         val wc = wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
 
+        logFile.appendText("$v, $vd, $w, $wd, $x, $xd, $y, $yd, $th, $thd, $k1, $k2, $vc, $wc\n")
 //        val difference = 0.feetPerSecond
-        val difference = wc.radiansPerSecond.toLinearVelocity((PI * drivebase.meters) / 1.rotations.radians)
-        //TODO: revisit kinematic calculations here
-        return vc + difference.feetPerSecond to vc - difference.feetPerSecond
+//        val difference = wc.radiansPerSecond.toLinearVelocity((PI * drivebase.meters) / 1.rotations.radians)
+        return vc - wc * drivebase.feet / 2.0 to vc + wc * drivebase.feet / 2.0
     }
 
     fun k13gains(vd: Double, wd: Double) = 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))
-    fun sinc(theta: Double, thetad: Double) = sin(thetad - theta) / (thetad - theta)
+    fun sinc(theta: Double, thetad: Double): Double {
+        return if ((thetad - theta).absoluteValue > 0.0001) sin(thetad - theta) / (thetad - theta) else 0.0
+    }
 
-    override fun isFinished() = currentIndex == traj.segments.size - 1
+    override fun isFinished(): Boolean {
+        println("checked")
+        return currentIndex == traj.segments.size - 1;
+    }
+
+    override fun end() {
+        println("done")
+    }
 
 }

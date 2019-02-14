@@ -39,6 +39,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     }
 
     override fun initialize() {
+        println("STARTING DRIVETRAIN")
         yawTimer.start()
         correctionZero = RobotMap.kIMU.getYaw()
         yawCorrection = 0.0
@@ -65,7 +66,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
         if (yawCorrecting) {
-            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, Modes.drivetrainMode.selected)
+            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, Modes.drivetrainMode.value() as DrivetrainMode)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
 //            println(rotation)
@@ -156,7 +157,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         }
 
 //        println("COMMANDED LEFT: $leftMotorOutput COMMANDED RIGHT: $rightMotorOutput")
-        Drivetrain.set(leftMotorOutput, rightMotorOutput, Modes.drivetrainMode.selected)
+        Drivetrain.set(leftMotorOutput, rightMotorOutput, Modes.drivetrainMode.value() as DrivetrainMode)
 //        println("left out=${leftMotorOutput}")
     }
 }

@@ -2,12 +2,10 @@ package frc.team6502.robot
 
 import com.ctre.phoenix.sensors.PigeonIMU
 import edu.wpi.cscore.VideoMode
+import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.DigitalOutput
 import frc.team6502.kyberlib.motorcontrol.PIDConfig
-import frc.team6502.kyberlib.util.units.Length
-import frc.team6502.kyberlib.util.units.feet
-import frc.team6502.kyberlib.util.units.inches
-import frc.team6502.kyberlib.vision.Jevois
+import frc.team6502.kyberlib.util.units.*
 
 object RobotMap {
 
@@ -32,10 +30,12 @@ object RobotMap {
     // SENSORS //
     // TODO('update stream format')
     val jevoisVideoMode = VideoMode(VideoMode.PixelFormat.kYUYV, 322, 288, 30)
-    val kJevois = Jevois(streamInfo = jevoisVideoMode)
+    //    val kJevois = Jevois(streamInfo = jevoisVideoMode)
     val kLEDRingRelay = DigitalOutput(0)
 
     val kIMU = PigeonIMU(imuId)
+
+    val kCompressor = Compressor(0)
 
     // TUNING //
     val driveStraightPID = PIDConfig(0.0, 0.0, 0.0)

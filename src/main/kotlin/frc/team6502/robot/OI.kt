@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.commands.manip.IntakeCargo
 import frc.team6502.robot.commands.manip.SetElevatorHeight
+import frc.team6502.robot.commands.manip.SetHatchPanelExtended
 import java.lang.Math.abs
 import kotlin.math.pow
 
@@ -46,8 +46,10 @@ object OI {
     }
 
     init {
-        JoystickButton(controller, 1).whenPressed(IntakeCargo)
-        JoystickButton(controller, 2).cancelWhenPressed(IntakeCargo)
+//        JoystickButton(controller, 1).whenPressed(IntakeCargo)
+//        JoystickButton(controller, 2).cancelWhenPressed(IntakeCargo)
+        JoystickButton(controller, 3).whenPressed(SetHatchPanelExtended(true))
+        JoystickButton(controller, 3).whenReleased(SetHatchPanelExtended(false))
 //        JoystickButton(controller, 1).cancelWhenPressed(VisionAlign)
     }
 }

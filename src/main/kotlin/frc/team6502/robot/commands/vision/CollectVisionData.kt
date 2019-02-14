@@ -1,8 +1,8 @@
 package frc.team6502.robot.commands.vision
 
 import edu.wpi.first.wpilibj.command.TimedCommand
-import frc.team6502.kyberlib.util.units.*
-import frc.team6502.robot.RobotMap
+import frc.team6502.kyberlib.util.units.Angle
+import frc.team6502.kyberlib.util.units.Length
 import org.nield.kotlinstatistics.median
 
 class CollectVisionData(val timeout: Double, val samples: Int) : TimedCommand(timeout) {
@@ -19,10 +19,10 @@ class CollectVisionData(val timeout: Double, val samples: Int) : TimedCommand(ti
     }
 
     override fun execute() {
-        val x = RobotMap.kJevois.data.getOrDefault("x", 0.0) as Double
-        val y = RobotMap.kJevois.data.getOrDefault("z", 0.0) as Double
-        val h = RobotMap.kJevois.data.getOrDefault("yaw", 0.0) as Double
-        data.add(Triple(x.inches, y.inches, h.degrees))
+//        val x = RobotMap.kJevois.data.getOrDefault("x", 0.0) as Double
+//        val y = RobotMap.kJevois.data.getOrDefault("z", 0.0) as Double
+//        val h = RobotMap.kJevois.data.getOrDefault("yaw", 0.0) as Double
+//        data.add(Triple(x.inches, y.inches, h.degrees))
     }
 
     override fun end() {

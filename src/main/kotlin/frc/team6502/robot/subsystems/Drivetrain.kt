@@ -1,9 +1,6 @@
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
@@ -19,8 +16,8 @@ object Drivetrain :  Subsystem() {
     private val leftTalon = WPI_TalonSRX(RobotMap.leftTalonId)
     private val rightTalon = WPI_TalonSRX(RobotMap.rightTalonId)
 
-    val maxSpeed = 13.30.feetPerSecond
-    val wheelRatio = (Math.PI * 6.0).inches.meters / 1.rotations.radians
+    val maxSpeed = 13.458.feetPerSecond
+    val wheelRatio = ((Math.PI * 6.0).inches.meters / 1.rotations.radians) / 0.899
 
     private val kV_L = 0.80193
     private val kS_L = 1.22362
