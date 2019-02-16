@@ -7,6 +7,9 @@ import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import jaci.pathfinder.Waypoint
 
+/**
+ * Generates a motion profile from the data collected from the vision system
+ */
 class GenerateVisionSpline() : InstantCommand() {
 
     companion object {

@@ -4,12 +4,13 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.*
+import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
 // decent gains P=0.02 I=0.0 D=0.02
 class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
-    private val correctionLimit = 0.0
+    private val correctionLimit = 0.33
     private var correctionZero = 0.0
 
     override fun returnPIDInput(): Double {
@@ -40,9 +41,9 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
     override fun initialize() {
         println("STARTING DRIVETRAIN")
-        RobotMap.kIMU.zero()
+        RobotOdometry.zero()
         yawTimer.start()
-        correctionZero = RobotMap.kIMU.getYaw()
+        correctionZero = 0.0
         yawCorrection = 0.0
         yawCorrecting = true
         println("reset pigeon")

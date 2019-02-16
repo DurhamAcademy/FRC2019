@@ -4,12 +4,25 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.commands.manip.*
+import frc.team6502.robot.commandgroups.VisionAlign
+import frc.team6502.robot.commands.manip.CancelOperation
+import frc.team6502.robot.commands.manip.IntakeCargo
+import frc.team6502.robot.commands.manip.ManipulatePanel
+import frc.team6502.robot.commands.manip.SetElevatorHeight
 import java.lang.Math.abs
 import kotlin.math.pow
 
 object OI {
     val controller = XboxController(0)
+    var selectedElevatorHeight = 0
+        set(value) {
+            val height = RobotMap.heights[value]
+            createElevatorButtons()
+            SmartDashboard.putBoolean(height.second, true)
+            SetElevatorHeight(height.first).start()
+            println("Set height to ${height.first.feet}ft")
+        }
+
     val commandingStraight: Boolean
         get() = deadband(controller.x, 0.1) == 0.0
 
@@ -29,18 +42,22 @@ object OI {
     }
 
     fun pollElevatorButtons() {
-        for (height in RobotMap.heights) {
-            if (SmartDashboard.getBoolean(height.value, false)) {
-                SmartDashboard.putBoolean(height.value, false)
-                SetElevatorHeight(height.key).start()
-                println("Set height to ${height.key.feet}ft")
+        for (idx in RobotMap.heights.indices) {
+
+            val height = RobotMap.heights[idx]
+            if (!SmartDashboard.getBoolean(height.second, false) && selectedElevatorHeight == idx) {
+                SmartDashboard.putBoolean(height.second, true)
+            }
+            if (SmartDashboard.getBoolean(height.second, false) && selectedElevatorHeight != idx) {
+                selectedElevatorHeight = idx
             }
         }
     }
 
+
     fun createElevatorButtons() {
         for (height in RobotMap.heights) {
-            SmartDashboard.putBoolean(height.value, false)
+            SmartDashboard.putBoolean(height.second, false)
         }
     }
 
@@ -49,11 +66,11 @@ object OI {
         // A (1) - Align
         // B (2) - Ball
         // X (3) - Panel
-        // Y (4) - Interrupt
+        // Y (4) - Cancel
         // LB (5)- Cycle down
         // RB (6) - Cycle up
 
-//        JoystickButton(controller, 1).whenPressed()
+        JoystickButton(controller, 1).whenPressed(VisionAlign())
         JoystickButton(controller, 2).whenPressed(IntakeCargo())
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
         JoystickButton(controller, 4).whenPressed(CancelOperation())

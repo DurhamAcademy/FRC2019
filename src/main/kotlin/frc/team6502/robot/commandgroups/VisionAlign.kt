@@ -7,7 +7,10 @@ import frc.team6502.robot.commands.vision.GenerateVisionSpline
 import frc.team6502.robot.commands.vision.SetLEDRing
 import frc.team6502.robot.subsystems.Drivetrain
 
-object VisionAlign : CommandGroup() {
+class VisionAlign : CommandGroup() {
+    companion object {
+        var singleton: CommandGroup? = null
+    }
     init {
         requires(Drivetrain)
         addSequential(SetLEDRing(true))
@@ -15,5 +18,17 @@ object VisionAlign : CommandGroup() {
         addSequential(SetLEDRing(false))
         addSequential(GenerateVisionSpline())
         addSequential(RamseteFollowPath(GenerateVisionSpline.visionSpline!!, 3.0, 0.6))
+    }
+
+    override fun initialize() {
+        singleton = this
+    }
+
+    override fun end() {
+        singleton = null
+    }
+
+    override fun interrupted() {
+        singleton = null
     }
 }

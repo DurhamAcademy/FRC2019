@@ -6,13 +6,16 @@ import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.kyberlib.util.units.degrees
 import frc.team6502.robot.commands.drive.CharacterizeDrivetrain
 import frc.team6502.robot.commands.drive.RamseteFollowPath
 import frc.team6502.robot.sensor.RobotOdometry
+import frc.team6502.robot.subsystems.CargoIntake
 import frc.team6502.robot.subsystems.Drivetrain
 import frc.team6502.robot.subsystems.Elevator
-import jaci.pathfinder.*
+import frc.team6502.robot.subsystems.HatchPanelIntake
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.Trajectory
+import jaci.pathfinder.Waypoint
 
 class Robot : TimedRobot() {
 
@@ -30,14 +33,14 @@ class Robot : TimedRobot() {
         Modes // sicko mode
         Drivetrain // create the drive boi
         Elevator
-//        HatchPanelIntake
-//        CargoIntake
+        HatchPanelIntake
+        CargoIntake
 
         RobotMap.kCompressor.closedLoopControl = true
 
         SmartDashboard.putData(CharacterizeDrivetrain())
         SmartDashboard.putBoolean("Has Panel", false)
-        OI.createElevatorButtons()
+
 
 //        // setup auto chooser
 //        chooser.name = "Robot Position"
@@ -49,6 +52,7 @@ class Robot : TimedRobot() {
     }
 
     override fun disabledInit() {
+        OI.createElevatorButtons()
         SmartDashboard.putBoolean("Correcting", false)
         SmartDashboard.putNumber("Heading Correction", 0.0)
     }
@@ -88,15 +92,22 @@ class Robot : TimedRobot() {
 
     override fun teleopInit() {
         RobotOdometry.zero()
+        OI.selectedElevatorHeight = 0
         Elevator.zeroHeight()
     }
 
     override fun teleopPeriodic() {
         Scheduler.getInstance().run()
-        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
-        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
-        SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
-        SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
+        if (OI.controller.getRawButton(5)) {
+            OI.selectedElevatorHeight = (OI.selectedElevatorHeight - 1) % RobotMap.heights.size
+        }
+        if (OI.controller.getRawButton(6)) {
+            OI.selectedElevatorHeight = (OI.selectedElevatorHeight + 1) % RobotMap.heights.size
+        }
+//        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
+//        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
+//        SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
+//        SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
 //        SmartDashboard.putNumber("elevator error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 

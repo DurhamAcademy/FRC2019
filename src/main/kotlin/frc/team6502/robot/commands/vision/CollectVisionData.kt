@@ -1,6 +1,7 @@
 package frc.team6502.robot.commands.vision
 
 import edu.wpi.first.wpilibj.command.TimedCommand
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.Angle
 import frc.team6502.kyberlib.util.units.Length
 import org.nield.kotlinstatistics.median
@@ -30,6 +31,10 @@ class CollectVisionData(val timeout: Double, val samples: Int) : TimedCommand(ti
         avgX = data.map { it.first.feet }.median()
         avgY = data.map { it.second.feet }.median()
         avgH = data.map { it.third.degrees }.median()
+
+        SmartDashboard.putNumber("avgX", avgX)
+        SmartDashboard.putNumber("avgY", avgY)
+        SmartDashboard.putNumber("avgH", avgH)
     }
 
     override fun isFinished() = data.size >= samples

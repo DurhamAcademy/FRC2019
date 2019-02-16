@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commandgroups.LoadHatchPanel
 import frc.team6502.robot.commandgroups.PlaceHatchPanel
+import frc.team6502.robot.subsystems.HatchPanelIntake
 
 class ManipulatePanel() : InstantCommand() {
     companion object {
@@ -11,8 +12,7 @@ class ManipulatePanel() : InstantCommand() {
     }
 
     init {
-
-
+        requires(HatchPanelIntake)
     }
 
     override fun execute() {

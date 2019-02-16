@@ -10,6 +10,9 @@ object HatchPanelIntake : Subsystem() {
 
     private val solenoid = DoubleSolenoid(0, 1)
 
+    /**
+     * Extends and retracts the hatch cylinder
+     */
     fun setCylinder(extended: Boolean) {
         val value: DoubleSolenoid.Value = when (extended) {
             true -> DoubleSolenoid.Value.kForward

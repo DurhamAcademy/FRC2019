@@ -5,7 +5,7 @@ import edu.wpi.cscore.VideoMode
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.DigitalOutput
 import frc.team6502.kyberlib.motorcontrol.PIDConfig
-import frc.team6502.kyberlib.util.units.*
+import frc.team6502.kyberlib.util.units.inches
 
 object RobotMap {
 
@@ -21,7 +21,11 @@ object RobotMap {
     val elevatorTalonId = 7
     val elevatorVictorIds = arrayOf(8, 9, 10)
 
-    val heights = mapOf<Length, String>(6.inches to "Zero", 9.inches to "Level 1", 1.feet to "Test", 31.5.inches to "Level 2", 59.5.inches to "Level 3")
+    val heights = arrayListOf(
+            9.inches to "Level 1",
+            31.5.inches to "Level 2",
+            59.5.inches to "Level 3"
+    )
 
     val intakeTalonId = 11
     val intakeVictorId = 12

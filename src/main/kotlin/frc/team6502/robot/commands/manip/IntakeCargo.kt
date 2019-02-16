@@ -3,6 +3,7 @@ package frc.team6502.robot.commands.manip
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.robot.OI
 import frc.team6502.robot.subsystems.CargoIntake
 
@@ -16,6 +17,7 @@ class IntakeCargo : Command() {
 
     init {
         singleton = this
+        requires(CargoIntake)
     }
 
     override fun initialize() {
@@ -25,18 +27,21 @@ class IntakeCargo : Command() {
     }
 
     override fun execute() {
-        println("RUNNING RUNNING RUNNING")
+//        println("RUNNING RUNNING RUNNING")
         SmartDashboard.putNumber("current", CargoIntake.current)
+        SetElevatorHeight(6.inches).start()
     }
 
     override fun end() {
         CargoIntake.speed = 0.0
         singleton = null
+        OI.selectedElevatorHeight = 0
     }
 
     override fun interrupted() {
         CargoIntake.speed = 0.0
         singleton = null
+        OI.selectedElevatorHeight = 0
     }
 
     override fun isFinished(): Boolean {
