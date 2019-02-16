@@ -9,7 +9,7 @@ import kotlin.math.absoluteValue
 
 // decent gains P=0.02 I=0.0 D=0.02
 class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
-    private val correctionLimit = 0.33
+    private val correctionLimit = 0.0
     private var correctionZero = 0.0
 
     override fun returnPIDInput(): Double {
@@ -40,6 +40,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
     override fun initialize() {
         println("STARTING DRIVETRAIN")
+        RobotMap.kIMU.zero()
         yawTimer.start()
         correctionZero = RobotMap.kIMU.getYaw()
         yawCorrection = 0.0
@@ -66,7 +67,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
         if (yawCorrecting) {
-            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, Modes.drivetrainMode.value() as DrivetrainMode)
+            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, Modes.drivetrainMode.selected)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
 //            println(rotation)
@@ -86,12 +87,12 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
         SmartDashboard.putNumber("pitch", RobotMap.kIMU.getPitch())
 
-        if (OI.controller.xButtonPressed) {
+        /*if (OI.controller.xButtonPressed) {
             frontIsFront = true
         }
         if (OI.controller.yButtonPressed) {
             frontIsFront = false
-        }
+        }*/
     }
 
 
@@ -157,7 +158,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         }
 
 //        println("COMMANDED LEFT: $leftMotorOutput COMMANDED RIGHT: $rightMotorOutput")
-        Drivetrain.set(leftMotorOutput, rightMotorOutput, Modes.drivetrainMode.value() as DrivetrainMode)
+        Drivetrain.set(leftMotorOutput, rightMotorOutput, Modes.drivetrainMode.selected)
 //        println("left out=${leftMotorOutput}")
     }
 }

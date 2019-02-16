@@ -21,7 +21,7 @@ object RobotMap {
     val elevatorTalonId = 7
     val elevatorVictorIds = arrayOf(8, 9, 10)
 
-    val heights = mapOf<Length, String>(0.feet to "Zero", 1.feet to "Test", 4.feet to "4ft", 60.inches to "Full")
+    val heights = mapOf<Length, String>(6.inches to "Zero", 9.inches to "Level 1", 1.feet to "Test", 31.5.inches to "Level 2", 59.5.inches to "Level 3")
 
     val intakeTalonId = 11
     val intakeVictorId = 12

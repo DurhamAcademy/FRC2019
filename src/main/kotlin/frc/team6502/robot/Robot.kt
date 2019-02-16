@@ -36,6 +36,7 @@ class Robot : TimedRobot() {
         RobotMap.kCompressor.closedLoopControl = true
 
         SmartDashboard.putData(CharacterizeDrivetrain())
+        SmartDashboard.putBoolean("Has Panel", false)
         OI.createElevatorButtons()
 
 //        // setup auto chooser

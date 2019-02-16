@@ -51,7 +51,7 @@ object Drivetrain :  Subsystem() {
                 configContinuousCurrentLimit(30)
 
                 // THE DANGER ZONE
-                config_kP(0, 0.0)
+                config_kP(0, 0.1)
                 config_kI(0, 0.0)
                 config_kD(0, 0.0)
 //                config_IntegralZone(0, 4)

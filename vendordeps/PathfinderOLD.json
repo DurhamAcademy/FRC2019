@@ -4,9 +4,9 @@
   "version": "2019.1.12",
   "uuid": "7194a2d4-2860-4bcc-86c0-97879737d875",
   "mavenUrls": [
-    "https://dev.imjac.in/maven"
+    "http://dev.imjac.in/maven"
   ],
-  "jsonUrl": "https://dev.imjac.in/maven/jaci/pathfinder/PathfinderOLD-latest.json",
+  "jsonUrl": "http://dev.imjac.in/maven/jaci/pathfinder/PathfinderOLD-latest.json",
   "cppDependencies": [
     {
       "groupId": "jaci.pathfinder",

@@ -10,7 +10,7 @@ object HatchPanelIntake : Subsystem() {
 
     private val solenoid = DoubleSolenoid(0, 1)
 
-    fun setCylinders(extended: Boolean) {
+    fun setCylinder(extended: Boolean) {
         val value: DoubleSolenoid.Value = when (extended) {
             true -> DoubleSolenoid.Value.kForward
             false -> DoubleSolenoid.Value.kReverse

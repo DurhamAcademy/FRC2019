@@ -10,6 +10,6 @@ class SetHatchPanelExtended(val extended: Boolean) : InstantCommand() {
     }
 
     override fun execute() {
-        HatchPanelIntake.setCylinders(extended)
+        HatchPanelIntake.setCylinder(extended)
     }
 }

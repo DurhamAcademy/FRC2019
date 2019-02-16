@@ -19,7 +19,7 @@ object CargoIntake : Subsystem() {
         intakeTalon.inverted = true
         intakeVictor.setNeutralMode(NeutralMode.Brake)
         intakeVictor.follow(intakeTalon)
-
+        intakeVictor.inverted = false
     }
 
     override fun initDefaultCommand() {
@@ -28,7 +28,7 @@ object CargoIntake : Subsystem() {
 
     var speed: Double = 0.0
     set(value) {
-        intakeTalon.set(ControlMode.PercentOutput, value)
+        intakeTalon.set(ControlMode.PercentOutput, value * 0.5)
         frontIntakeTalon.set(ControlMode.PercentOutput, value)
     }
 

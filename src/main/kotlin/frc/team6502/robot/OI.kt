@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.commands.manip.SetElevatorHeight
-import frc.team6502.robot.commands.manip.SetHatchPanelExtended
+import frc.team6502.robot.commands.manip.*
 import java.lang.Math.abs
 import kotlin.math.pow
 
@@ -46,10 +45,24 @@ object OI {
     }
 
     init {
+
+        // A (1) - Align
+        // B (2) - Ball
+        // X (3) - Panel
+        // Y (4) - Interrupt
+        // LB (5)- Cycle down
+        // RB (6) - Cycle up
+
+//        JoystickButton(controller, 1).whenPressed()
+        JoystickButton(controller, 2).whenPressed(IntakeCargo())
+        JoystickButton(controller, 3).whenPressed(ManipulatePanel())
+        JoystickButton(controller, 4).whenPressed(CancelOperation())
+
+
 //        JoystickButton(controller, 1).whenPressed(IntakeCargo)
 //        JoystickButton(controller, 2).cancelWhenPressed(IntakeCargo)
-        JoystickButton(controller, 3).whenPressed(SetHatchPanelExtended(true))
-        JoystickButton(controller, 3).whenReleased(SetHatchPanelExtended(false))
+//        JoystickButton(controller, 3).whenPressed(SetHatchPanelExtended(true))
+//        JoystickButton(controller, 3).whenReleased(SetHatchPanelExtended(false))
 //        JoystickButton(controller, 1).cancelWhenPressed(VisionAlign)
     }
 }
