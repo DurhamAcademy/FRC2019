@@ -1,26 +1,25 @@
 package frc.team6502.robot
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.TimedRobot
+import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commands.drive.CharacterizeDrivetrain
 import frc.team6502.robot.commands.drive.RamseteFollowPath
+import frc.team6502.robot.commands.vision.SetLEDRing
 import frc.team6502.robot.sensor.RobotOdometry
-import frc.team6502.robot.subsystems.CargoIntake
-import frc.team6502.robot.subsystems.Drivetrain
-import frc.team6502.robot.subsystems.Elevator
-import frc.team6502.robot.subsystems.HatchPanelIntake
-import jaci.pathfinder.Pathfinder
-import jaci.pathfinder.Trajectory
-import jaci.pathfinder.Waypoint
+import frc.team6502.robot.subsystems.*
+import jaci.pathfinder.*
+import java.io.File
 
 class Robot : TimedRobot() {
 
     private val chooser = SendableChooser<String>()
-
+    private var autoCommand: Command? = null
 
     override fun robotInit() {
 
@@ -37,6 +36,7 @@ class Robot : TimedRobot() {
         CargoIntake
 
         RobotMap.kCompressor.closedLoopControl = true
+        RobotMap.kJevois.setStreaming(true)
 
         SmartDashboard.putData(CharacterizeDrivetrain())
         SmartDashboard.putBoolean("Has Panel", false)
@@ -55,6 +55,9 @@ class Robot : TimedRobot() {
         OI.createElevatorButtons()
         SmartDashboard.putBoolean("Correcting", false)
         SmartDashboard.putNumber("Heading Correction", 0.0)
+        Elevator.setpoint = 0.0
+        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
+        SetLEDRing(false).start()
     }
 
     /**
@@ -63,6 +66,9 @@ class Robot : TimedRobot() {
     override fun robotPeriodic() {
         // do everything
 //        Scheduler.getInstance().run()
+        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)
+        SmartDashboard.putNumber("y", RobotOdometry.odometry.pose.y.feet)
+        SmartDashboard.putNumber("theta", RobotOdometry.odometry.pose.theta.degrees)
         OI.pollElevatorButtons()
         SmartDashboard.putNumber("height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
@@ -75,11 +81,13 @@ class Robot : TimedRobot() {
         val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_LOW, RobotMap.TIMESTEP, 3.0, 1.0, 18.0)
          val waypoints = arrayOf(
                  Waypoint(0.0,0.0, Pathfinder.d2r(0.0)),
-                 Waypoint(10.0, 10.0, 0.0)
+                 Waypoint(10.0, 0.0, 0.0)
          )
          val t = Pathfinder.generate(waypoints, cfg)
+        Pathfinder.writeToCSV(File("/U/traj.csv"), t)
          println("Running path")
-        RamseteFollowPath(t, 2.0, 0.4).start()
+        autoCommand = RamseteFollowPath(t, 1.0, 0.6)
+        autoCommand?.start()
     }
 
     override fun autonomousPeriodic() {
@@ -91,18 +99,25 @@ class Robot : TimedRobot() {
     }
 
     override fun teleopInit() {
+        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
+        Elevator.setpoint = 0.0
+        autoCommand?.cancel()
         RobotOdometry.zero()
-        OI.selectedElevatorHeight = 0
         Elevator.zeroHeight()
+        OI.setElevatorHeight(0)
     }
 
     override fun teleopPeriodic() {
         Scheduler.getInstance().run()
-        if (OI.controller.getRawButton(5)) {
-            OI.selectedElevatorHeight = (OI.selectedElevatorHeight - 1) % RobotMap.heights.size
+        if (OI.controller.getRawButtonPressed(5)) {
+            println("before: ${OI.selectedElevatorHeight}")
+            OI.setElevatorHeight((OI.selectedElevatorHeight - 1))
+            println("after: ${OI.selectedElevatorHeight}")
         }
-        if (OI.controller.getRawButton(6)) {
-            OI.selectedElevatorHeight = (OI.selectedElevatorHeight + 1) % RobotMap.heights.size
+        if (OI.controller.getRawButtonPressed(6)) {
+            println("before: ${OI.selectedElevatorHeight}")
+            OI.setElevatorHeight((OI.selectedElevatorHeight + 1))
+            println("after: ${OI.selectedElevatorHeight}")
         }
 //        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
 //        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)

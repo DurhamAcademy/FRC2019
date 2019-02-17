@@ -4,13 +4,12 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.*
-import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
 // decent gains P=0.02 I=0.0 D=0.02
 class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
-    private val correctionLimit = 0.33
+    private val correctionLimit = 0.0
     private var correctionZero = 0.0
 
     override fun returnPIDInput(): Double {
@@ -41,7 +40,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
     override fun initialize() {
         println("STARTING DRIVETRAIN")
-        RobotOdometry.zero()
+        RobotMap.kIMU.zero()
         yawTimer.start()
         correctionZero = 0.0
         yawCorrection = 0.0
@@ -52,6 +51,8 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     override fun execute() {
         val throttle = OI.commandedY * if (frontIsFront) -1 else 1
         val rotation = OI.commandedX
+
+//        println("EXECUTING DRIVETRAIN LOL")
 
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
@@ -67,11 +68,14 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         }
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
+//        println("t=$throttle r=$rotation")
         if (yawCorrecting) {
-            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, Modes.drivetrainMode.selected)
+//            println("t=$throttle r=$rotation")
+            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, DrivetrainMode.CLOSED_LOOP)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
 //            println(rotation)
+//            println("t=$throttle r=$rotation")
             curvatureDrive(throttle, rotation, true)
             SmartDashboard.putNumber("Heading Correction", 0.0)
         }

@@ -1,9 +1,6 @@
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
@@ -29,7 +26,7 @@ object Drivetrain :  Subsystem() {
     /**
      * Meters per rotation of the wheels
      */
-    val wheelRatio = ((Math.PI * 6.0).inches.meters / 1.rotations.radians) / 0.899
+    val wheelRatio = ((Math.PI * 6.0).inches.meters / 1.rotations.radians) / 0.9
 
     // kV -> Volts per foot/sec
     // kS -> Volts required to start moving
@@ -66,9 +63,9 @@ object Drivetrain :  Subsystem() {
                 configContinuousCurrentLimit(30)
 
                 // THE DANGER ZONE
-                config_kP(0, 0.1)
+                config_kP(0, 0.02)
                 config_kI(0, 0.0)
-                config_kD(0, 0.0)
+                config_kD(0, 0.02)
 //                config_IntegralZone(0, 4)
 
                 // turn on voltage comp, talons drive faster when voltage dips to compensate

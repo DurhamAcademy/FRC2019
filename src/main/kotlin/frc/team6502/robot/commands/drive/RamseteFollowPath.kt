@@ -21,7 +21,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     private var currentIndex = 0
     private val drivebase = 31.inches
-    private val logFile = File("/U/RamseteLog.txt")
+    private val logFile = File("/U/RamseteLog.csv")
 
     init {
         requires(Drivetrain)
@@ -37,11 +37,11 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         println("Segment $currentIndex/${traj.segments.size}")
 
         val seg = traj.segments[currentIndex]
-        val w = if (currentIndex > 0) (seg.heading - traj.segments[currentIndex - 1].heading) / RobotMap.TIMESTEP else 0.0
+        val w = if (currentIndex > 0) (boundHalf(seg.heading) - boundHalf(traj.segments[currentIndex - 1].heading)) / RobotMap.TIMESTEP else 0.0
 
         val commanded = ramsete(
                 RobotOdometry.odometry,
-                Odometry(Pose(seg.x.feet, seg.y.feet, seg.heading.radians), seg.velocity.feetPerSecond, w.radiansPerSecond))
+                Odometry(Pose(seg.x.feet, seg.y.feet, boundHalf(seg.heading).radians), seg.velocity.feetPerSecond, w.radiansPerSecond))
 
         Drivetrain.set(
                 (commanded.first / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-0.5, 0.5),
@@ -61,17 +61,17 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         val w = odometry.angularVelocity.radiansPerSecond
         val x = odometry.pose.x.feet
         val y = odometry.pose.y.feet
-        val th = odometry.pose.theta.radians
+        val th = boundHalf(odometry.pose.theta.radians)
 
         // desired
         val vd = desired.velocity.feetPerSecond
         val wd = desired.angularVelocity.radiansPerSecond
         val xd = desired.pose.x.feet
         val yd = desired.pose.y.feet
-        val thd = desired.pose.theta.radians
+        val thd = boundHalf(desired.pose.theta.radians)
 
         val k1 = k13gains(desired.velocity.feetPerSecond, desired.angularVelocity.radiansPerSecond)
-        val k2 = b// * vd.absoluteValue
+        val k2 = b * vd.absoluteValue.coerceAtLeast(0.1)
 
 //        println(thd - th)
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
@@ -95,6 +95,14 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     override fun end() {
         println("done")
+    }
+
+    fun boundHalf(ang: Double): Double {
+        return if (ang > Math.PI) {
+            ang - Math.PI * 2
+        } else {
+            ang
+        }
     }
 
 }

@@ -35,13 +35,13 @@ class IntakeCargo : Command() {
     override fun end() {
         CargoIntake.speed = 0.0
         singleton = null
-        OI.selectedElevatorHeight = 0
+        OI.setElevatorHeight(0)
     }
 
     override fun interrupted() {
         CargoIntake.speed = 0.0
         singleton = null
-        OI.selectedElevatorHeight = 0
+        OI.setElevatorHeight(0)
     }
 
     override fun isFinished(): Boolean {

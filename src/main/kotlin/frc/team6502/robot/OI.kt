@@ -5,23 +5,26 @@ import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commandgroups.VisionAlign
-import frc.team6502.robot.commands.manip.CancelOperation
-import frc.team6502.robot.commands.manip.IntakeCargo
-import frc.team6502.robot.commands.manip.ManipulatePanel
-import frc.team6502.robot.commands.manip.SetElevatorHeight
+import frc.team6502.robot.commands.manip.*
+import frc.team6502.robot.commands.vision.SetLEDRing
 import java.lang.Math.abs
 import kotlin.math.pow
 
 object OI {
     val controller = XboxController(0)
     var selectedElevatorHeight = 0
-        set(value) {
-            val height = RobotMap.heights[value]
-            createElevatorButtons()
-            SmartDashboard.putBoolean(height.second, true)
-            SetElevatorHeight(height.first).start()
-            println("Set height to ${height.first.feet}ft")
-        }
+        private set
+
+    fun setElevatorHeight(index: Int) {
+        if (index !in 0..2) return
+        println("SET TO $index")
+        selectedElevatorHeight = index
+        val height = RobotMap.heights[index]
+        createElevatorButtons()
+        SmartDashboard.putBoolean(height.second, true)
+        SetElevatorHeight(height.first).start()
+        println("Set height to ${height.first.feet}ft")
+    }
 
     val commandingStraight: Boolean
         get() = deadband(controller.x, 0.1) == 0.0
@@ -74,6 +77,8 @@ object OI {
         JoystickButton(controller, 2).whenPressed(IntakeCargo())
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
         JoystickButton(controller, 4).whenPressed(CancelOperation())
+        JoystickButton(controller, 7).whenPressed(SetLEDRing(true))
+        JoystickButton(controller, 8).whenPressed(SetLEDRing(false))
 
 
 //        JoystickButton(controller, 1).whenPressed(IntakeCargo)

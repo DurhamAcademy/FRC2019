@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.ElevatorOffset
 import frc.team6502.robot.RobotMap
-import frc.team6502.robot.commands.manip.ZeroElevator
-import kotlin.math.absoluteValue
 
 /**
  * Robot's elevator
@@ -27,7 +25,7 @@ object Elevator : Subsystem() {
     private val holdVoltage = 1.1
 
     private val wheelRatio = (Math.PI * 1.0).inches.meters / 1.rotations.radians
-    private var setpoint = 0.0
+    var setpoint = 0.0
     var zeroing = false
 
     init {
@@ -64,8 +62,8 @@ object Elevator : Subsystem() {
             configMotionAcceleration(maxAcceleration.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
 
             // limit switch
-            configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen)
-            configClearPositionOnLimitR(true, 5)
+//            configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen)
+//            configClearPositionOnLimitR(true, 5)
         }
 
         // set up elevator slaves
@@ -84,32 +82,20 @@ object Elevator : Subsystem() {
         // determine offset based on offset mode
         val offsetAmount = when (offset) {
             ElevatorOffset.CARRY -> 0.0
-            ElevatorOffset.CARGO_DELIVERY -> CARGO_DELIVERY_OFFSET
+            ElevatorOffset.CARGO_DELIVERY -> -CARGO_DELIVERY_OFFSET
             ElevatorOffset.HATCH_DELIVERY -> HATCH_DELIVERY_OFFSET
         }
 
         // calculate desired encoder position for height
         val desired = ((setpoint - offsetAmount - GROUND_DISTANCE).coerceAtLeast(0.0).feet.meters / wheelRatio).radians.encoder1024
 
-
-        // if elevator is stopped slightly above zero then slowly bring it down until limit is hit
-        if (!zeroing) {
-            if (elevatorTalon.selectedSensorVelocity.absoluteValue < 16 &&
-                    setpoint == 0.0 &&
-                    elevatorTalon.selectedSensorPosition < 1000
-                    && !elevatorTalon.sensorCollection.isRevLimitSwitchClosed) {
-                zeroHeight()
-            } else {
-                // update the motion magic setpoint
-                elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, holdVoltage / 12.0)
-            }
-        }
+        elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, holdVoltage / 12.0)
     }
 
     fun zeroHeight() {
-        zeroing = true
+//        zeroing = true
         // start the zero elevator cmd
-        ZeroElevator().start()
+        elevatorTalon.selectedSensorPosition = 0
     }
 
     /**
