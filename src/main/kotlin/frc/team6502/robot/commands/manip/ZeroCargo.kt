@@ -11,7 +11,7 @@ class ZeroCargo : Command(1.0) {
     override fun initialize() {
         //Make the shooter reverse
         CargoIntake.shooterDrection(true)
-        CargoIntake.speedShooter = 0.1
+        CargoIntake.speedShooter = 0.2
     }
 
     override fun end() {
@@ -25,6 +25,6 @@ class ZeroCargo : Command(1.0) {
     }
 
     override fun isFinished(): Boolean {
-        return false
+        return CargoIntake.shooterCurrent > 5
     }
 }

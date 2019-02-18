@@ -12,7 +12,6 @@ class ZeroElevator : InstantCommand() {
     }
 
     override fun execute() {
-        println("Elevator distance from zero: " + Math.abs(Elevator.elevatorTalon.selectedSensorPosition - Elevator.expectedEncoderZeroedPosition).inches)
         Elevator.elevatorTalon.selectedSensorPosition = 0
     }
 }

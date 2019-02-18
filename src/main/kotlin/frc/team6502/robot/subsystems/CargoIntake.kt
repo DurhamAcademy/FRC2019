@@ -55,8 +55,10 @@ object CargoIntake : Subsystem() {
         }
 
     /**
-     * Amount of current talons are drawing
+     * Amount of shooterCurrent talons are drawing
      */
-    val current: Double
+    val shooterCurrent: Double
         get() = shooterTalon.outputCurrent
+    val intakeCurrent: Double
+        get() = intakeTalon.outputCurrent
 }

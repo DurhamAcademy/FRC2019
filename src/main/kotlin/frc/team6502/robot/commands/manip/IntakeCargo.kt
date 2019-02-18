@@ -28,7 +28,7 @@ class IntakeCargo : Command() {
 
     override fun execute() {
 //        println("RUNNING RUNNING RUNNING")
-        SmartDashboard.putNumber("current", CargoIntake.current)
+        SmartDashboard.putNumber("shooterCurrent", CargoIntake.shooterCurrent)
         SetElevatorHeight(6.inches).start()
     }
 
@@ -46,6 +46,6 @@ class IntakeCargo : Command() {
 
     override fun isFinished(): Boolean {
         println(intakeCurrentTimer.get())
-        return OI.controller.yButton || (CargoIntake.current > 2.0 && intakeCurrentTimer.get() > 1.0)
+        return OI.controller.yButton || (CargoIntake.shooterCurrent > 2.0 && intakeCurrentTimer.get() > 1.0)
     }
 }
