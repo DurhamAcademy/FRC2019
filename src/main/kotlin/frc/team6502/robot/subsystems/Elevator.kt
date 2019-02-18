@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.ElevatorOffset
 import frc.team6502.robot.RobotMap
+import frc.team6502.robot.commands.manip.ZeroElevator
 
 /**
  * Robot's elevator
@@ -17,6 +18,8 @@ object Elevator : Subsystem() {
     val CARGO_DELIVERY_OFFSET = 6.inches.feet
     val HATCH_DELIVERY_OFFSET = 2.4.inches.feet
     val GROUND_DISTANCE = 6.inches.feet
+
+    val expectedEncoderZeroedPosition = 0
 
     val elevatorTalon = WPI_TalonSRX(RobotMap.elevatorTalonId)
 
@@ -95,7 +98,8 @@ object Elevator : Subsystem() {
     fun zeroHeight() {
 //        zeroing = true
         // start the zero elevator cmd
-        elevatorTalon.selectedSensorPosition = 0
+        //elevatorTalon.selectedSensorPosition = 0
+        ZeroElevator()
     }
 
     /**
