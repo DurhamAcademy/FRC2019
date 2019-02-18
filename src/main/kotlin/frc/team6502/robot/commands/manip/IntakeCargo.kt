@@ -21,7 +21,7 @@ class IntakeCargo : Command() {
     }
 
     override fun initialize() {
-        CargoIntake.speed = 0.5
+        CargoIntake.speedIntake = 0.5
         intakeCurrentTimer.reset()
         intakeCurrentTimer.start()
     }
@@ -33,13 +33,13 @@ class IntakeCargo : Command() {
     }
 
     override fun end() {
-        CargoIntake.speed = 0.0
+        CargoIntake.speedIntake = 0.0
         singleton = null
         OI.setElevatorHeight(0)
     }
 
     override fun interrupted() {
-        CargoIntake.speed = 0.0
+        CargoIntake.speedIntake = 0.0
         singleton = null
         OI.setElevatorHeight(0)
     }
