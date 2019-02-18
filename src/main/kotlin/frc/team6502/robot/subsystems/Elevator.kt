@@ -102,6 +102,15 @@ object Elevator : Subsystem() {
         ZeroElevator()
     }
 
+    fun testElevatorOk() {
+        elevatorTalon.outputCurrent
+        if (elevatorTalon.activeTrajectoryVelocity - elevatorTalon.selectedSensorVelocity > 10) {
+            println("Stall!!")
+        }
+        if(elevatorTalon.errorDerivative > 2000) {
+            println("Rope breakage!!")
+        }
+    }
     /**
      * Height of the elevator in feet
      */
