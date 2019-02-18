@@ -3,7 +3,7 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.robot.subsystems.CargoIntake
 
-class ShootCargo() : Command(){
+class ShootCargo() : Command(1.5){
     private val shooterActiveTimer = Timer()
     init {
         requires(CargoIntake)
@@ -22,6 +22,6 @@ class ShootCargo() : Command(){
         CargoIntake.speedShooter = 0.0
     }
     override fun isFinished(): Boolean {
-        return shooterActiveTimer.get() > 1.5
+        return shooterActiveTimer.get() > 3 //Just to test if I need a timer
     }
 }

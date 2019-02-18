@@ -30,6 +30,16 @@ object CargoIntake : Subsystem() {
         defaultCommand = null
     }
 
+    fun shooterDrection(reverse: Boolean) {
+        if(reverse) {
+            shooterTalon.inverted = false
+            shooterVictor.inverted = true
+        }
+        else {
+            shooterTalon.inverted = true
+            shooterVictor.inverted = false
+        }
+    }
     /**
      * Roller speed, to be tested
      */
