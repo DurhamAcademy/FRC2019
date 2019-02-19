@@ -1,6 +1,5 @@
 package frc.team6502.robot
 
-import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.TimedRobot
@@ -55,8 +54,8 @@ class Robot : TimedRobot() {
         OI.createElevatorButtons()
         SmartDashboard.putBoolean("Correcting", false)
         SmartDashboard.putNumber("Heading Correction", 0.0)
-        Elevator.setpoint = 0.0
-        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
+//        Elevator.setpoint = 0.0
+//        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
         SetLEDRing(false).start()
     }
 
@@ -99,25 +98,25 @@ class Robot : TimedRobot() {
     }
 
     override fun teleopInit() {
-        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
-        Elevator.setpoint = 0.0
         autoCommand?.cancel()
         RobotOdometry.zero()
-        Elevator.zeroHeight()
+//        Elevator.zeroHeight()
+//        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
+//        Elevator.setpoint = 0.0
         OI.setElevatorHeight(0)
     }
 
     override fun teleopPeriodic() {
         Scheduler.getInstance().run()
         if (OI.controller.getRawButtonPressed(5)) {
-            println("before: ${OI.selectedElevatorHeight}")
+//            println("before: ${OI.selectedElevatorHeight}")
             OI.setElevatorHeight((OI.selectedElevatorHeight - 1))
-            println("after: ${OI.selectedElevatorHeight}")
+//            println("after: ${OI.selectedElevatorHeight}")
         }
         if (OI.controller.getRawButtonPressed(6)) {
-            println("before: ${OI.selectedElevatorHeight}")
+//            println("before: ${OI.selectedElevatorHeight}")
             OI.setElevatorHeight((OI.selectedElevatorHeight + 1))
-            println("after: ${OI.selectedElevatorHeight}")
+//            println("after: ${OI.selectedElevatorHeight}")
         }
 //        RobotOdometry.addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
 //        SmartDashboard.putNumber("x", RobotOdometry.odometry.pose.x.feet)

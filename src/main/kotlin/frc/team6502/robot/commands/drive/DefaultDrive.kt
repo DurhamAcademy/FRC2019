@@ -9,11 +9,10 @@ import kotlin.math.absoluteValue
 
 // decent gains P=0.02 I=0.0 D=0.02
 class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
-    private val correctionLimit = 0.0
-    private var correctionZero = 0.0
+    private val correctionLimit = 0.33
 
     override fun returnPIDInput(): Double {
-        return RobotMap.kIMU.getYaw() - correctionZero
+        return RobotMap.kIMU.getYaw()
     }
 
     override fun usePIDOutput(output: Double) {
@@ -42,10 +41,9 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         println("STARTING DRIVETRAIN")
         RobotMap.kIMU.zero()
         yawTimer.start()
-        correctionZero = 0.0
         yawCorrection = 0.0
         yawCorrecting = true
-        println("reset pigeon")
+//        println("reset pigeon")
     }
 
     override fun execute() {
@@ -64,7 +62,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
         if (yawTimer.get() < 0.35) {
             yawCorrection = 0.0
-            correctionZero = RobotMap.kIMU.getYaw()
+            RobotMap.kIMU.zero()
         }
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
@@ -85,7 +83,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
             yawTimer.start()
             yawCorrecting = false
         } else if (yawTimer.get() > 0.3 && !yawCorrecting) {
-            correctionZero = RobotMap.kIMU.getYaw()
+            RobotMap.kIMU.zero()
             yawCorrection = 0.0
             yawCorrecting = true
         }
