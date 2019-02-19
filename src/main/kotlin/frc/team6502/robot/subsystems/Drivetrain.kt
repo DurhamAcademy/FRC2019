@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.DrivetrainMode
 import frc.team6502.robot.RobotMap
@@ -126,8 +127,8 @@ object Drivetrain :  Subsystem() {
     private fun setDriveVelocities(l: Double, r: Double) {
 
         // logging
-//        SmartDashboard.putNumber("Left Error", leftTalon.closedLoopError.toDouble())
-//        SmartDashboard.putNumber("Right Error", rightTalon.closedLoopError.toDouble())
+        SmartDashboard.putNumber("Left Error", leftTalon.closedLoopError.toDouble())
+        SmartDashboard.putNumber("Right Error", rightTalon.closedLoopError.toDouble())
 
         // convert % to fps
         val left = (l * maxSpeed.feetPerSecond).feetPerSecond

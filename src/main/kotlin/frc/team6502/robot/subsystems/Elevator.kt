@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.ElevatorOffset
 import frc.team6502.robot.RobotMap
+import frc.team6502.robot.commands.manip.DefaultElevator
 
 /**
  * Robot's elevator
@@ -22,9 +23,9 @@ object Elevator : Subsystem() {
 
     private val cruiseVelocity = 2.feetPerSecond
     private val maxAcceleration = 1.feetPerSecond
-    private val holdVoltage = 1.1
+    val holdVoltage = 1.1
 
-    private val wheelRatio = (Math.PI * 1.0).inches.meters / 1.rotations.radians
+    val wheelRatio = (Math.PI * 1.0).inches.meters / 1.rotations.radians
     var setpoint = 0.0
     var zeroing = false
 
@@ -32,23 +33,25 @@ object Elevator : Subsystem() {
         // configure the elevator talon
         elevatorTalon.run {
             // make watchdog less strict
-            expiration = 0.25
+            expiration = 0.05
 
             // reset to make sure no settings stick
             configFactoryDefault()
 
             // set up encoder
-            configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 5)
+            configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 5)
             setSensorPhase(true)
 
             // temporarily zero the sensor until properly zeroed
-            selectedSensorPosition = 0
+//            selectedSensorPosition = 0
 
             // set PID
             config_kP(0, 0.3)
             config_kI(0, 0.0)
             config_IntegralZone(0, 64)
-            config_kD(0, 0.002)
+            config_kD(0, 0.08)
+
+//            configPeak
 
             // limits and ramps
             configContinuousCurrentLimit(2)
@@ -78,24 +81,11 @@ object Elevator : Subsystem() {
 //        zeroHeight()
     }
 
-    override fun periodic() {
-        // determine offset based on offset mode
-        val offsetAmount = when (offset) {
-            ElevatorOffset.CARRY -> 0.0
-            ElevatorOffset.CARGO_DELIVERY -> -CARGO_DELIVERY_OFFSET
-            ElevatorOffset.HATCH_DELIVERY -> HATCH_DELIVERY_OFFSET
-        }
-
-        // calculate desired encoder position for height
-        val desired = ((setpoint - offsetAmount - GROUND_DISTANCE).coerceAtLeast(0.0).feet.meters / wheelRatio).radians.encoder1024
-
-        elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, holdVoltage / 12.0)
-    }
-
     fun zeroHeight() {
 //        zeroing = true
         // start the zero elevator cmd
-        elevatorTalon.selectedSensorPosition = 0
+//        elevatorTalon.selectedSensorPosition = 0
+        println("ZEROED ELEVATOR")
     }
 
     /**
@@ -122,7 +112,7 @@ object Elevator : Subsystem() {
         }
 
     override fun initDefaultCommand() {
-        defaultCommand = null
+        defaultCommand = DefaultElevator()
     }
 
 }

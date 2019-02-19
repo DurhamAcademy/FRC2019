@@ -7,7 +7,7 @@ import frc.team6502.robot.subsystems.Elevator
 class SetElevatorHeight(private val height: Length) : InstantCommand() {
 
     init {
-        requires(Elevator)
+//        requires(Elevator)
     }
     override fun execute() {
         Elevator.height = height.feet
