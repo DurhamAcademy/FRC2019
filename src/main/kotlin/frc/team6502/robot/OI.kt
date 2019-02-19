@@ -74,7 +74,7 @@ object OI {
         // RB (6) - Cycle up
 
         JoystickButton(controller, 1).whenPressed(VisionAlign())
-        JoystickButton(controller, 2).whenPressed(IntakeCargo())
+        JoystickButton(controller, 2).whenPressed(ManipulateCargo())
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
         JoystickButton(controller, 4).whenPressed(CancelOperation())
         JoystickButton(controller, 7).whenPressed(SetLEDRing(true))
