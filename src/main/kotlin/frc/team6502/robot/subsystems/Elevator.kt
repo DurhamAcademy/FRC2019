@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.ElevatorOffset
 import frc.team6502.robot.RobotMap
-import frc.team6502.robot.commands.manip.ZeroElevator
 
 /**
  * Robot's elevator
