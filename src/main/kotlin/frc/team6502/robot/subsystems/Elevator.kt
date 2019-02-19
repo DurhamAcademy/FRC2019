@@ -85,9 +85,18 @@ object Elevator : Subsystem() {
 //        zeroing = true
         // start the zero elevator cmd
 //        elevatorTalon.selectedSensorPosition = 0
-        println("ZEROED ELEVATOR")
+        println("ZEROED ELEVATOR (not)")
     }
 
+    fun testElevatorOk() {
+        elevatorTalon.outputCurrent
+        if (elevatorTalon.activeTrajectoryVelocity - elevatorTalon.selectedSensorVelocity > 10) {
+            println("Stall!!")
+        }
+        if(elevatorTalon.errorDerivative > 2000) {
+            println("Rope breakage!!")
+        }
+    }
     /**
      * Height of the elevator in feet
      */

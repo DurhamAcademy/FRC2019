@@ -21,31 +21,31 @@ class IntakeCargo : Command() {
     }
 
     override fun initialize() {
-        CargoIntake.speed = 0.5
+        CargoIntake.speedIntake = 0.5
         intakeCurrentTimer.reset()
         intakeCurrentTimer.start()
     }
 
     override fun execute() {
 //        println("RUNNING RUNNING RUNNING")
-        SmartDashboard.putNumber("current", CargoIntake.current)
+        SmartDashboard.putNumber("shooterCurrent", CargoIntake.shooterCurrent)
         SetElevatorHeight(6.inches).start()
     }
 
     override fun end() {
-        CargoIntake.speed = 0.0
+        CargoIntake.speedIntake = 0.0
         singleton = null
         OI.setElevatorHeight(0)
     }
 
     override fun interrupted() {
-        CargoIntake.speed = 0.0
+        CargoIntake.speedIntake = 0.0
         singleton = null
         OI.setElevatorHeight(0)
     }
 
     override fun isFinished(): Boolean {
         println(intakeCurrentTimer.get())
-        return OI.controller.yButton || (CargoIntake.current > 2.0 && intakeCurrentTimer.get() > 1.0)
+        return OI.controller.yButton || (CargoIntake.shooterCurrent > 2.0 && intakeCurrentTimer.get() > 1.0)
     }
 }
