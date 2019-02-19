@@ -71,6 +71,7 @@ class Robot : TimedRobot() {
         OI.pollElevatorButtons()
         SmartDashboard.putNumber("height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
+        LED()
     }
 
     override fun autonomousInit() {
