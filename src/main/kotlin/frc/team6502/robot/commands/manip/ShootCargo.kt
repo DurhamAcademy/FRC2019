@@ -3,7 +3,7 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.robot.subsystems.CargoIntake
 
-class ShootCargo() : Command(1.5){
+class ShootCargo : Command(1.5){
     //private val shooterActiveTimer = Timer()
     init {
         requires(CargoIntake)
@@ -16,7 +16,7 @@ class ShootCargo() : Command(1.5){
     }
     override fun end() {
         CargoIntake.speedShooter = 0.0
-        ZeroCargo()
+        //ZeroCargo()
     }
 
     override fun interrupted() {

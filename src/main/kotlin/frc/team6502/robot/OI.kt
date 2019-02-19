@@ -79,7 +79,7 @@ object OI {
         JoystickButton(controller, 4).whenPressed(CancelOperation())
         JoystickButton(controller, 7).whenPressed(SetLEDRing(true))
         JoystickButton(controller, 8).whenPressed(SetLEDRing(false))
-        JoystickButton(controller, 9).whenPressed(ShootCargo())
+        //JoystickButton(controller, 9).whenPressed(ShootCargo())
 
 //        JoystickButton(controller, 1).whenPressed(IntakeCargo)
 //        JoystickButton(controller, 2).cancelWhenPressed(IntakeCargo)

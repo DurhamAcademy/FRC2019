@@ -19,8 +19,6 @@ object Elevator : Subsystem() {
     val HATCH_DELIVERY_OFFSET = 2.4.inches.feet
     val GROUND_DISTANCE = 6.inches.feet
 
-    val expectedEncoderZeroedPosition = 0
-
     val elevatorTalon = WPI_TalonSRX(RobotMap.elevatorTalonId)
 
     private val cruiseVelocity = 2.feetPerSecond
@@ -98,8 +96,8 @@ object Elevator : Subsystem() {
     fun zeroHeight() {
 //        zeroing = true
         // start the zero elevator cmd
-        //elevatorTalon.selectedSensorPosition = 0
-        ZeroElevator()
+        elevatorTalon.selectedSensorPosition = 0
+        //ZeroElevator()
     }
 
     fun testElevatorOk() {
