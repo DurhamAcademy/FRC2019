@@ -64,9 +64,9 @@ object Drivetrain :  Subsystem() {
                 configContinuousCurrentLimit(30)
 
                 // THE DANGER ZONE
-                config_kP(0, 0.02)
+                config_kP(0, 0.1)
                 config_kI(0, 0.0)
-                config_kD(0, 0.02)
+                config_kD(0, 0.05)
 //                config_IntegralZone(0, 4)
 
                 // turn on voltage comp, talons drive faster when voltage dips to compensate

@@ -36,10 +36,10 @@ class Robot : TimedRobot() {
 
         RobotMap.kCompressor.closedLoopControl = true
         RobotMap.kJevois.setStreaming(true)
+//        RobotMap.kJevois.setCam("absexp","500")
 
         SmartDashboard.putData(CharacterizeDrivetrain())
         SmartDashboard.putBoolean("Has Panel", false)
-
 
 //        // setup auto chooser
 //        chooser.name = "Robot Position"
@@ -77,15 +77,15 @@ class Robot : TimedRobot() {
         RobotOdometry.zero()
 
         println("Generating spline")
-        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_LOW, RobotMap.TIMESTEP, 3.0, 1.0, 18.0)
+        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_LOW, RobotMap.TIMESTEP, 5.0, 2.0, 18.0)
          val waypoints = arrayOf(
                  Waypoint(0.0,0.0, Pathfinder.d2r(0.0)),
-                 Waypoint(10.0, 0.0, 0.0)
+                 Waypoint(5.05, 0.471, -0.08)
          )
          val t = Pathfinder.generate(waypoints, cfg)
         Pathfinder.writeToCSV(File("/U/traj.csv"), t)
          println("Running path")
-        autoCommand = RamseteFollowPath(t, 1.0, 0.6)
+        autoCommand = RamseteFollowPath(t, 0.7, 0.2)
         autoCommand?.start()
     }
 
@@ -101,6 +101,7 @@ class Robot : TimedRobot() {
         autoCommand?.cancel()
         RobotOdometry.zero()
 //        Elevator.zeroHeight()
+        Elevator.elevatorTalon.selectedSensorPosition = 0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
 //        Elevator.setpoint = 0.0
         OI.setElevatorHeight(0)

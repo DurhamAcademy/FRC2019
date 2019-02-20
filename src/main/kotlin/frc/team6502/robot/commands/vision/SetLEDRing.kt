@@ -9,6 +9,7 @@ class SetLEDRing(private val on: Boolean) : InstantCommand() {
     }
     override fun execute() {
         state = !state
+//        RobotMap.kJevois.setCam("absexp", if(state) "150" else "500")
         RobotMap.kLEDRingRelay.set(on)
     }
 }

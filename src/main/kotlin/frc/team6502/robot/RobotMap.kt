@@ -23,9 +23,9 @@ object RobotMap {
     val elevatorVictorIds = arrayOf(8, 9, 10)
 
     val heights = arrayListOf(
-            9.inches to "Level 1",
-            31.5.inches to "Level 2",
-            59.5.inches to "Level 3"
+            8.inches to "Level 1",
+            30.5.inches to "Level 2",
+            58.5.inches to "Level 3"
     )
 
     val intakeTalonId = 11

@@ -22,7 +22,7 @@ class PlaceHatchPanel() : CommandGroup() {
 
         // in
         addSequential(SetHatchPanelExtended(false))
-        addSequential(WaitCommand(1.0))
+        addSequential(WaitCommand(0.25))
 
         // up
         addSequential(SetElevatorOffset(ElevatorOffset.CARRY))

@@ -16,7 +16,7 @@ import frc.team6502.robot.commands.manip.DefaultElevator
 object Elevator : Subsystem() {
 
     val CARGO_DELIVERY_OFFSET = 6.inches.feet
-    val HATCH_DELIVERY_OFFSET = 2.4.inches.feet
+    val HATCH_DELIVERY_OFFSET = 12.inches.feet
     val GROUND_DISTANCE = 6.inches.feet
 
     val elevatorTalon = WPI_TalonSRX(RobotMap.elevatorTalonId)
@@ -39,7 +39,7 @@ object Elevator : Subsystem() {
             configFactoryDefault()
 
             // set up encoder
-            configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 5)
+            configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 5)
             setSensorPhase(true)
 
             // temporarily zero the sensor until properly zeroed
@@ -78,14 +78,14 @@ object Elevator : Subsystem() {
             }
         }
 
-//        zeroHeight()
+        zeroHeight()
     }
 
     fun zeroHeight() {
 //        zeroing = true
         // start the zero elevator cmd
-//        elevatorTalon.selectedSensorPosition = 0
-        println("ZEROED ELEVATOR (not)")
+        elevatorTalon.selectedSensorPosition = 0
+        println("ZEROED ELEVATOR")
     }
 
     fun testElevatorOk() {

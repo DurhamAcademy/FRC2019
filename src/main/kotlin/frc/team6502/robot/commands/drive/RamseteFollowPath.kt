@@ -5,9 +5,9 @@ import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
+import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import java.io.File
-import java.lang.Math.cos
 import java.lang.Math.sin
 import kotlin.math.*
 
@@ -20,7 +20,7 @@ import kotlin.math.*
 class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
 
     private var currentIndex = 0
-    private val drivebase = 31.inches
+    private val drivebase = 29.inches
     private val logFile = File("/U/ramsetelog_${System.currentTimeMillis()}.csv")
 
     init {
@@ -37,17 +37,21 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         println("Segment $currentIndex/${traj.segments.size}")
 
         val seg = traj.segments[currentIndex]
-        val w = if (currentIndex > 0) (boundHalf(seg.heading) - boundHalf(traj.segments[currentIndex - 1].heading)) / RobotMap.TIMESTEP else 0.0
-
+        val w = if (currentIndex > 0) {
+            (boundHalf(seg.heading - traj.segments[currentIndex - 1].heading)) / RobotMap.TIMESTEP
+        } else {
+            0.0
+        }
+        println(w)
         val commanded = ramsete(
                 RobotOdometry.odometry,
                 Odometry(Pose(seg.x.feet, seg.y.feet, boundHalf(seg.heading).radians), seg.velocity.feetPerSecond, w.radiansPerSecond),
-                currentIndex > traj.segments.size - 20
+                false
         )
 
         Drivetrain.set(
-                (commanded.first / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-0.5, 0.5),
-                (commanded.second / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-0.5, 0.5),
+                (commanded.first / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-1.0, 1.0),
+                (commanded.second / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-1.0, 1.0),
                 DrivetrainMode.CLOSED_LOOP)
 
         currentIndex++
@@ -75,7 +79,6 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 //        println(thd - th)
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
         var wc = wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
-        if (disableTurn) wc = 0.0
         logFile.appendText("$currentIndex, $v, $vd, $w, $wd, $x, $xd, $y, $yd, $th, $thd, $k1, $k2, $vc, $wc, ${xd - x}, ${yd - y}, ${thd - th}\n")
 //        val difference = 0.feetPerSecond
 //        val difference = wc.radiansPerSecond.toLinearVelocity((PI * drivebase.meters) / 1.rotations.radians)
@@ -101,11 +104,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     }
 
     fun boundHalf(ang: Double): Double {
-        return if (ang > Math.PI) {
-            ang - Math.PI * 2
-        } else {
-            ang
-        }
+        return Pathfinder.boundHalfDegrees(ang.radians.degrees).degrees.radians
     }
 
 }
