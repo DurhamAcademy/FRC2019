@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.robot.OI
 import frc.team6502.robot.subsystems.CargoIntake
+import frc.team6502.robot.subsystems.Elevator
 
 class IntakeCargo : Command() {
     private val intakeCurrentThreshold = 15
