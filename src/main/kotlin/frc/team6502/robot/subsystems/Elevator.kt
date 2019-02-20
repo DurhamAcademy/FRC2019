@@ -104,6 +104,7 @@ object Elevator : Subsystem() {
         get() = (elevatorTalon.getSelectedSensorPosition(0).encoder1024.radians * wheelRatio).meters.feet
         set(value) {
             setpoint = value
+
         }
 
     /**
