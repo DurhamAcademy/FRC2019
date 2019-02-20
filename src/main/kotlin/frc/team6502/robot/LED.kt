@@ -2,24 +2,30 @@ package frc.team6502.robot
 
 import edu.wpi.first.wpilibj.I2C
 import edu.wpi.first.wpilibj.Timer
-import frc.team6502.robot.subsystems.Elevator
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 
 object LED {
     private val leds = I2C(I2C.Port.kOnboard, 0x02)
-    private val bytes = ByteArray(2)
+    private val bytes = ByteArray(1)
     private val Timer = Timer()
-    /*
-    1: Command
-    2: Modifier (elevator position)
-     */
+    private var currentCommand = 0
+
     fun execute() {
         bytes[0] = 0
-        if(Elevator.height > 0.5) {
+        if(SmartDashboard.getBoolean("Request Hatch", false) || (currentCommand == 1 && Timer.get() < 2))  {
+            currentCommand = 1
             bytes[0] = 1
-            bytes[1] = Elevator.height.toByte()
+            Timer.start()
+        }
+        else if(SmartDashboard.getBoolean("Request Cargo", false) || (currentCommand == 2 && Timer.get() < 2)) {
+            currentCommand = 2
+            bytes[0] = 2
+            Timer.start()
         }
         else {
-            bytes[1] = 0
+            currentCommand = 0
+            Timer.stop()
+            Timer.reset()
         }
         leds.writeBulk(bytes)
     }
