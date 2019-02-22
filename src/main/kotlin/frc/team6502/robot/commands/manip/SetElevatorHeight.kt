@@ -11,5 +11,6 @@ class SetElevatorHeight(private val height: Length) : InstantCommand() {
     }
     override fun execute() {
         Elevator.height = height.feet
+        Elevator.updateSetpoint()
     }
 }

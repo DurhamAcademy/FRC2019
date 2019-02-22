@@ -4,8 +4,9 @@ import edu.wpi.first.wpilibj.command.TimedCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.RobotMap
+import org.nield.kotlinstatistics.median
 
-class CollectVisionData(val timeout: Double, val samples: Int) : TimedCommand(timeout) {
+class CollectVisionData(val timeout: Double) : TimedCommand(timeout) {
 
     var tries = 0
     companion object {
@@ -34,14 +35,13 @@ class CollectVisionData(val timeout: Double, val samples: Int) : TimedCommand(ti
 
     override fun end() {
         // take the average of the data
-        avgX = data.map { it.first.feet }.average()
-        avgY = data.map { it.second.feet }.average()
-        avgH = data.map { it.third.degrees }.average()
+        avgX = data.map { it.first.feet }.median()
+        avgY = data.map { it.second.feet }.median()
+        avgH = data.map { it.third.degrees }.median()
 
         SmartDashboard.putNumber("avgX", avgX)
         SmartDashboard.putNumber("avgY", avgY)
         SmartDashboard.putNumber("avgH", avgH)
     }
 
-    override fun isFinished() = data.size >= samples || tries > 100
 }

@@ -24,7 +24,7 @@ object RobotMap {
 
     val heights = arrayListOf(
             8.inches to "Level 1",
-            30.5.inches to "Level 2",
+            32.5.inches to "Level 2",
             58.5.inches to "Level 3"
     )
 

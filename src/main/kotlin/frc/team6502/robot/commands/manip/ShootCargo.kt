@@ -1,29 +1,19 @@
 package frc.team6502.robot.commands.manip
-import edu.wpi.first.wpilibj.Timer
-import edu.wpi.first.wpilibj.command.Command
-import frc.team6502.robot.subsystems.CargoIntake
 
-class ShootCargo : Command(1.5){
-    //private val shooterActiveTimer = Timer()
+import edu.wpi.first.wpilibj.command.CommandGroup
+import edu.wpi.first.wpilibj.command.WaitCommand
+import frc.team6502.robot.ElevatorOffset
+
+class ShootCargo(val levelThree: Boolean) : CommandGroup() {
     init {
-        requires(CargoIntake)
-    }
-
-    override fun initialize() {
-        CargoIntake.speedShooter = 1.0
-//        shooterActiveTimer.reset()
-//        shooterActiveTimer.start()
-    }
-    override fun end() {
-        CargoIntake.speedShooter = 0.0
-        //ZeroCargo()
-    }
-
-    override fun interrupted() {
-        CargoIntake.speedShooter = 0.0
-    }
-    override fun isFinished(): Boolean {
-        //return shooterActiveTimer.get() > 3 //Just to test if I need a timer
-        return false
+        if (levelThree) addSequential(SetCargoRamp(true))
+        if (levelThree) addSequential(SetElevatorOffset(ElevatorOffset.CARGO_L3_DELIVERY))
+        else addSequential(SetElevatorOffset(ElevatorOffset.CARGO_DELIVERY))
+        addSequential(WaitCommand(1.5))
+        addSequential(SetShooterSpeed(if (levelThree) -1.0 else 1.0))
+        addSequential(WaitCommand(1.5))
+        addSequential(SetShooterSpeed(0.0))
+        if (levelThree) addSequential(SetCargoRamp(false))
+        addSequential(SetElevatorOffset(ElevatorOffset.CARRY))
     }
 }

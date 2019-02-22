@@ -18,6 +18,7 @@ object OI {
     fun setElevatorHeight(index: Int) {
         if (index !in 0..2) return
         println("SET TO $index")
+        IntakeCargo.singleton?.cancel()
         selectedElevatorHeight = index
         val height = RobotMap.heights[index]
         createElevatorButtons()

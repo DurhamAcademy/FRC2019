@@ -15,8 +15,8 @@ import frc.team6502.robot.commands.manip.DefaultElevator
  */
 object Elevator : Subsystem() {
 
-    val CARGO_DELIVERY_OFFSET = 6.inches.feet
-    val HATCH_DELIVERY_OFFSET = 12.inches.feet
+    val CARGO_DELIVERY_OFFSET = 14.inches.feet
+    val HATCH_DELIVERY_OFFSET = 4.inches.feet
     val GROUND_DISTANCE = 6.inches.feet
 
     val elevatorTalon = WPI_TalonSRX(RobotMap.elevatorTalonId)
@@ -42,6 +42,9 @@ object Elevator : Subsystem() {
             configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 5)
             setSensorPhase(true)
 
+            configForwardSoftLimitEnable(true)
+            configForwardSoftLimitThreshold(74700)
+
             // temporarily zero the sensor until properly zeroed
 //            selectedSensorPosition = 0
 
@@ -56,6 +59,7 @@ object Elevator : Subsystem() {
             // limits and ramps
             configContinuousCurrentLimit(2)
             configOpenloopRamp(0.5)
+            configClosedloopRamp(0.5)
 
             // brakes on
             setNeutralMode(NeutralMode.Brake)
@@ -120,6 +124,19 @@ object Elevator : Subsystem() {
             elevatorTalon.set(ControlMode.PercentOutput, value)
         }
 
+    fun updateSetpoint() {
+        val offsetAmount = when (offset) {
+            ElevatorOffset.CARRY -> 0.0
+            ElevatorOffset.CARGO_DELIVERY -> -CARGO_DELIVERY_OFFSET
+            ElevatorOffset.CARGO_L3_DELIVERY -> -4.inches.feet
+            ElevatorOffset.HATCH_DELIVERY -> HATCH_DELIVERY_OFFSET
+        }
+
+        // calculate desired encoder position for height
+        val desired = ((setpoint - offsetAmount - GROUND_DISTANCE).coerceAtLeast(0.0).feet.meters / wheelRatio).radians.encoder1024
+
+        elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, holdVoltage / 12.0)
+    }
     override fun initDefaultCommand() {
         defaultCommand = DefaultElevator()
     }

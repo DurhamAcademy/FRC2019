@@ -13,7 +13,7 @@ class VisionAlign : CommandGroup() {
         requires(Drivetrain)
         addSequential(SetLEDRing(true))
         addSequential(WaitCommand(0.5))
-        addSequential(CollectVisionData(1.0, 10))
+        addSequential(CollectVisionData(1.0))
         addSequential(SetLEDRing(false))
         addSequential(GenerateVisionSpline())
 //        addSequential(RamseteFollowPath(1.0, 0.6))
