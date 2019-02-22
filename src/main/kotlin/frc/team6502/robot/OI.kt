@@ -58,7 +58,6 @@ object OI {
         }
     }
 
-
     fun createElevatorButtons() {
         for (height in HEIGHTS) {
             SmartDashboard.putBoolean(height.second, false)

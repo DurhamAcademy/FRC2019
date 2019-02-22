@@ -26,7 +26,6 @@ class Robot : TimedRobot(TIMESTEP) {
     private var autoCommand: Command? = null
 
     override fun robotInit() {
-
         // report kotlin as the language (unofficially)
         val kLanguageKotlin = 6
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
@@ -38,6 +37,7 @@ class Robot : TimedRobot(TIMESTEP) {
         Elevator
         HatchPanelIntake
         CargoIntake
+        LED
 
         RobotMap.kCompressor.closedLoopControl = true
         RobotMap.kJevois.setStreaming(true)
@@ -76,6 +76,8 @@ class Robot : TimedRobot(TIMESTEP) {
         OI.pollElevatorButtons()
         SmartDashboard.putNumber("height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
+        LED.execute()
+
     }
 
     override fun autonomousInit() {
