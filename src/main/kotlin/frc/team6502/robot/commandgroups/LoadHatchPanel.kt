@@ -17,7 +17,7 @@ class LoadHatchPanel() : CommandGroup() {
         addSequential(WaitCommand(1.0))
         // out
         addSequential(SetHatchPanelExtended(true))
-        addSequential(WaitCommand(1.0))
+        addSequential(WaitCommand(0.25))
         // up
         addSequential(SetElevatorOffset(ElevatorOffset.CARRY))
         addSequential(WaitCommand(1.0))

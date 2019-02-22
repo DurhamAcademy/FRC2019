@@ -14,7 +14,7 @@ class DefaultElevator() : Command() {
     }
 
     override fun initialize() {
-        Elevator.elevatorTalon.stopMotor()
+        Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())
     }
 
     override fun execute() {
