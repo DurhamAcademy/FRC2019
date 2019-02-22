@@ -57,7 +57,6 @@ object OI {
         }
     }
 
-
     fun createElevatorButtons() {
         for (height in RobotMap.heights) {
             SmartDashboard.putBoolean(height.second, false)

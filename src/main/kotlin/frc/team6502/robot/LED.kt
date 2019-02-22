@@ -13,11 +13,13 @@ object LED {
     fun execute() {
         bytes[0] = 0
         if(SmartDashboard.getBoolean("Request Hatch", false) || (currentCommand == 1 && Timer.get() < 2))  {
+            SmartDashboard.putBoolean("Request Hatch", false)
             currentCommand = 1
             bytes[0] = 1
             Timer.start()
         }
         else if(SmartDashboard.getBoolean("Request Cargo", false) || (currentCommand == 2 && Timer.get() < 2)) {
+            SmartDashboard.putBoolean("Request Cargo", false)
             currentCommand = 2
             bytes[0] = 2
             Timer.start()
