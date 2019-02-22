@@ -1,13 +1,15 @@
 
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.DemandType
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.util.units.*
-import frc.team6502.robot.ElevatorOffset
-import frc.team6502.robot.RobotMap
+import frc.team6502.robot.*
 import frc.team6502.robot.commands.manip.DefaultElevator
 
 /**
@@ -15,15 +17,11 @@ import frc.team6502.robot.commands.manip.DefaultElevator
  */
 object Elevator : Subsystem() {
 
-    val CARGO_DELIVERY_OFFSET = 14.inches.feet
-    val HATCH_DELIVERY_OFFSET = 4.inches.feet
-    val GROUND_DISTANCE = 6.inches.feet
+
 
     val elevatorTalon = WPI_TalonSRX(RobotMap.elevatorTalonId)
 
-    private val cruiseVelocity = 2.feetPerSecond
-    private val maxAcceleration = 1.feetPerSecond
-    val holdVoltage = 1.1
+
 
     val wheelRatio = (Math.PI * 1.0).inches.meters / 1.rotations.radians
     var setpoint = 0.0
@@ -49,10 +47,10 @@ object Elevator : Subsystem() {
 //            selectedSensorPosition = 0
 
             // set PID
-            config_kP(0, 0.3)
-            config_kI(0, 0.0)
+            config_kP(0, ELEVATOR_GAINS.p)
+            config_kI(0, ELEVATOR_GAINS.i)
             config_IntegralZone(0, 64)
-            config_kD(0, 0.08)
+            config_kD(0, ELEVATOR_GAINS.d)
 
 //            configPeak
 
@@ -65,8 +63,8 @@ object Elevator : Subsystem() {
             setNeutralMode(NeutralMode.Brake)
 
             // config vel and accel
-            configMotionCruiseVelocity(cruiseVelocity.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
-            configMotionAcceleration(maxAcceleration.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+            configMotionCruiseVelocity(CRUISE_UP.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+            configMotionAcceleration(ACCEL_UP.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
 
             // limit switch
 //            configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen)
@@ -108,7 +106,12 @@ object Elevator : Subsystem() {
         get() = (elevatorTalon.getSelectedSensorPosition(0).encoder1024.radians * wheelRatio).meters.feet
         set(value) {
             setpoint = value
+            updateSetpoint()
         }
+
+    var sensorPosition = 0
+        get() = elevatorTalon.selectedSensorPosition
+        private set
 
     /**
      * Elevator offset from base level
@@ -128,14 +131,23 @@ object Elevator : Subsystem() {
         val offsetAmount = when (offset) {
             ElevatorOffset.CARRY -> 0.0
             ElevatorOffset.CARGO_DELIVERY -> -CARGO_DELIVERY_OFFSET
-            ElevatorOffset.CARGO_L3_DELIVERY -> -4.inches.feet
+            ElevatorOffset.CARGO_L3_DELIVERY -> -CARGO_DELIVERY_L3_OFFSET
             ElevatorOffset.HATCH_DELIVERY -> HATCH_DELIVERY_OFFSET
         }
 
         // calculate desired encoder position for height
         val desired = ((setpoint - offsetAmount - GROUND_DISTANCE).coerceAtLeast(0.0).feet.meters / wheelRatio).radians.encoder1024
 
-        elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, holdVoltage / 12.0)
+        // if elevator wants to go up, use upwards vel and accel, else use downwards ones
+        if (desired > elevatorTalon.selectedSensorPosition) {
+            elevatorTalon.configMotionCruiseVelocity(CRUISE_UP.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+            elevatorTalon.configMotionAcceleration(ACCEL_UP.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+        } else {
+            elevatorTalon.configMotionCruiseVelocity(CRUISE_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+            elevatorTalon.configMotionAcceleration(CRUISE_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+        }
+
+        elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, HOLD_VOLTAGE / 12.0)
     }
     override fun initDefaultCommand() {
         defaultCommand = DefaultElevator()

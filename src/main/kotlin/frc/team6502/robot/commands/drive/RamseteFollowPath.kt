@@ -2,14 +2,20 @@ package frc.team6502.robot.commands.drive
 
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.*
-import frc.team6502.robot.*
+import frc.team6502.robot.DrivetrainMode
+import frc.team6502.robot.Odometry
+import frc.team6502.robot.Pose
+import frc.team6502.robot.TIMESTEP
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import java.io.File
 import java.lang.Math.sin
-import kotlin.math.*
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * Ramsete path follower
@@ -38,7 +44,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
         val seg = traj.segments[currentIndex]
         val w = if (currentIndex > 0) {
-            (boundHalf(seg.heading - traj.segments[currentIndex - 1].heading)) / RobotMap.TIMESTEP
+            (boundHalf(seg.heading - traj.segments[currentIndex - 1].heading)) / TIMESTEP
         } else {
             0.0
         }

@@ -14,7 +14,6 @@ class DefaultElevator() : Command() {
     }
 
     override fun execute() {
-
     }
 
     override fun isFinished() = false
