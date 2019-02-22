@@ -74,7 +74,7 @@ object Drivetrain :  Subsystem() {
                 configVoltageCompSaturation(12.0)
 
                 // ramping
-                configOpenloopRamp(0.25)
+                configClosedloopRamp(0.5)
                 configContinuousCurrentLimit(30)
 
                 // neutral mode

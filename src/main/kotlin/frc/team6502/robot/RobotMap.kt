@@ -4,8 +4,6 @@ import com.ctre.phoenix.sensors.PigeonIMU
 import edu.wpi.cscore.VideoMode
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.DigitalOutput
-import frc.team6502.kyberlib.motorcontrol.PIDConfig
-import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.kyberlib.vision.Jevois
 
 object RobotMap {
@@ -22,11 +20,6 @@ object RobotMap {
     val elevatorTalonId = 7
     val elevatorVictorIds = arrayOf(8, 9, 10)
 
-    val heights = arrayListOf(
-            8.inches to "Level 1",
-            30.5.inches to "Level 2",
-            58.5.inches to "Level 3"
-    )
 
     val intakeTalonId = 11
     val intakeVictorId = 12
@@ -41,12 +34,4 @@ object RobotMap {
     val kIMU = PigeonIMU(imuId)
 
     val kCompressor = Compressor(0)
-
-    // TUNING //
-    val driveStraightPID = PIDConfig(0.0, 0.0, 0.0)
-    val elevatorPID      = PIDConfig(0.0, 0.0, 0.0)
-
-    // AUTOS //
-    val TIMESTEP = 0.02
-
 }

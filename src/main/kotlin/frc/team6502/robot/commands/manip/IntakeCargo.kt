@@ -22,12 +22,16 @@ class IntakeCargo : Command() {
     }
 
     override fun initialize() {
-        CargoIntake.speedIntake = 0.5
         intakeCurrentTimer.reset()
         intakeCurrentTimer.start()
     }
 
     override fun execute() {
+        if (Elevator.elevatorTalon.selectedSensorPosition < 2048) {
+            CargoIntake.speedIntake = 0.5
+        } else {
+            CargoIntake.speedIntake = 0.0
+        }
 //        println("RUNNING RUNNING RUNNING")
         SmartDashboard.putNumber("shooterCurrent", CargoIntake.shooterCurrent)
         SetElevatorHeight(6.inches).start()

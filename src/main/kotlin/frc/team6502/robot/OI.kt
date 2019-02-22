@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.commandgroups.VisionAlign
+import frc.team6502.robot.commands.drive.VisionDrive
 import frc.team6502.robot.commands.manip.*
 import frc.team6502.robot.commands.vision.SetLEDRing
 import java.lang.Math.abs
@@ -18,8 +18,9 @@ object OI {
     fun setElevatorHeight(index: Int) {
         if (index !in 0..2) return
         println("SET TO $index")
+        IntakeCargo.singleton?.cancel()
         selectedElevatorHeight = index
-        val height = RobotMap.heights[index]
+        val height = HEIGHTS[index]
         createElevatorButtons()
         SmartDashboard.putBoolean(height.second, true)
         SetElevatorHeight(height.first).start()
@@ -45,9 +46,9 @@ object OI {
     }
 
     fun pollElevatorButtons() {
-        for (idx in RobotMap.heights.indices) {
+        for (idx in HEIGHTS.indices) {
 
-            val height = RobotMap.heights[idx]
+            val height = HEIGHTS[idx]
             if (!SmartDashboard.getBoolean(height.second, false) && selectedElevatorHeight == idx) {
                 SmartDashboard.putBoolean(height.second, true)
             }
@@ -58,7 +59,7 @@ object OI {
     }
 
     fun createElevatorButtons() {
-        for (height in RobotMap.heights) {
+        for (height in HEIGHTS) {
             SmartDashboard.putBoolean(height.second, false)
         }
     }
@@ -72,7 +73,7 @@ object OI {
         // LB (5)- Cycle down
         // RB (6) - Cycle up
 
-        JoystickButton(controller, 1).whenPressed(VisionAlign())
+        JoystickButton(controller, 1).whenPressed(VisionDrive())
         JoystickButton(controller, 2).whenPressed(ManipulateCargo())
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
         JoystickButton(controller, 4).whenPressed(CancelOperation())

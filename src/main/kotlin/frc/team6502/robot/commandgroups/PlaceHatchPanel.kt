@@ -14,7 +14,7 @@ class PlaceHatchPanel() : CommandGroup() {
 
         // out
         addSequential(SetHatchPanelExtended(true))
-        addSequential(WaitCommand(1.0))
+        addSequential(WaitCommand(0.5))
 
         // down
         addSequential(SetElevatorOffset(ElevatorOffset.HATCH_DELIVERY))

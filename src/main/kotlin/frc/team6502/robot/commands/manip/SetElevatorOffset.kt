@@ -12,5 +12,6 @@ class SetElevatorOffset(val offset: ElevatorOffset) : InstantCommand() {
 
     override fun execute() {
         Elevator.offset = offset
+        Elevator.updateSetpoint()
     }
 }

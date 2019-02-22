@@ -11,11 +11,16 @@ import frc.team6502.robot.commands.drive.CharacterizeDrivetrain
 import frc.team6502.robot.commands.drive.RamseteFollowPath
 import frc.team6502.robot.commands.vision.SetLEDRing
 import frc.team6502.robot.sensor.RobotOdometry
-import frc.team6502.robot.subsystems.*
-import jaci.pathfinder.*
+import frc.team6502.robot.subsystems.CargoIntake
+import frc.team6502.robot.subsystems.Drivetrain
+import frc.team6502.robot.subsystems.Elevator
+import frc.team6502.robot.subsystems.HatchPanelIntake
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.Trajectory
+import jaci.pathfinder.Waypoint
 import java.io.File
 
-class Robot : TimedRobot() {
+class Robot : TimedRobot(TIMESTEP) {
 
     private val chooser = SendableChooser<String>()
     private var autoCommand: Command? = null
@@ -79,7 +84,7 @@ class Robot : TimedRobot() {
         RobotOdometry.zero()
 
         println("Generating spline")
-        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_LOW, RobotMap.TIMESTEP, 5.0, 2.0, 18.0)
+        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_LOW, TIMESTEP, 5.0, 2.0, 18.0)
          val waypoints = arrayOf(
                  Waypoint(0.0,0.0, Pathfinder.d2r(0.0)),
                  Waypoint(5.05, 0.471, -0.08)

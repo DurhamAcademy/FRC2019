@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
+import edu.wpi.first.wpilibj.DoubleSolenoid
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.robot.RobotMap
 
@@ -16,7 +17,7 @@ object CargoIntake : Subsystem() {
     private val shooterVictor = VictorSPX(RobotMap.intakeVictorId)
 
     private val intakeTalon = TalonSRX(RobotMap.frontIntakeTalonId)
-//    private val rampSolenoid = DoubleSolenoid(1,2)
+    private val rampSolenoid = DoubleSolenoid(1, 2)
 
     init {
         // turn on brake mode and set directions for elevator wheels
@@ -25,6 +26,7 @@ object CargoIntake : Subsystem() {
         shooterVictor.setNeutralMode(NeutralMode.Brake)
         shooterVictor.follow(shooterTalon)
         shooterVictor.inverted = false
+        rampSolenoid.set(DoubleSolenoid.Value.kReverse)
     }
 
     override fun initDefaultCommand() {
@@ -63,7 +65,7 @@ object CargoIntake : Subsystem() {
     val intakeCurrent: Double
         get() = intakeTalon.outputCurrent
 
-    /*var rampState
+    var rampState
         get() = rampSolenoid.get() == DoubleSolenoid.Value.kForward
         set(value){
             rampSolenoid.set(if(value){
@@ -71,5 +73,5 @@ object CargoIntake : Subsystem() {
             } else {
                 DoubleSolenoid.Value.kReverse
             })
-        }*/
+        }
 }

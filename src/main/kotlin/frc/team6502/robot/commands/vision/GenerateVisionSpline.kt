@@ -5,7 +5,9 @@ import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.robot.*
 import frc.team6502.robot.commands.drive.RamseteFollowPath
 import frc.team6502.robot.commands.manip.SetElevatorOffset
-import jaci.pathfinder.*
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.Trajectory
+import jaci.pathfinder.Waypoint
 import java.io.File
 
 /**
@@ -21,7 +23,7 @@ class GenerateVisionSpline() : InstantCommand() {
         if (CollectVisionData.avgH == 0.0 && CollectVisionData.avgX == 0.0 && CollectVisionData.avgY == 0.0) {
             return
         }
-        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_LOW, RobotMap.TIMESTEP, 5.0, 2.0, 18.0)
+        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_LOW, TIMESTEP, 5.0, 2.0, 18.0)
 
         val targetX = CollectVisionData.avgY - 5.inches.feet
         val targetY = -CollectVisionData.avgX - 13.inches.feet
@@ -47,6 +49,6 @@ class GenerateVisionSpline() : InstantCommand() {
         println("First ${t.segments.first().stringify()}")
         println("Last ${t.segments.last().stringify()}")
         SetElevatorOffset(ElevatorOffset.HATCH_DELIVERY).start()
-        RamseteFollowPath(t, 0.5, 0.5).start()
+        RamseteFollowPath(t, B, ZETA).start()
     }
 }
