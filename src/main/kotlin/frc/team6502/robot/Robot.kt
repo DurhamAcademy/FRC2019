@@ -1,5 +1,6 @@
 package frc.team6502.robot
 
+import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.TimedRobot
@@ -136,5 +137,9 @@ class Robot : TimedRobot(TIMESTEP) {
     override fun testInit() {}
 
     override fun testPeriodic() {}
+
+    override fun disabledPeriodic() {
+        Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())
+    }
 
 }

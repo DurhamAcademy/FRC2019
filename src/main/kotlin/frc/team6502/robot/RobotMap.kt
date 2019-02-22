@@ -6,6 +6,9 @@ import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.DigitalOutput
 import frc.team6502.kyberlib.vision.Jevois
 
+/**
+ * This contains actual robot components and indices
+ */
 object RobotMap {
 
     // PORTS //
@@ -26,7 +29,6 @@ object RobotMap {
     val frontIntakeTalonId = 13
 
     // SENSORS //
-    // TODO('update stream format')
     val jevoisVideoMode = VideoMode(VideoMode.PixelFormat.kYUYV, 352, 288, 10)
     val kJevois = Jevois(streamInfo = jevoisVideoMode)
     val kLEDRingRelay = DigitalOutput(0)

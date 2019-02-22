@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
-import frc.team6502.robot.commands.manip.DefaultElevator
 
 /**
  * Robot's elevator
@@ -150,7 +149,7 @@ object Elevator : Subsystem() {
         elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, HOLD_VOLTAGE / 12.0)
     }
     override fun initDefaultCommand() {
-        defaultCommand = DefaultElevator()
+        defaultCommand = null
     }
 
 }
