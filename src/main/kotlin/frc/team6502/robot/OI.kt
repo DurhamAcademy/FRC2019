@@ -5,18 +5,26 @@ import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commands.drive.VisionDrive
+import frc.team6502.robot.commands.lighting.RequestCargo
+import frc.team6502.robot.commands.lighting.RequestPanel
 import frc.team6502.robot.commands.manip.*
-import frc.team6502.robot.commands.vision.SetLEDRing
 import java.lang.Math.abs
 import kotlin.math.pow
 
 object OI {
     val controller = XboxController(0)
+
+    /**
+     * The currently selected elevator height
+     */
     var selectedElevatorHeight = 0
         private set
 
+    /**
+     * Sets the elevator's desired level (0 - 2) -> (Level 1 - Level 3) and updates the dashboard accordingly
+     */
     fun setElevatorHeight(index: Int) {
-        if (index !in 0..2) return
+        if (index !in 0 until HEIGHTS.size) return
         println("SET TO $index")
         IntakeCargo.singleton?.cancel()
         selectedElevatorHeight = index
@@ -36,28 +44,50 @@ object OI {
     val commandedX: Double
         get() = deadband(controller.getX(GenericHID.Hand.kRight).pow(3), 0.04)
 
+    /**
+     * Applies a deadband to an input
+     * @param input The value to apply the deadband to
+     * @param deadband The minimum value required for the return value to be non-zero
+     */
     fun deadband(input: Double, deadband: Double): Double {
         return if (abs(input) < deadband) 0.0 else input
     }
 
+    /**
+     * Set the controller rumble
+     */
     fun setControllerRumble(rumble: Double) {
         controller.setRumble(GenericHID.RumbleType.kLeftRumble, rumble)
         controller.setRumble(GenericHID.RumbleType.kRightRumble, rumble)
     }
 
+    /**
+     * Change elevator height if buttons indicate it should change
+     */
     fun pollElevatorButtons() {
-        for (idx in HEIGHTS.indices) {
+        // poll physical buttons
+        if (controller.getRawButtonPressed(5)) {
+            setElevatorHeight((selectedElevatorHeight - 1))
+        }
+        if (controller.getRawButtonPressed(6)) {
+            setElevatorHeight((selectedElevatorHeight + 1))
+        }
 
+        // poll digital buttons
+        for (idx in HEIGHTS.indices) {
             val height = HEIGHTS[idx]
             if (!SmartDashboard.getBoolean(height.second, false) && selectedElevatorHeight == idx) {
                 SmartDashboard.putBoolean(height.second, true)
             }
             if (SmartDashboard.getBoolean(height.second, false) && selectedElevatorHeight != idx) {
-                selectedElevatorHeight = idx
+                setElevatorHeight(idx)
             }
         }
     }
 
+    /**
+     * Put elevator status buttons on the dashboard
+     */
     fun createElevatorButtons() {
         for (height in HEIGHTS) {
             SmartDashboard.putBoolean(height.second, false)
@@ -70,21 +100,14 @@ object OI {
         // B (2) - Ball
         // X (3) - Panel
         // Y (4) - Cancel
-        // LB (5)- Cycle down
+        // LB (5) - Cycle down
         // RB (6) - Cycle up
 
         JoystickButton(controller, 1).whenPressed(VisionDrive())
         JoystickButton(controller, 2).whenPressed(ManipulateCargo())
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
         JoystickButton(controller, 4).whenPressed(CancelOperation())
-        JoystickButton(controller, 7).whenPressed(SetLEDRing(true))
-        JoystickButton(controller, 8).whenPressed(SetLEDRing(false))
-        //JoystickButton(controller, 9).whenPressed(ShootCargo())
-
-//        JoystickButton(controller, 1).whenPressed(IntakeCargo)
-//        JoystickButton(controller, 2).cancelWhenPressed(IntakeCargo)
-//        JoystickButton(controller, 3).whenPressed(SetHatchPanelExtended(true))
-//        JoystickButton(controller, 3).whenReleased(SetHatchPanelExtended(false))
-//        JoystickButton(controller, 1).cancelWhenPressed(VisionAlign)
+        JoystickButton(controller, 7).whenPressed(RequestPanel())
+        JoystickButton(controller, 8).whenPressed(RequestCargo())
     }
 }
