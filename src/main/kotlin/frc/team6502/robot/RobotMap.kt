@@ -36,4 +36,8 @@ object RobotMap {
     val kIMU = PigeonIMU(imuId)
 
     val kCompressor = Compressor(0)
+
+    val hatchSolenoidId = 0
+    val rampSolenoidIds = arrayOf(1, 2)
+    val wedgeSolenoidIds = arrayOf(3, 4)
 }
