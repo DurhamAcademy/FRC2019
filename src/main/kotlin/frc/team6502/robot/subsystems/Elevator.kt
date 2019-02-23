@@ -16,15 +16,10 @@ import frc.team6502.robot.*
  */
 object Elevator : Subsystem() {
 
-
-
     val elevatorTalon = WPI_TalonSRX(RobotMap.elevatorTalonId)
 
-
-
-    val wheelRatio = (Math.PI * 1.0).inches.meters / 1.rotations.radians
-    var setpoint = 0.0
-    var zeroing = false
+    private val wheelRatio = (Math.PI * 1.0).inches.meters / 1.rotations.radians
+    private var setpoint = 0.0
 
     init {
         // configure the elevator talon
