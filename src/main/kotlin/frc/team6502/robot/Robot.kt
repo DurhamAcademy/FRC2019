@@ -11,10 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commands.drive.CharacterizeDrivetrain
 import frc.team6502.robot.commands.vision.SetLEDRing
 import frc.team6502.robot.sensor.RobotOdometry
-import frc.team6502.robot.subsystems.CargoIntake
-import frc.team6502.robot.subsystems.Drivetrain
-import frc.team6502.robot.subsystems.Elevator
-import frc.team6502.robot.subsystems.HatchPanelIntake
+import frc.team6502.robot.subsystems.*
 
 class Robot : TimedRobot(TIMESTEP) {
 

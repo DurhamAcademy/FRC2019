@@ -47,3 +47,11 @@ enum class Station {
     CENTER,
     RIGHT
 }
+
+enum class LightingCommand(val cmd: Int) {
+    OFF(-1),
+    CHASE_RED(0),
+    CHASE_BLUE(1),
+    PANEL(2),
+    CARGO(3)
+}

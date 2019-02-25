@@ -1,7 +1,7 @@
 package frc.team6502.robot.commands.lighting
 
 import edu.wpi.first.wpilibj.command.TimedCommand
-import frc.team6502.robot.Lighting
+import frc.team6502.robot.subsystems.Lighting
 
 class RequestCargo() : TimedCommand(2.0) {
     init {
