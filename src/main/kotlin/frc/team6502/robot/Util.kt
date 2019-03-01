@@ -39,7 +39,7 @@ enum class ElevatorOffset {
     HATCH_DELIVERY,
     CARGO_DELIVERY,
     CARGO_L3_DELIVERY,
-    CARRY
+    INTAKE
 }
 
 enum class Station {

@@ -13,7 +13,7 @@ object RobotStatus {
 
         currentGamePiece = gp
         when (currentGamePiece) {
-            GamePiece.NONE -> SetElevatorOffset(ElevatorOffset.CARRY).start()
+            GamePiece.NONE -> SetElevatorOffset(ElevatorOffset.INTAKE).start()
             GamePiece.CARGO -> SetElevatorOffset(ElevatorOffset.CARGO_DELIVERY).start()
             GamePiece.HATCH -> SetElevatorOffset(ElevatorOffset.HATCH_DELIVERY).start()
         }
