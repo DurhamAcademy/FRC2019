@@ -8,6 +8,7 @@ class SetElevatorOffset(val offset: ElevatorOffset) : InstantCommand() {
 
     init {
 //        requires(Elevator)
+        setRunWhenDisabled(true)
     }
 
     override fun execute() {

@@ -15,16 +15,16 @@ const val ZETA = 0.5
 // Elevator
 val GROUND_DISTANCE = 6.inches.feet
 val HEIGHTS = arrayListOf(
-        8.inches to "Level 1",
-        30.5.inches to "Level 2",
-        58.5.inches to "Level 3"
+        0.inches to "Level 1",
+        28.inches to "Level 2",
+        56.inches to "Level 3"
 )
 val ELEVATOR_GAINS = PIDConfig(0.3, 0.0, 0.08)
 val HOLD_VOLTAGE = 1.1
 
-val CARGO_DELIVERY_OFFSET = 6.inches.feet
+val CARGO_DELIVERY_OFFSET = 8.5.inches.feet
 val CARGO_DELIVERY_L3_OFFSET = 4.inches.feet
-val HATCH_DELIVERY_OFFSET = 12.inches.feet
+val HATCH_DELIVERY_OFFSET = 3.inches.feet
 
 val CRUISE_UP = 2.feetPerSecond
 val ACCEL_UP = 1.feetPerSecond // ^2

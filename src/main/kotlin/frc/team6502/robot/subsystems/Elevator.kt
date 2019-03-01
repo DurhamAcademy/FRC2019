@@ -124,13 +124,13 @@ object Elevator : Subsystem() {
     fun updateSetpoint() {
         val offsetAmount = when (offset) {
             ElevatorOffset.CARRY -> 0.0
-            ElevatorOffset.CARGO_DELIVERY -> -CARGO_DELIVERY_OFFSET
-            ElevatorOffset.CARGO_L3_DELIVERY -> -CARGO_DELIVERY_L3_OFFSET
+            ElevatorOffset.CARGO_DELIVERY -> CARGO_DELIVERY_OFFSET
+            ElevatorOffset.CARGO_L3_DELIVERY -> CARGO_DELIVERY_L3_OFFSET
             ElevatorOffset.HATCH_DELIVERY -> HATCH_DELIVERY_OFFSET
         }
 
         // calculate desired encoder position for height
-        val desired = ((setpoint - offsetAmount - GROUND_DISTANCE).coerceAtLeast(0.0).feet.meters / wheelRatio).radians.encoder1024
+        val desired = ((setpoint + offsetAmount).coerceAtLeast(0.0).feet.meters / wheelRatio).radians.encoder1024
 
         // if elevator wants to go up, use upwards vel and accel, else use downwards ones
         if (desired > elevatorTalon.selectedSensorPosition) {

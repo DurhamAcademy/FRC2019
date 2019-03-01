@@ -55,3 +55,9 @@ enum class LightingCommand(val cmd: Int) {
     PANEL(2),
     CARGO(3)
 }
+
+enum class GamePiece {
+    NONE,
+    CARGO,
+    HATCH
+}

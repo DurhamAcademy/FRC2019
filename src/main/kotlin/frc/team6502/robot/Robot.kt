@@ -18,15 +18,21 @@ class Robot : TimedRobot(TIMESTEP) {
     private val autoChooser = SendableChooser<Command?>()
     private var autoCommand: Command? = null
 
+    private val startingGamePiece = GamePiece.NONE
+
     override fun robotInit() {
         // report kotlin as the language (unofficially)
         val kLanguageKotlin = 6
         HAL.report(FRCNetComm.tResourceType.kResourceType_Language, kLanguageKotlin)
 
-        RobotMap // lazy init all the RobotMap vars
+        // create all the util classes
+        RobotMap
         RobotOdometry
-        Modes // sicko mode
-        Drivetrain // create the drive boi
+        RobotStatus
+        Modes
+
+        // create subsystems
+        Drivetrain
         Elevator
         HatchPanelIntake
         CargoIntake
@@ -49,6 +55,7 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
         SetLEDRing(false).start()
+        RobotStatus.setGamePiece(startingGamePiece)
     }
 
     /**
@@ -58,6 +65,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
     override fun autonomousInit() {
         RobotOdometry.zero()
+        Elevator.updateSetpoint()
 
         /*println("Generating spline")
         val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_LOW, TIMESTEP, 5.0, 2.0, 18.0)
@@ -83,6 +91,8 @@ class Robot : TimedRobot(TIMESTEP) {
         RobotOdometry.zero()
         Elevator.elevatorTalon.selectedSensorPosition = 0
 
+        Elevator.updateSetpoint()
+
         // make elevator go to level 1 idle height
         OI.setElevatorHeight(0)
     }
@@ -92,7 +102,7 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Scheduler.getInstance().run()
         Scheduler.getInstance().run()
 
-        OI.pollElevatorButtons()
+        OI.poll()
 
         SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
