@@ -1,9 +1,12 @@
 package frc.team6502.robot.commands.drive
 
+import edu.wpi.first.wpilibj.PIDController
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.*
+import frc.team6502.robot.commands.vision.SetLEDRing
+import frc.team6502.robot.sensor.JevoisPIDSource
 import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
@@ -16,7 +19,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     }
 
     override fun usePIDOutput(output: Double) {
-        yawCorrection = output.coerceIn(-correctionLimit, correctionLimit)
+        yawCorrection = output
 //        yawCorrection = OI.deadband(yawCorrection, 0.025)
     }
 
@@ -25,13 +28,16 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     private var yawCorrecting = false
     private val yawTimer = Timer()
 
-    // CURVATURE PARAMS
-    private var quickStopAccumulator = 0.0
-    private val quickStopThreshold = 0.2
-    private val quickStopAlpha = 0.1
+    private var visionCorrection = 0.0
+
+
 
     // FRONT TOGGLE
     private var frontIsFront = true
+
+    private var jevoisController = PIDController(0.01, 0.0, 0.01, JevoisPIDSource()) {
+        visionCorrection = it * OI.commandedVC
+    }
 
     init {
         requires(Drivetrain)
@@ -65,11 +71,17 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
             RobotMap.kIMU.zero()
         }
 
+        // turn on the ring if vision is about to happen
+        SetLEDRing(OI.commandedVC > 0.01).start()
+
+        if (OI.commandedVC < 0.05) visionCorrection = 0.0
+
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
 //        println("t=$throttle r=$rotation")
         if (yawCorrecting) {
 //            println("t=$throttle r=$rotation")
-            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, DrivetrainMode.CLOSED_LOOP)
+            val totalCorrection = (yawCorrection + visionCorrection).coerceIn(-correctionLimit, correctionLimit)
+            Drivetrain.set(throttle - totalCorrection, throttle + totalCorrection, DrivetrainMode.CLOSED_LOOP)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
 //            println(rotation)

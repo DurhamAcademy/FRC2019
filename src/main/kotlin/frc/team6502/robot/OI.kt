@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.commands.drive.VisionDrive
 import frc.team6502.robot.commands.lighting.RequestCargo
 import frc.team6502.robot.commands.lighting.RequestPanel
 import frc.team6502.robot.commands.manip.*
@@ -43,6 +42,9 @@ object OI {
 
     val commandedX: Double
         get() = deadband(controller.getX(GenericHID.Hand.kRight).pow(3), 0.04)
+
+    val commandedVC: Double
+        get() = controller.getTriggerAxis(GenericHID.Hand.kRight)
 
     /**
      * Applies a deadband to an input
@@ -120,7 +122,7 @@ object OI {
         // LB (5) - Cycle down
         // RB (6) - Cycle up
 
-        JoystickButton(controller, 1).whenPressed(VisionDrive())
+//        JoystickButton(controller, 1).whenPressed(VisionDrive())
         JoystickButton(controller, 2).whenPressed(ManipulateCargo())
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
         JoystickButton(controller, 4).whenPressed(CancelOperation())

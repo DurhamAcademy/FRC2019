@@ -3,6 +3,7 @@ package frc.team6502.robot
 import frc.team6502.kyberlib.motorcontrol.PIDConfig
 import frc.team6502.kyberlib.util.units.feetPerSecond
 import frc.team6502.kyberlib.util.units.inches
+import frc.team6502.kyberlib.util.units.rotations
 
 // Timings
 const val TIMESTEP = 0.02
@@ -31,3 +32,19 @@ val ACCEL_UP = 1.feetPerSecond // ^2
 val CRUISE_DOWN = 2.feetPerSecond
 val ACCEL_DOWN = 1.feetPerSecond // ^2
 
+// Drivetrain
+val JEVOIS_OFFSET = 5.inches
+
+val DRIVETRAIN_MAXSPEED = 13.458.feetPerSecond
+val DRIVETRAIN_WHEEL_RATIO = ((Math.PI * 6.0).inches.meters / 1.rotations.radians) / 0.9
+
+// kV -> Volts per foot/sec
+// kS -> Volts required to start moving
+val kV_L = 0.80193
+val kS_L = 1.22362
+val kV_R = 0.79018
+val kS_R = 1.34859
+
+var quickStopAccumulator = 0.0
+val quickStopThreshold = 0.2
+val quickStopAlpha = 0.1

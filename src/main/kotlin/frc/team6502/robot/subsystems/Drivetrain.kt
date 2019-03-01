@@ -1,13 +1,17 @@
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.DemandType
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.kyberlib.util.units.*
-import frc.team6502.robot.DrivetrainMode
-import frc.team6502.robot.RobotMap
+import frc.team6502.kyberlib.util.units.LinearVelocity
+import frc.team6502.kyberlib.util.units.encoder1024PerDecisecond
+import frc.team6502.kyberlib.util.units.feetPerSecond
+import frc.team6502.robot.*
 import frc.team6502.robot.commands.drive.DefaultDrive
 import kotlin.math.sign
 
@@ -19,23 +23,7 @@ object Drivetrain :  Subsystem() {
     private val leftTalon = WPI_TalonSRX(RobotMap.leftTalonId)
     private val rightTalon = WPI_TalonSRX(RobotMap.rightTalonId)
 
-    // constants
-    /**
-     * How fast the drivetrain can go at maximum
-     */
-    val maxSpeed = 13.458.feetPerSecond
-    /**
-     * Meters per rotation of the wheels
-     */
-    val wheelRatio = ((Math.PI * 6.0).inches.meters / 1.rotations.radians) / 0.9
 
-    // kV -> Volts per foot/sec
-    // kS -> Volts required to start moving
-    private val kV_L = 0.80193
-    private val kS_L = 1.22362
-
-    private val kV_R = 0.79018
-    private val kS_R = 1.34859
 
     init {
         // follower victors
@@ -108,8 +96,8 @@ object Drivetrain :  Subsystem() {
      * Gets each side of the drivetrain's speed
      */
     fun getVelocities(): Pair<LinearVelocity, LinearVelocity> {
-        return leftTalon.selectedSensorVelocity.encoder1024PerDecisecond.toLinearVelocity(wheelRatio) to
-                rightTalon.selectedSensorVelocity.encoder1024PerDecisecond.toLinearVelocity(wheelRatio)
+        return leftTalon.selectedSensorVelocity.encoder1024PerDecisecond.toLinearVelocity(DRIVETRAIN_WHEEL_RATIO) to
+                rightTalon.selectedSensorVelocity.encoder1024PerDecisecond.toLinearVelocity(DRIVETRAIN_WHEEL_RATIO)
     }
 
     /**
@@ -131,12 +119,12 @@ object Drivetrain :  Subsystem() {
         SmartDashboard.putNumber("Right Error", rightTalon.closedLoopError.toDouble())
 
         // convert % to fps
-        val left = (l * maxSpeed.feetPerSecond).feetPerSecond
-        val right = (r * maxSpeed.feetPerSecond).feetPerSecond
+        val left = (l * DRIVETRAIN_MAXSPEED.feetPerSecond).feetPerSecond
+        val right = (r * DRIVETRAIN_MAXSPEED.feetPerSecond).feetPerSecond
 
         // convert fps to encoder units
-        val leftNative = left.toAngularVelocity(wheelRatio).encoder1024PerDecisecond
-        val rightNative = right.toAngularVelocity(wheelRatio).encoder1024PerDecisecond
+        val leftNative = left.toAngularVelocity(DRIVETRAIN_WHEEL_RATIO).encoder1024PerDecisecond
+        val rightNative = right.toAngularVelocity(DRIVETRAIN_WHEEL_RATIO).encoder1024PerDecisecond
 
         // set speeds
         leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward,

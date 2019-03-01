@@ -138,7 +138,7 @@ object Elevator : Subsystem() {
             elevatorTalon.configMotionAcceleration(ACCEL_UP.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
         } else {
             elevatorTalon.configMotionCruiseVelocity(CRUISE_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
-            elevatorTalon.configMotionAcceleration(CRUISE_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+            elevatorTalon.configMotionAcceleration(ACCEL_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
         }
 
         elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, HOLD_VOLTAGE / 12.0)
