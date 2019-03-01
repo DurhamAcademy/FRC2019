@@ -121,9 +121,8 @@ object OI {
         // Y (4) - Cancel
         // LB (5) - Cycle down
         // RB (6) - Cycle up
-
-//        JoystickButton(controller, 1).whenPressed(VisionDrive())
-        JoystickButton(controller, 2).whenPressed(ManipulateCargo())
+        JoystickButton(controller, 2).whenPressed(ManipulateCargo(true))
+        JoystickButton(controller, 2).whenPressed(ManipulateCargo(false))
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
         JoystickButton(controller, 4).whenPressed(CancelOperation())
         JoystickButton(controller, 7).whenPressed(RequestPanel())

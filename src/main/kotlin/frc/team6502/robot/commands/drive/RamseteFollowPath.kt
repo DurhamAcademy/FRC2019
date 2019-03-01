@@ -2,10 +2,7 @@ package frc.team6502.robot.commands.drive
 
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.*
-import frc.team6502.robot.DrivetrainMode
-import frc.team6502.robot.Odometry
-import frc.team6502.robot.Pose
-import frc.team6502.robot.TIMESTEP
+import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
 import jaci.pathfinder.Pathfinder
@@ -56,8 +53,8 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         )
 
         Drivetrain.set(
-                (commanded.first / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-1.0, 1.0),
-                (commanded.second / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-1.0, 1.0),
+                (commanded.first / DRIVETRAIN_MAXSPEED.feetPerSecond).coerceIn(-1.0, 1.0),
+                (commanded.second / DRIVETRAIN_MAXSPEED.feetPerSecond).coerceIn(-1.0, 1.0),
                 DrivetrainMode.CLOSED_LOOP)
 
         currentIndex++

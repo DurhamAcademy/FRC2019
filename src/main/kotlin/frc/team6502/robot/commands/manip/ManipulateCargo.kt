@@ -7,7 +7,7 @@ import frc.team6502.robot.RobotStatus
 import frc.team6502.robot.commandgroups.ShootCargo
 import frc.team6502.robot.subsystems.CargoIntake
 
-class ManipulateCargo : InstantCommand() {
+class ManipulateCargo(val cargoShip: Boolean) : InstantCommand() {
 
     init {
         requires(CargoIntake)
@@ -15,7 +15,7 @@ class ManipulateCargo : InstantCommand() {
 
     override fun execute() {
         when {
-            RobotStatus.currentGamePiece == GamePiece.CARGO -> ShootCargo(OI.selectedElevatorHeight == 2).start()
+            RobotStatus.currentGamePiece == GamePiece.CARGO -> ShootCargo(OI.selectedElevatorHeight == 2, cargoShip).start()
             RobotStatus.currentGamePiece == GamePiece.NONE -> IntakeCargo().start()
         }
     }
