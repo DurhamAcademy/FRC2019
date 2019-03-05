@@ -26,7 +26,6 @@ class Jevois(private val stream: Boolean = false) : Closeable {
 
     private var initializationTime = 0.0
     private var lastUpdate = 0.0
-    private var lastRetry = 0.0
 
     val isDataStale
         get() = Timer.getFPGATimestamp() > lastUpdate + STALE_THRESHOLD
@@ -65,15 +64,10 @@ class Jevois(private val stream: Boolean = false) : Closeable {
     }
 
     private fun periodic() {
-        if (retries > MAX_RETRIES) {
-            notifier.stop()
-            closeSerial()
-            DriverStation.reportError("Jevois exceeded maximum retry count, disabling vision system!!!", false)
-            return
-        }
+
 
         // if there is no data after a while then the cam is probably ded
-        if (isDataStale) closeSerial()
+
 
         if (jevoisPort == null) {
             // camera is not connected, attempt connection
@@ -82,8 +76,10 @@ class Jevois(private val stream: Boolean = false) : Closeable {
                     jevoisPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB)
                     initialize()
                 } catch (e: Exception) {
-                    DriverStation.reportWarning("Jevois refused serial connection, retry ${retries + 1}/$MAX_RETRIES", false)
-                    retries++
+
+                    DriverStation.reportWarning("Jevois refused serial connection, retry ${++retries}/$MAX_RETRIES", false)
+                    initializationTime = Timer.getFPGATimestamp()
+
                 }
             }
         } else {
@@ -102,6 +98,13 @@ class Jevois(private val stream: Boolean = false) : Closeable {
 
         }
 
+        if (isDataStale) closeSerial()
+        if (retries >= MAX_RETRIES) {
+            notifier.stop()
+            closeSerial()
+            DriverStation.reportError("Jevois exceeded maximum retry count, disabling vision system!!!", false)
+            return
+        }
     }
 
     fun runCommand(command: String) {
