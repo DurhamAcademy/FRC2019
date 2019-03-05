@@ -16,10 +16,10 @@ class Jevois(private val stream: Boolean = false) : Closeable {
     private val BAUD_RATE = 115200
 
     // time of no data that classifies as stale
-    private val STALE_THRESHOLD = 300
+    private val STALE_THRESHOLD = 0.1
 
     // time to not check staleness after an initial connection, also serves as retry interval
-    private val BOOT_THRESHOLD = 2000
+    private val BOOT_THRESHOLD = 2.0
 
     // maximum reconnection attempts before giving up
     private val MAX_RETRIES = 100
