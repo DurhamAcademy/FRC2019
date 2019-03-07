@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.commands.drive.CharacterizeDrivetrain
 import frc.team6502.robot.commands.vision.SetLEDRing
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.*
@@ -36,14 +35,13 @@ class Robot : TimedRobot(TIMESTEP) {
         Elevator
         HatchPanelIntake
         CargoIntake
-        Lighting
+//        Lighting
 
         RobotMap.kCompressor.closedLoopControl = true
-        RobotMap.kJevois.setStreaming(true)
+//        RobotMap.kJevois
 //        RobotMap.kJevois.setCam("absexp","500")
 
-        SmartDashboard.putData(CharacterizeDrivetrain())
-        SmartDashboard.putBoolean("Has Panel", false)
+//        SmartDashboard.putData(CharacterizeDrivetrain())
 
         autoChooser.addOption("Hybrid", null)
     }
@@ -55,6 +53,7 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
         SetLEDRing(false).start()
+        Wedges.deployed = false
         RobotStatus.setGamePiece(startingGamePiece)
     }
 
@@ -78,7 +77,6 @@ class Robot : TimedRobot(TIMESTEP) {
          println("Running path")
         autoCommand = RamseteFollowPath(t, 0.7, 0.2)
         autoCommand?.start()*/
-
         autoCommand = autoChooser.selected
         autoCommand?.start()
     }

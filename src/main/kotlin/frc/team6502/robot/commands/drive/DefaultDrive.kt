@@ -30,7 +30,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
     private var visionCorrection = 0.0
 
-
+    private var quickStopAccumulator = 0.0
 
     // FRONT TOGGLE
     private var frontIsFront = true

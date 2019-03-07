@@ -9,10 +9,7 @@ import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 import java.io.File
 import java.lang.Math.sin
-import kotlin.math.absoluteValue
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 /**
  * Ramsete path follower
@@ -24,7 +21,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     private var currentIndex = 0
     private val drivebase = 29.inches
-    private val logFile = File("/U/ramsetelog_${System.currentTimeMillis()}.csv")
+    private val logFile = File("/ramsetelog_${System.currentTimeMillis()}.csv")
 
     init {
         requires(Drivetrain)

@@ -5,10 +5,7 @@ import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.robot.*
 import frc.team6502.robot.commands.drive.RamseteFollowPath
 import frc.team6502.robot.commands.manip.SetElevatorOffset
-import jaci.pathfinder.Pathfinder
-import jaci.pathfinder.Trajectory
-import jaci.pathfinder.Waypoint
-import java.io.File
+import jaci.pathfinder.*
 
 /**
  * Generates a motion profile from the data collected from the vision system
@@ -43,7 +40,7 @@ class GenerateVisionSpline() : InstantCommand() {
         )
         val t = Pathfinder.generate(waypoints, cfg)
         if (t.segments.isEmpty()) return
-        Pathfinder.writeToCSV(File("/U/visionspline_${System.currentTimeMillis()}.csv"), t)
+//        Pathfinder.writeToCSV(File("/U/visionspline_${System.currentTimeMillis()}.csv"), t)
         visionSpline = t
         println("Generated trajectory in ${timeSinceInitialized() * 1000}ms")
         println("First ${t.segments.first().stringify()}")

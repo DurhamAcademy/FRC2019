@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj.GenericHID
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.robot.commands.lighting.RequestCargo
-import frc.team6502.robot.commands.lighting.RequestPanel
 import frc.team6502.robot.commands.manip.*
 import java.lang.Math.abs
 import kotlin.math.pow
@@ -86,22 +84,20 @@ object OI {
             }
         }
 
-        // if dashboard says i have cargo when i dont think i do
-        if (SmartDashboard.getBoolean("Has Cargo", false) && RobotStatus.currentGamePiece != GamePiece.CARGO)
+        if (!SmartDashboard.getBoolean("Cargo", true) && RobotStatus.currentGamePiece == GamePiece.CARGO)
+            SmartDashboard.putBoolean("Cargo", true)
+        if (SmartDashboard.getBoolean("Cargo", false) && RobotStatus.currentGamePiece != GamePiece.CARGO)
             RobotStatus.setGamePiece(GamePiece.CARGO)
 
-        // if dashboard says shouldnt have cargo when i think i do
-        if (!SmartDashboard.getBoolean("Has Cargo", true) && RobotStatus.currentGamePiece == GamePiece.CARGO)
-            RobotStatus.setGamePiece(GamePiece.NONE)
-
-        // if dashboard says i have panel when i dont think i do
-        if (SmartDashboard.getBoolean("Has Panel", false) && RobotStatus.currentGamePiece != GamePiece.HATCH)
+        if (!SmartDashboard.getBoolean("Hatch", true) && RobotStatus.currentGamePiece == GamePiece.HATCH)
+            SmartDashboard.putBoolean("Hatch", true)
+        if (SmartDashboard.getBoolean("Hatch", false) && RobotStatus.currentGamePiece != GamePiece.HATCH)
             RobotStatus.setGamePiece(GamePiece.HATCH)
 
-        // if dashboard says shouldnt have panel when i think i do
-        if (!SmartDashboard.getBoolean("Has Panel", true) && RobotStatus.currentGamePiece == GamePiece.HATCH)
+        if (!SmartDashboard.getBoolean("None", true) && RobotStatus.currentGamePiece == GamePiece.NONE)
+            SmartDashboard.putBoolean("None", true)
+        if (SmartDashboard.getBoolean("None", false) && RobotStatus.currentGamePiece != GamePiece.NONE)
             RobotStatus.setGamePiece(GamePiece.NONE)
-
     }
 
     /**
@@ -125,7 +121,6 @@ object OI {
         JoystickButton(controller, 2).whenPressed(ManipulateCargo(false))
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
         JoystickButton(controller, 4).whenPressed(CancelOperation())
-        JoystickButton(controller, 7).whenPressed(RequestPanel())
-        JoystickButton(controller, 8).whenPressed(RequestCargo())
+
     }
 }

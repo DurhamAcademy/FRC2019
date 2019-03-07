@@ -1,4 +1,4 @@
-package frc.team6502.robot.commands.lighting
+/*package frc.team6502.robot.commands.lighting
 
 import edu.wpi.first.wpilibj.command.TimedCommand
 import frc.team6502.robot.LightingCommand
@@ -12,4 +12,4 @@ class RequestPanel() : TimedCommand(2.0) {
     override fun initialize() {
         Lighting.currentCommand = LightingCommand.PANEL
     }
-}
+}*/
