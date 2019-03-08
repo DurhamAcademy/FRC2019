@@ -53,8 +53,11 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
         SetLEDRing(false).start()
-        Wedges.deployed = false
+        Wedges.unlock = true
         RobotStatus.setGamePiece(startingGamePiece)
+        SmartDashboard.putBoolean("None", RobotStatus.currentGamePiece == GamePiece.NONE)
+        SmartDashboard.putBoolean("Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
+        SmartDashboard.putBoolean("Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
     }
 
     /**
@@ -106,7 +109,9 @@ class Robot : TimedRobot(TIMESTEP) {
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 
-    override fun teleopPeriodic() {}
+    override fun teleopPeriodic() {
+        Wedges.unlock = true
+    }
     override fun autonomousPeriodic() {}
 
     override fun disabledPeriodic() {

@@ -3,11 +3,9 @@ package frc.team6502.robot.sensor
 import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
 import edu.wpi.cscore.UsbCamera
+import edu.wpi.cscore.VideoMode
 import edu.wpi.first.cameraserver.CameraServer
-import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj.Notifier
-import edu.wpi.first.wpilibj.SerialPort
-import edu.wpi.first.wpilibj.Timer
+import edu.wpi.first.wpilibj.*
 import frc.team6502.robot.TIMESTEP
 import java.io.Closeable
 
@@ -40,6 +38,10 @@ class Jevois(private val stream: Boolean = false) : Closeable {
 
     init {
         notifier.startPeriodic(TIMESTEP)
+
+        val cam = UsbCamera("Jevois", 0)
+        cam.setPixelFormat(VideoMode.PixelFormat.kYUYV)
+        if (stream) CameraServer.getInstance().startAutomaticCapture(cam)
     }
 
     override fun close() {
@@ -52,7 +54,6 @@ class Jevois(private val stream: Boolean = false) : Closeable {
 
     private fun initialize() {
         jevoisPort?.enableTermination()
-        if (stream) CameraServer.getInstance().startAutomaticCapture(UsbCamera("Jevois", 0))
         retries = 0
         initializationTime = Timer.getFPGATimestamp()
     }

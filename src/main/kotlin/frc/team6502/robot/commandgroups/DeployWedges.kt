@@ -9,7 +9,7 @@ class DeployWedges() : CommandGroup() {
     init {
         requires(Wedges)
         addSequential(SetWedgesLocked(false))
-        addSequential(WaitCommand(1.0))
+        addSequential(WaitCommand(5.0))
         addSequential(SetWedgesLocked(true))
     }
 }

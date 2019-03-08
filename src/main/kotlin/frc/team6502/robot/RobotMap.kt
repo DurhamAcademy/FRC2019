@@ -37,5 +37,5 @@ object RobotMap {
 
     val hatchSolenoidId = 0
     val rampSolenoidIds = arrayOf(1, 2)
-    val wedgeSolenoidIds = arrayOf(3, 4)
+    val wedgeSolenoidIds = arrayOf(3, 4, 5, 6)
 }

@@ -5,8 +5,7 @@ import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
-import jaci.pathfinder.Pathfinder
-import jaci.pathfinder.Trajectory
+import jaci.pathfinder.*
 import java.io.File
 import java.lang.Math.sin
 import kotlin.math.*
@@ -25,6 +24,12 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     init {
         requires(Drivetrain)
+        val xOffset = traj[0].x
+        val yOffset = traj[0].y
+        for (t in traj.segments.indices) {
+            traj[t].x -= xOffset
+            traj[t].y -= yOffset
+        }
     }
 
     override fun initialize() {
@@ -105,6 +110,14 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     fun boundHalf(ang: Double): Double {
         return Pathfinder.boundHalfDegrees(ang.radians.degrees).degrees.radians
+    }
+
+    companion object {
+
+        fun loadFromFile() {
+            PathfinderFRC.getTrajectory("CenterToLeftCargo")
+        }
+
     }
 
 }
