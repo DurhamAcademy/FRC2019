@@ -42,7 +42,7 @@ class IntakeCargo : Command() {
     override fun end() {
         CargoIntake.speedIntake = 0.0
         singleton = null
-        RobotStatus.setGamePiece(GamePiece.CARGO)
+        ZeroCargo().start()
     }
 
     override fun interrupted() {

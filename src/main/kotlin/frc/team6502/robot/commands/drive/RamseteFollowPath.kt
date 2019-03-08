@@ -18,6 +18,10 @@ import kotlin.math.*
  */
 class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
 
+    // PULL YOUR CODE IDOIT
+
+    constructor(name: String, b: Double, zeta: Double) : this(PathfinderFRC.getTrajectory(name), b, zeta)
+
     private var currentIndex = 0
     private val drivebase = 29.inches
     private val logFile = File("/ramsetelog_${System.currentTimeMillis()}.csv")

@@ -8,9 +8,11 @@ import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team6502.robot.commands.drive.RamseteFollowPath
 import frc.team6502.robot.commands.vision.SetLEDRing
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.*
+import java.io.File
 
 class Robot : TimedRobot(TIMESTEP) {
 
@@ -44,6 +46,12 @@ class Robot : TimedRobot(TIMESTEP) {
 //        SmartDashboard.putData(CharacterizeDrivetrain())
 
         autoChooser.addOption("Hybrid", null)
+
+        File("/home/lvuser/deploy/paths").listFiles().forEach {
+            if (!it.name.endsWith(".left.pf1.csv") && !it.name.endsWith(".right.pf1.csv"))
+                autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA))
+        }
+
     }
 
     override fun disabledInit() {
@@ -80,6 +88,7 @@ class Robot : TimedRobot(TIMESTEP) {
          println("Running path")
         autoCommand = RamseteFollowPath(t, 0.7, 0.2)
         autoCommand?.start()*/
+
         autoCommand = autoChooser.selected
         autoCommand?.start()
     }
