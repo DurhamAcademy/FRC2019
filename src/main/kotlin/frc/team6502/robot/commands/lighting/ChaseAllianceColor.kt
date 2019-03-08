@@ -1,4 +1,4 @@
-package frc.team6502.robot.commands.lighting
+/*package frc.team6502.robot.commands.lighting
 
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.command.Command
@@ -25,4 +25,4 @@ class ChaseAllianceColor() : Command() {
         return false
     }
 
-}
+}*/

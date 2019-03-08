@@ -14,7 +14,7 @@ class CharacterizeDrivetrain() : TimedCommand(5.9) {
     private val leftPoints = arrayListOf<Pair<Double, Double>>()
     private val rightPoints = arrayListOf<Pair<Double, Double>>()
 
-    val f = File("/U/characterizationData.txt")
+    val f = File("/characterizationData.txt")
 
     init {
         requires(Drivetrain)

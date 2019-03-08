@@ -8,8 +8,9 @@ object RobotStatus {
         private set
 
     fun setGamePiece(gp: GamePiece) {
-        SmartDashboard.putBoolean("Has Cargo", currentGamePiece == GamePiece.CARGO)
-        SmartDashboard.putBoolean("Has Panel", currentGamePiece == GamePiece.HATCH)
+        SmartDashboard.putBoolean("None", false)// currentGamePiece == GamePiece.NONE)
+        SmartDashboard.putBoolean("Cargo", false)// currentGamePiece == GamePiece.CARGO)
+        SmartDashboard.putBoolean("Panel", false)//currentGamePiece == GamePiece.HATCH)
 
         currentGamePiece = gp
         when (currentGamePiece) {
@@ -20,8 +21,9 @@ object RobotStatus {
     }
 
     init {
-        SmartDashboard.putBoolean("Has Cargo", currentGamePiece == GamePiece.CARGO)
-        SmartDashboard.putBoolean("Has Panel", currentGamePiece == GamePiece.HATCH)
+        SmartDashboard.putBoolean("None", currentGamePiece == GamePiece.NONE)
+        SmartDashboard.putBoolean("Cargo", currentGamePiece == GamePiece.CARGO)
+        SmartDashboard.putBoolean("Panel", currentGamePiece == GamePiece.HATCH)
     }
 
 }

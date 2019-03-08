@@ -30,7 +30,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
     private var visionCorrection = 0.0
 
-
+    private var quickStopAccumulator = 0.0
 
     // FRONT TOGGLE
     private var frontIsFront = true
@@ -47,6 +47,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         println("STARTING DRIVETRAIN")
         RobotMap.kIMU.zero()
         yawTimer.start()
+        jevoisController.enable()
         yawCorrection = 0.0
         yawCorrecting = true
 //        println("reset pigeon")
