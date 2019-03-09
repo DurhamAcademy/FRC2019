@@ -51,6 +51,6 @@ class IntakeCargo : Command() {
     }
 
     override fun isFinished(): Boolean {
-        return (CargoIntake.shooterCurrent > 2.6 && intakeCurrentTimer.get() > 0.25)
+        return (CargoIntake.shooterCurrent > 1.5 && intakeCurrentTimer.get() > 0.2)
     }
 }

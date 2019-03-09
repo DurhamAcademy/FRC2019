@@ -37,13 +37,13 @@ object OI {
         get() = deadband(controller.x, 0.1) == 0.0
 
     val commandedY: Double
-        get() = deadband(controller.getY(GenericHID.Hand.kLeft).pow(3), 0.04)
+        get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.03).pow(3)
 
     val commandedX: Double
-        get() = deadband(controller.getX(GenericHID.Hand.kRight).pow(3), 0.04)
+        get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.03).pow(3) * 0.5
 
     val commandedVC: Double
-        get() = controller.getTriggerAxis(GenericHID.Hand.kRight)
+        get() = 0.0//controller.getTriggerAxis(GenericHID.Hand.kRight)
 
     /**
      * Applies a deadband to an input

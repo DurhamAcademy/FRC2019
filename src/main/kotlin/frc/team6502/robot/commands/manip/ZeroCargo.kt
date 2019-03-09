@@ -7,13 +7,14 @@ import frc.team6502.robot.subsystems.CargoIntake
 
 class ZeroCargo : TimedCommand(1.0) {
     init {
-        requires(CargoIntake)
+//        requires(CargoIntake)
     }
 
     override fun initialize() {
         //Make the shooter reverse
+        println("I AM ZEROING")
         CargoIntake.shooterDrection(true)
-        CargoIntake.speedShooter = 0.1
+        CargoIntake.speedShooter = 0.25
     }
 
     override fun end() {

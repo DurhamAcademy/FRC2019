@@ -21,9 +21,9 @@ val HEIGHTS = arrayListOf(
 val ELEVATOR_GAINS = PIDConfig(0.3, 0.0, 0.08)
 val HOLD_VOLTAGE = 1.1
 
-val CARGO_DELIVERY_OFFSET = 8.5.inches.feet
+val CARGO_DELIVERY_OFFSET = 12.inches.feet
 val CARGO_DELIVERY_L3_OFFSET = 0.inches.feet
-val HATCH_DELIVERY_OFFSET = 1.5.inches.feet
+val HATCH_DELIVERY_OFFSET = 2.5.inches.feet
 
 val CRUISE_UP = 2.feetPerSecond
 val ACCEL_UP = 1.feetPerSecond // ^2

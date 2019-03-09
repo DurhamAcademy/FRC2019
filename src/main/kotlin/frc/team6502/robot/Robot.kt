@@ -41,7 +41,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
         RobotMap.kCompressor.closedLoopControl = true
 //        RobotMap.kJevois
-//        RobotMap.kJevois.setCam("absexp","500")
+        RobotMap.kJevois.runCommand("setcam absexp 500")
 
 //        SmartDashboard.putData(CharacterizeDrivetrain())
 
@@ -63,9 +63,12 @@ class Robot : TimedRobot(TIMESTEP) {
         SetLEDRing(false).start()
         Wedges.unlock = true
         RobotStatus.setGamePiece(startingGamePiece)
-        SmartDashboard.putBoolean("None", RobotStatus.currentGamePiece == GamePiece.NONE)
-        SmartDashboard.putBoolean("Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
-        SmartDashboard.putBoolean("Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
+        SmartDashboard.putBoolean("None", false)
+        SmartDashboard.putBoolean("Cargo", false)
+        SmartDashboard.putBoolean("Panel", false)
+        SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
+        SmartDashboard.putBoolean("Has Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
+        SmartDashboard.putBoolean("Has Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
     }
 
     /**

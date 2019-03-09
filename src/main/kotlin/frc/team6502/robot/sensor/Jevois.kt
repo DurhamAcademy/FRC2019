@@ -5,19 +5,20 @@ import com.google.gson.internal.LinkedTreeMap
 import edu.wpi.cscore.UsbCamera
 import edu.wpi.cscore.VideoMode
 import edu.wpi.first.cameraserver.CameraServer
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.*
 import frc.team6502.robot.TIMESTEP
 import java.io.Closeable
 
 class Jevois(private val stream: Boolean = false) : Closeable {
 
-    private val BAUD_RATE = 115200
+    private val BAUD_RATE = 19200
 
     // time of no data that classifies as stale
-    private val STALE_THRESHOLD = 0.1
+    private val STALE_THRESHOLD = 10.0
 
     // time to not check staleness after an initial connection, also serves as retry interval
-    private val BOOT_THRESHOLD = 2.0
+    private val BOOT_THRESHOLD = 20.0
 
     // maximum reconnection attempts before giving up
     private val MAX_RETRIES = 100
@@ -39,9 +40,12 @@ class Jevois(private val stream: Boolean = false) : Closeable {
     init {
         notifier.startPeriodic(TIMESTEP)
 
-        val cam = UsbCamera("Jevois", 0)
-        cam.setPixelFormat(VideoMode.PixelFormat.kYUYV)
-        if (stream) CameraServer.getInstance().startAutomaticCapture(cam)
+//        val cam = UsbCamera("Jevois", 0)
+//        cam.setPixelFormat(VideoMode.PixelFormat.kYUYV)
+//        if (stream) CameraServer.getInstance().startAutomaticCapture(cam)
+        NetworkTableInstance.getDefault()
+                .getEntry("/CameraPublisher/Jevois/streams")
+                .setStringArray(arrayOf("mjpeg:http://roborio-6502-frc.local:1181/?action=stream"))
     }
 
     override fun close() {
@@ -53,15 +57,19 @@ class Jevois(private val stream: Boolean = false) : Closeable {
     }
 
     private fun initialize() {
+
         jevoisPort?.enableTermination()
         retries = 0
         initializationTime = Timer.getFPGATimestamp()
+        println("CONNECTED CONNECTED")
+        runCommand("setcam absexp 750")
     }
 
     private fun closeSerial() {
         data.clear()
         jevoisPort?.close()
         jevoisPort = null
+        println("CLOSED SERIAL")
     }
 
     private fun periodic() {
@@ -99,7 +107,7 @@ class Jevois(private val stream: Boolean = false) : Closeable {
 
         }
 
-        if (isDataStale) closeSerial()
+        if (isDataStale && hasBootTimeExpired) closeSerial()
         if (retries >= MAX_RETRIES) {
             notifier.stop()
             closeSerial()
