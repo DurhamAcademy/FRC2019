@@ -12,7 +12,7 @@ import java.io.Closeable
 
 class Jevois(private val stream: Boolean = false) : Closeable {
 
-    private val BAUD_RATE = 19200
+    private val BAUD_RATE = 115200
 
     // time of no data that classifies as stale
     private val STALE_THRESHOLD = 10.0
