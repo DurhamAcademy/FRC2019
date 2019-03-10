@@ -4,18 +4,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commands.manip.SetElevatorOffset
 
 object RobotStatus {
-    var currentGamePiece = GamePiece.NONE
+    var currentGamePiece = GamePiece.HATCH
         private set
 
     fun setGamePiece(gp: GamePiece) {
         SmartDashboard.putBoolean("None", false)
         SmartDashboard.putBoolean("Cargo", false)
         SmartDashboard.putBoolean("Panel", false)
+
+
+        currentGamePiece = gp
+
         SmartDashboard.putBoolean("Has None", currentGamePiece == GamePiece.NONE)
         SmartDashboard.putBoolean("Has Cargo", currentGamePiece == GamePiece.CARGO)
         SmartDashboard.putBoolean("Has Panel", currentGamePiece == GamePiece.HATCH)
 
-        currentGamePiece = gp
         when (currentGamePiece) {
             GamePiece.NONE -> SetElevatorOffset(ElevatorOffset.INTAKE).start()
             GamePiece.CARGO -> SetElevatorOffset(ElevatorOffset.CARGO_DELIVERY).start()

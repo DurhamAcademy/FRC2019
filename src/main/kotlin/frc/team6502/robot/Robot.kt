@@ -1,6 +1,7 @@
 package frc.team6502.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
+import edu.wpi.first.cameraserver.CameraServer
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.TimedRobot
@@ -19,7 +20,7 @@ class Robot : TimedRobot(TIMESTEP) {
     private val autoChooser = SendableChooser<Command?>()
     private var autoCommand: Command? = null
 
-    private val startingGamePiece = GamePiece.NONE
+    private val startingGamePiece = GamePiece.HATCH
 
     override fun robotInit() {
         // report kotlin as the language (unofficially)
@@ -45,13 +46,19 @@ class Robot : TimedRobot(TIMESTEP) {
 
 //        SmartDashboard.putData(CharacterizeDrivetrain())
 
+        CameraServer.getInstance().startAutomaticCapture()
+
         autoChooser.addOption("Hybrid", null)
+
+
 
         File("/home/lvuser/deploy/paths").listFiles().forEach {
             if (!it.name.endsWith(".left.pf1.csv") && !it.name.endsWith(".right.pf1.csv"))
                 autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA))
         }
 
+        SmartDashboard.putData(autoChooser)
+        Elevator.elevatorTalon.selectedSensorPosition = 0
     }
 
     override fun disabledInit() {
@@ -102,7 +109,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
         // zero everything
         RobotOdometry.zero()
-        Elevator.elevatorTalon.selectedSensorPosition = 0
+
 
         Elevator.updateSetpoint()
 
@@ -116,7 +123,11 @@ class Robot : TimedRobot(TIMESTEP) {
         Scheduler.getInstance().run()
 
         OI.poll()
+        RobotMap.kJevois.periodic()
 
+//        SmartDashboard.putBoolean("None", false)
+//        SmartDashboard.putBoolean("Cargo", false)
+//        SmartDashboard.putBoolean("Panel", false)
         SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
@@ -128,6 +139,9 @@ class Robot : TimedRobot(TIMESTEP) {
 
     override fun disabledPeriodic() {
         Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())
+        SmartDashboard.putBoolean("None", false)
+        SmartDashboard.putBoolean("Cargo", false)
+        SmartDashboard.putBoolean("Panel", false)
     }
 
 }

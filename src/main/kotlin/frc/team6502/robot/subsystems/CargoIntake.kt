@@ -50,7 +50,7 @@ object CargoIntake : Subsystem() {
     var speedIntake: Double = 0.0
         set(value) {
             shooterTalon.set(ControlMode.PercentOutput, value * 0.5)
-            intakeTalon.set(ControlMode.PercentOutput, value)
+            intakeTalon.set(ControlMode.PercentOutput, -value)
         }
     var speedShooter: Double = 0.0
         set(value) {

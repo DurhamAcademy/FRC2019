@@ -11,13 +11,16 @@ import frc.team6502.robot.commands.manip.*
 class ShootCargo(val levelThree: Boolean, val cargoShip: Boolean) : CommandGroup() {
     init {
         if (levelThree) addSequential(SetCargoRamp(true))
-        if (levelThree) addSequential(SetElevatorOffset(ElevatorOffset.CARGO_L3_DELIVERY))
+        if (levelThree) {
+            addSequential(SetElevatorOffset(ElevatorOffset.CARGO_L3_DELIVERY))
+            addSequential(WaitCommand(1.0))
+        }
         if (cargoShip) {
             addSequential(SetElevatorHeight(28.inches))
             addSequential(SetElevatorOffset(ElevatorOffset.INTAKE))
-            addSequential(WaitCommand(1.0))
+            addSequential(WaitCommand(2.0))
         }
-        addSequential(WaitCommand(1.0))
+
         addSequential(SetShooterSpeed(if (levelThree) -1.0 else 1.0))
         addSequential(WaitCommand(1.5))
         addSequential(SetGamePiece(GamePiece.NONE))

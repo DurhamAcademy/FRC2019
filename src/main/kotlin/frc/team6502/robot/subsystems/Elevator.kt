@@ -40,7 +40,7 @@ object Elevator : Subsystem() {
             // set PID
             config_kP(0, ELEVATOR_GAINS.p)
             config_kI(0, ELEVATOR_GAINS.i)
-            config_IntegralZone(0, 64)
+            config_IntegralZone(0, 16)
             config_kD(0, ELEVATOR_GAINS.d)
 
 //            configPeak
@@ -77,8 +77,8 @@ object Elevator : Subsystem() {
     fun zeroHeight() {
 //        zeroing = true
         // start the zero elevator cmd
-        elevatorTalon.selectedSensorPosition = 0
-        println("ZEROED ELEVATOR")
+//        elevatorTalon.selectedSensorPosition = 0
+        println("ZEROED ELEVATOR (NOT)")
     }
 
     fun testElevatorOk() {

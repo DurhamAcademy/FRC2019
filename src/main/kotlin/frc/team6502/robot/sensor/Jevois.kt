@@ -1,14 +1,18 @@
 package frc.team6502.robot.sensor
 
+import com.fazecast.jSerialComm.SerialPort
 import com.google.gson.Gson
 import com.google.gson.internal.LinkedTreeMap
 import edu.wpi.cscore.UsbCamera
 import edu.wpi.cscore.VideoMode
 import edu.wpi.first.cameraserver.CameraServer
 import edu.wpi.first.networktables.NetworkTableInstance
-import edu.wpi.first.wpilibj.*
+import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.Notifier
+import edu.wpi.first.wpilibj.Timer
 import frc.team6502.robot.TIMESTEP
 import java.io.Closeable
+import java.nio.charset.Charset
 
 class Jevois(private val stream: Boolean = false) : Closeable {
 
@@ -31,21 +35,27 @@ class Jevois(private val stream: Boolean = false) : Closeable {
     val hasBootTimeExpired
         get() = Timer.getFPGATimestamp() > initializationTime + BOOT_THRESHOLD
 
-    private var jevoisPort: SerialPort? = null
-    private var retries = 0
-    private val notifier = Notifier { periodic() }
+     var jevoisPort: SerialPort? = null
 
     var data: LinkedTreeMap<String, Any> = LinkedTreeMap()
 
     init {
-        notifier.startPeriodic(TIMESTEP)
+//        notifier.startPeriodic(TIMESTEP)
 
 //        val cam = UsbCamera("Jevois", 0)
 //        cam.setPixelFormat(VideoMode.PixelFormat.kYUYV)
-//        if (stream) CameraServer.getInstance().startAutomaticCapture(cam)
-        NetworkTableInstance.getDefault()
-                .getEntry("/CameraPublisher/Jevois/streams")
-                .setStringArray(arrayOf("mjpeg:http://roborio-6502-frc.local:1181/?action=stream"))
+
+//        CameraServer.getInstance().startAutomaticCapture(cam)
+//        CameraServer.getInstance().addCamera(cam)
+//        CameraServer.getInstance().addServer("Jevois",1181)
+//        NetworkTableInstance.getDefault()
+//                .getEntry("/CameraPublisher/Jevois/streams")
+//                .setStringArray(arrayOf("mjpeg:http://roborio-6502-frc.local:1181/?action=stream"))
+
+
+
+
+
     }
 
     override fun close() {
@@ -57,71 +67,37 @@ class Jevois(private val stream: Boolean = false) : Closeable {
     }
 
     private fun initialize() {
-
-        jevoisPort?.enableTermination()
-        retries = 0
-        initializationTime = Timer.getFPGATimestamp()
-        println("CONNECTED CONNECTED")
-        runCommand("setcam absexp 750")
+//        jevoisPort?.openPort()
     }
 
     private fun closeSerial() {
-        data.clear()
-        jevoisPort?.close()
-        jevoisPort = null
-        println("CLOSED SERIAL")
+//        jevoisPort?.closePort()
     }
 
-    private fun periodic() {
-
-
-        // if there is no data after a while then the cam is probably ded
-
-
-        if (jevoisPort == null) {
-            // camera is not connected, attempt connection
-            if (hasBootTimeExpired) {
-                try {
-                    jevoisPort = SerialPort(BAUD_RATE, SerialPort.Port.kUSB)
-                    initialize()
-                } catch (e: Exception) {
-
-                    DriverStation.reportWarning("Jevois refused serial connection, retry ${++retries}/$MAX_RETRIES", false)
-                    initializationTime = Timer.getFPGATimestamp()
-
+    fun periodic() {
+/*
+        if(jevoisPort == null) {
+            SerialPort.getCommPorts().forEach {
+                if (it.descriptivePortName.contains("ACM") && !it.isOpen) {
+                    jevoisPort = it
+                    jevoisPort?.openPort()
+                    println("Connected to ${it.descriptivePortName}")
                 }
             }
         } else {
-            // camera is connected, read data
-            if (jevoisPort!!.bytesReceived > 0) {
-                lastUpdate = Timer.getFPGATimestamp()
-                val s = jevoisPort!!.readString().trim()
-                if (s.startsWith("{") && s.endsWith("}")) {
-                    // that boi is a json
-                    data = Gson().fromJson(s, data.javaClass)
-                } else {
-                    // either malformed or a log message
-                    println("JEVOIS: $s")
-                }
+            if(jevoisPort!!.bytesAvailable() > 0) {
+                val b = ByteArray(jevoisPort!!.bytesAvailable())
+                jevoisPort?.readBytes(b, b.size.toLong())
+                println(b.toString(Charset.defaultCharset()))
             }
-
         }
 
-        if (isDataStale && hasBootTimeExpired) closeSerial()
-        if (retries >= MAX_RETRIES) {
-            notifier.stop()
-            closeSerial()
-            DriverStation.reportError("Jevois exceeded maximum retry count, disabling vision system!!!", false)
-            return
-        }
+*/
     }
 
     fun runCommand(command: String) {
-        if (jevoisPort != null) {
-            jevoisPort?.writeString("$command\n")
-        } else {
-            DriverStation.reportWarning("Tried executing command on disconnected serial port", false)
-        }
+//        val b = (command + "\n").toByteArray(Charset.defaultCharset())
+//        jevoisPort?.writeBytes(b, b.size.toLong())
     }
 
 }

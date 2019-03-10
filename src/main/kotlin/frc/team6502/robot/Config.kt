@@ -16,9 +16,9 @@ val GROUND_DISTANCE = 6.inches.feet
 val HEIGHTS = arrayListOf(
         0.inches to "Level 1",
         28.inches to "Level 2",
-        56.inches to "Level 3"
+        53.inches to "Level 3"
 )
-val ELEVATOR_GAINS = PIDConfig(0.3, 0.0, 0.08)
+val ELEVATOR_GAINS = PIDConfig(0.5, 0.0001, 0.08)
 val HOLD_VOLTAGE = 1.1
 
 val CARGO_DELIVERY_OFFSET = 12.inches.feet

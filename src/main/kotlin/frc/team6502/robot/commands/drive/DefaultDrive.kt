@@ -62,6 +62,8 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
         }
+        yawCorrection = 0.0
+        visionCorrection = 0.0
 //        println(throttle)
 //        if (yawCorrection.absoluteValue < 0.05 && throttle < 0.15 && throttle > 0.0){
 //            yawCorrection = 0.0
@@ -81,7 +83,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 //        println("t=$throttle r=$rotation")
         if (yawCorrecting) {
 //            println("t=$throttle r=$rotation")
-            val totalCorrection = (yawCorrection + visionCorrection).coerceIn(-correctionLimit, correctionLimit)
+            val totalCorrection = 0.0//(yawCorrection + visionCorrection).coerceIn(-correctionLimit, correctionLimit)
             Drivetrain.set(throttle - totalCorrection, throttle + totalCorrection, DrivetrainMode.CLOSED_LOOP)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
