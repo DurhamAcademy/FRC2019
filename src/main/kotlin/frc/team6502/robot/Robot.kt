@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commands.drive.RamseteFollowPath
-import frc.team6502.robot.commands.vision.SetLEDRing
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.*
 import java.io.File
@@ -41,8 +40,6 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Lighting
 
         RobotMap.kCompressor.closedLoopControl = true
-//        RobotMap.kJevois
-        RobotMap.kJevois.runCommand("setcam absexp 500")
 
 //        SmartDashboard.putData(CharacterizeDrivetrain())
 
@@ -71,7 +68,6 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
 
-        SetLEDRing(false).start()
         RobotStatus.setGamePiece(startingGamePiece)
         SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
         SmartDashboard.putBoolean("Has Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
@@ -123,8 +119,6 @@ class Robot : TimedRobot(TIMESTEP) {
         Scheduler.getInstance().run()
 
         OI.poll()
-        RobotMap.kJevois.periodic()
-
 //        SmartDashboard.putBoolean("None", false)
 //        SmartDashboard.putBoolean("Cargo", false)
 //        SmartDashboard.putBoolean("Panel", false)

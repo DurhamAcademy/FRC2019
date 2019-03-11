@@ -1,11 +1,11 @@
 package frc.team6502.robot.sensor
 
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.PIDSource
 import edu.wpi.first.wpilibj.PIDSourceType
-import frc.team6502.robot.JEVOIS_OFFSET
-import frc.team6502.robot.RobotMap
 
-class JevoisPIDSource : PIDSource {
+class VisionPIDSource : PIDSource {
+    val lt = NetworkTableInstance.getDefault().getTable("limelight")
     override fun getPIDSourceType(): PIDSourceType {
         return PIDSourceType.kDisplacement
     }
@@ -15,12 +15,9 @@ class JevoisPIDSource : PIDSource {
     }
 
     override fun pidGet(): Double {
-        return if (RobotMap.kJevois.data.getOrDefault("hasContour", false) as Boolean) {
-            (RobotMap.kJevois.data.getOrDefault("x", 0.0) as Double) - JEVOIS_OFFSET.inches
-        } else {
-            0.0
-        }
-
+        return if (lt.getEntry("tv").getNumber(0) as Int > 0)
+            lt.getEntry("tx").getDouble(0.0)
+        else 0.0
     }
 
 }

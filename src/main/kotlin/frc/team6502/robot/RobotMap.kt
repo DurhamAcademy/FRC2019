@@ -3,7 +3,6 @@ package frc.team6502.robot
 import com.ctre.phoenix.sensors.PigeonIMU
 import edu.wpi.first.wpilibj.Compressor
 import edu.wpi.first.wpilibj.DigitalOutput
-import frc.team6502.robot.sensor.Jevois
 
 /**
  * This contains actual robot components and indices
@@ -27,8 +26,6 @@ object RobotMap {
     val intakeVictorId = 12
     val frontIntakeTalonId = 13
 
-    // SENSORS //
-    val kJevois = Jevois(true)
     val kLEDRingRelay = DigitalOutput(0)
 
     val kIMU = PigeonIMU(imuId)

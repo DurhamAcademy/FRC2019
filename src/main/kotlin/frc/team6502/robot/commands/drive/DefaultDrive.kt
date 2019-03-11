@@ -5,8 +5,7 @@ import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.*
-import frc.team6502.robot.commands.vision.SetLEDRing
-import frc.team6502.robot.sensor.JevoisPIDSource
+import frc.team6502.robot.sensor.VisionPIDSource
 import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
@@ -35,7 +34,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     // FRONT TOGGLE
     private var frontIsFront = true
 
-    private var jevoisController = PIDController(0.01, 0.0, 0.01, JevoisPIDSource()) {
+    private var jevoisController = PIDController(0.01, 0.0, 0.01, VisionPIDSource()) {
         visionCorrection = it * OI.commandedVC
     }
 
@@ -74,8 +73,6 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
             RobotMap.kIMU.zero()
         }
 
-        // turn on the ring if vision is about to happen
-        SetLEDRing(OI.commandedVC > 0.01).start()
 
         if (OI.commandedVC < 0.05) visionCorrection = 0.0
 
