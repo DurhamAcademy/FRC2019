@@ -18,7 +18,7 @@ class ShootCargo(val levelThree: Boolean, val cargoShip: Boolean) : CommandGroup
         if (cargoShip) {
             addSequential(SetElevatorHeight(28.inches))
             addSequential(SetElevatorOffset(ElevatorOffset.INTAKE))
-            addSequential(WaitCommand(2.0))
+            addSequential(WaitCommand(1.5))
         }
 
         addSequential(SetShooterSpeed(if (levelThree) -1.0 else 1.0))

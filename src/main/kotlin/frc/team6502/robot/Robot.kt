@@ -62,17 +62,17 @@ class Robot : TimedRobot(TIMESTEP) {
     }
 
     override fun disabledInit() {
+
         OI.createElevatorButtons()
+
         SmartDashboard.putBoolean("Correcting", false)
         SmartDashboard.putNumber("Heading Correction", 0.0)
+
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
+
         SetLEDRing(false).start()
-        Wedges.unlock = true
         RobotStatus.setGamePiece(startingGamePiece)
-        SmartDashboard.putBoolean("None", false)
-        SmartDashboard.putBoolean("Cargo", false)
-        SmartDashboard.putBoolean("Panel", false)
         SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
         SmartDashboard.putBoolean("Has Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
         SmartDashboard.putBoolean("Has Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
@@ -139,9 +139,6 @@ class Robot : TimedRobot(TIMESTEP) {
 
     override fun disabledPeriodic() {
         Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())
-        SmartDashboard.putBoolean("None", false)
-        SmartDashboard.putBoolean("Cargo", false)
-        SmartDashboard.putBoolean("Panel", false)
     }
 
 }

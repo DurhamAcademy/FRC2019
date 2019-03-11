@@ -24,11 +24,23 @@ object OI {
     fun setElevatorHeight(index: Int) {
         if (index !in 0 until HEIGHTS.size) return
         println("SET TO $index")
+
+        // if you are intaking, stop it
         IntakeCargo.singleton?.cancel()
+
+        // update backing field
         selectedElevatorHeight = index
+
+        // get height pair
         val height = HEIGHTS[index]
+
+        // set elevator buttons back to false
         createElevatorButtons()
+
+        // put the boolean
         SmartDashboard.putBoolean(height.second, true)
+
+        // move the elevator to the correct point
         SetElevatorHeight(height.first).start()
         println("Set height to ${height.first.feet}ft")
     }
@@ -37,7 +49,7 @@ object OI {
         get() = deadband(controller.x, 0.1) == 0.0
 
     val commandedY: Double
-        get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.05).pow(3) * 0.5
+        get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.05).pow(3) * 0.75
 
     val commandedX: Double
         get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.05).pow(3) * 0.25
@@ -85,19 +97,12 @@ object OI {
             }
         }
 
-        /*if (!SmartDashboard.getBoolean("Cargo", true) && RobotStatus.currentGamePiece == GamePiece.CARGO)
-            SmartDashboard.putBoolean("Cargo", true)*/
-        if (SmartDashboard.getBoolean("Cargo", false))
+        // game piece overrides
+        if (RobotStatus.cargo.getBoolean(false))
             RobotStatus.setGamePiece(GamePiece.CARGO)
-
-        /*if (!SmartDashboard.getBoolean("Hatch", true) && RobotStatus.currentGamePiece == GamePiece.HATCH)
-            SmartDashboard.putBoolean("Hatch", true)*/
-        if (SmartDashboard.getBoolean("Panel", false))
+        if (RobotStatus.hatch.getBoolean(false))
             RobotStatus.setGamePiece(GamePiece.HATCH)
-
-        /*if (!SmartDashboard.getBoolean("None", true) && RobotStatus.currentGamePiece == GamePiece.NONE)
-            SmartDashboard.putBoolean("None", true)*/
-        if (SmartDashboard.getBoolean("None", false))
+        if (RobotStatus.none.getBoolean(false))
             RobotStatus.setGamePiece(GamePiece.NONE)
     }
 

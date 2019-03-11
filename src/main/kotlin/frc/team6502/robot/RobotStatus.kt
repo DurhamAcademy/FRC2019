@@ -1,35 +1,38 @@
 package frc.team6502.robot
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard
 import frc.team6502.robot.commands.manip.SetElevatorOffset
 
 object RobotStatus {
-    var currentGamePiece = GamePiece.HATCH
+    var currentGamePiece = GamePiece.NONE
         private set
 
-    fun setGamePiece(gp: GamePiece) {
-        SmartDashboard.putBoolean("None", false)
-        SmartDashboard.putBoolean("Cargo", false)
-        SmartDashboard.putBoolean("Panel", false)
+    val none = Shuffleboard.getTab("Teleop")
+            .add("None", false)
+            .withWidget("Toggle Button")
+            .entry
 
+    val hatch = Shuffleboard.getTab("Teleop")
+            .add("Hatch", false)
+            .withWidget("Toggle Button")
+            .entry
+
+    val cargo = Shuffleboard.getTab("Teleop")
+            .add("Cargo", false)
+            .withWidget("Toggle Button")
+            .entry
+
+    fun setGamePiece(gp: GamePiece) {
+        none.setBoolean(false)
+        hatch.setBoolean(false)
+        cargo.setBoolean(false)
 
         currentGamePiece = gp
-
-        SmartDashboard.putBoolean("Has None", currentGamePiece == GamePiece.NONE)
-        SmartDashboard.putBoolean("Has Cargo", currentGamePiece == GamePiece.CARGO)
-        SmartDashboard.putBoolean("Has Panel", currentGamePiece == GamePiece.HATCH)
-
         when (currentGamePiece) {
             GamePiece.NONE -> SetElevatorOffset(ElevatorOffset.INTAKE).start()
             GamePiece.CARGO -> SetElevatorOffset(ElevatorOffset.CARGO_DELIVERY).start()
             GamePiece.HATCH -> SetElevatorOffset(ElevatorOffset.HATCH_DELIVERY).start()
         }
-    }
-
-    init {
-        SmartDashboard.putBoolean("Has None", currentGamePiece == GamePiece.NONE)
-        SmartDashboard.putBoolean("Has Cargo", currentGamePiece == GamePiece.CARGO)
-        SmartDashboard.putBoolean("Has Panel", currentGamePiece == GamePiece.HATCH)
     }
 
 }
