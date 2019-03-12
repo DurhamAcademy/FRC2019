@@ -46,15 +46,14 @@ class Robot : TimedRobot(TIMESTEP) {
         CameraServer.getInstance().startAutomaticCapture()
 
         autoChooser.addOption("Hybrid", null)
-
-
-
         File("/home/lvuser/deploy/paths").listFiles().forEach {
             if (!it.name.endsWith(".left.pf1.csv") && !it.name.endsWith(".right.pf1.csv"))
                 autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA))
         }
 
         SmartDashboard.putData(autoChooser)
+
+        // zero elevator height on boot
         Elevator.elevatorTalon.selectedSensorPosition = 0
     }
 
@@ -83,18 +82,6 @@ class Robot : TimedRobot(TIMESTEP) {
         RobotOdometry.zero()
         Elevator.updateSetpoint()
 
-        /*println("Generating spline")
-        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_LOW, TIMESTEP, 5.0, 2.0, 18.0)
-         val waypoints = arrayOf(
-                 Waypoint(0.0,0.0, Pathfinder.d2r(0.0)),
-                 Waypoint(5.05, 0.471, -0.08)
-         )
-         val t = Pathfinder.generate(waypoints, cfg)
-        Pathfinder.writeToCSV(File("/U/traj.csv"), t)
-         println("Running path")
-        autoCommand = RamseteFollowPath(t, 0.7, 0.2)
-        autoCommand?.start()*/
-
         autoCommand = autoChooser.selected
         autoCommand?.start()
     }
@@ -102,26 +89,18 @@ class Robot : TimedRobot(TIMESTEP) {
     override fun teleopInit() {
         // if auto is still running for some reason, stop it
         autoCommand?.cancel()
-
-        // zero everything
-        RobotOdometry.zero()
-
-
         Elevator.updateSetpoint()
 
-        // make elevator go to level 1 idle height
+        // make elevator go to level 1
+
+        //TODO: if autos are going to level 2+ remove this!!!
         OI.setElevatorHeight(0)
     }
 
     override fun robotPeriodic() {
-        // do everything
-//        Scheduler.getInstance().run()
         Scheduler.getInstance().run()
 
         OI.poll()
-//        SmartDashboard.putBoolean("None", false)
-//        SmartDashboard.putBoolean("Cargo", false)
-//        SmartDashboard.putBoolean("Panel", false)
         SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
@@ -132,6 +111,7 @@ class Robot : TimedRobot(TIMESTEP) {
     override fun autonomousPeriodic() {}
 
     override fun disabledPeriodic() {
+        // make elevator not go sicko mode on enable (constantly set setpoint to current position)
         Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())
     }
 

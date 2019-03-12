@@ -13,18 +13,15 @@ class ZeroCargo : TimedCommand(1.0) {
     override fun initialize() {
         //Make the shooter reverse
         println("I AM ZEROING")
-        CargoIntake.shooterDrection(true)
-        CargoIntake.speedShooter = 0.25
+        CargoIntake.speedShooter = -0.25
     }
 
     override fun end() {
         CargoIntake.speedShooter = 0.0
-        CargoIntake.shooterDrection(false)
         RobotStatus.setGamePiece(GamePiece.CARGO)
     }
 
     override fun interrupted() {
         CargoIntake.speedShooter = 0.0
-        CargoIntake.shooterDrection(false)
     }
 }

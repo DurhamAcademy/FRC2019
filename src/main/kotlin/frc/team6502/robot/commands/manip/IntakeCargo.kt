@@ -32,8 +32,10 @@ class IntakeCargo : Command() {
     override fun execute() {
         if (Elevator.elevatorTalon.selectedSensorPosition < 2048) {
             CargoIntake.speedIntake = 0.4
+            CargoIntake.speedShooter = 0.2
         } else {
             CargoIntake.speedIntake = 0.0
+            CargoIntake.speedShooter = 0.0
         }
 //        println("RUNNING RUNNING RUNNING")
         SmartDashboard.putNumber("shooterCurrent", CargoIntake.shooterCurrent)
@@ -41,12 +43,14 @@ class IntakeCargo : Command() {
 
     override fun end() {
         CargoIntake.speedIntake = 0.0
+        CargoIntake.speedShooter = 0.0
         singleton = null
         ZeroCargo().start()
     }
 
     override fun interrupted() {
         CargoIntake.speedIntake = 0.0
+        CargoIntake.speedShooter = 0.0
         singleton = null
     }
 
