@@ -1,30 +1,22 @@
 package frc.team6502.robot.commands.manip
 
 import edu.wpi.first.wpilibj.command.InstantCommand
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team6502.robot.GamePiece
 import frc.team6502.robot.OI
+import frc.team6502.robot.RobotStatus
+import frc.team6502.robot.commandgroups.ShootCargo
 import frc.team6502.robot.subsystems.CargoIntake
 
-class ManipulateCargo : InstantCommand() {
-
-    companion object {
-        var hasCargo = false
-
-    }
+class ManipulateCargo(val cargoShip: Boolean) : InstantCommand() {
 
     init {
         requires(CargoIntake)
-        SmartDashboard.putBoolean("Has Cargo", hasCargo)
     }
 
     override fun execute() {
-        hasCargo = SmartDashboard.getBoolean("Has Cargo", false)
-        if (hasCargo) {
-            ShootCargo(OI.selectedElevatorHeight == 2).start()
-        } else {
-            IntakeCargo().start()
+        when {
+            RobotStatus.currentGamePiece == GamePiece.CARGO -> ShootCargo(OI.selectedElevatorHeight == 2, cargoShip).start()
+            RobotStatus.currentGamePiece == GamePiece.NONE -> IntakeCargo().start()
         }
-        hasCargo = !hasCargo
-        SmartDashboard.putBoolean("Has Cargo", hasCargo)
     }
 }

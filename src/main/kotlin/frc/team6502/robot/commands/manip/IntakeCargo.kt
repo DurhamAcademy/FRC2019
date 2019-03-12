@@ -3,8 +3,8 @@ package frc.team6502.robot.commands.manip
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.kyberlib.util.units.inches
-import frc.team6502.robot.OI
+import frc.team6502.robot.GamePiece
+import frc.team6502.robot.RobotStatus
 import frc.team6502.robot.subsystems.CargoIntake
 import frc.team6502.robot.subsystems.Elevator
 
@@ -22,35 +22,35 @@ class IntakeCargo : Command() {
     }
 
     override fun initialize() {
+        if (RobotStatus.currentGamePiece != GamePiece.NONE) {
+            cancel()
+        }
         intakeCurrentTimer.reset()
         intakeCurrentTimer.start()
     }
 
     override fun execute() {
         if (Elevator.elevatorTalon.selectedSensorPosition < 2048) {
-            CargoIntake.speedIntake = 0.5
+            CargoIntake.speedIntake = 0.4
         } else {
             CargoIntake.speedIntake = 0.0
         }
 //        println("RUNNING RUNNING RUNNING")
         SmartDashboard.putNumber("shooterCurrent", CargoIntake.shooterCurrent)
-        SetElevatorHeight(6.inches).start()
     }
 
     override fun end() {
         CargoIntake.speedIntake = 0.0
         singleton = null
-        OI.setElevatorHeight(0)
+        ZeroCargo().start()
     }
 
     override fun interrupted() {
         CargoIntake.speedIntake = 0.0
         singleton = null
-        OI.setElevatorHeight(0)
     }
 
     override fun isFinished(): Boolean {
-        println(intakeCurrentTimer.get())
-        return OI.controller.yButton || (CargoIntake.shooterCurrent > 2.0 && intakeCurrentTimer.get() > 1.0)
+        return (CargoIntake.shooterCurrent > 1.6 && intakeCurrentTimer.get() > 0.2)
     }
 }

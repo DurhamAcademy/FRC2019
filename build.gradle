@@ -1,5 +1,5 @@
 plugins {
-    id "edu.wpi.first.GradleRIO" version "2019.1.1"
+    id "edu.wpi.first.GradleRIO" version "2019.4.1"
     id 'org.jetbrains.kotlin.jvm' version '1.3.20'
 }
 
@@ -15,6 +15,13 @@ deploy {
         frcJavaArtifact('frcJava') {
             targets << "roborio"
             debug = frc.getDebugOrDefault(false)
+        }
+        fileTreeArtifact('frcStaticFileDeploy') {
+            // The directory below is the local directory to deploy
+            files = fileTree(dir: 'src/main/deploy')
+            // Deploy to RoboRIO target, into /home/lvuser/deploy
+            targets << "roborio"
+            directory = '/home/lvuser/deploy'
         }
     }
 }
@@ -37,6 +44,7 @@ dependencies {
 
     compile 'org.nield:kotlin-statistics:1.2.1'
     implementation "com.google.code.gson:gson:2.8.5"
+    compile 'com.fazecast:jSerialComm:[2.0.0,3.0.0)'
 
     // kyber
     compile "frc.team6502:kyberlib:2019.1.4"
@@ -55,5 +63,4 @@ jar {
 
 sourceSets {
     main.kotlin.srcDirs = ['src/main/kotlin']
-    test.kotlin.srcDirs = ['src/test/kotlin']
 }

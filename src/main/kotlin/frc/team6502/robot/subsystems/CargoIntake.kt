@@ -17,7 +17,7 @@ object CargoIntake : Subsystem() {
     private val shooterVictor = VictorSPX(RobotMap.intakeVictorId)
 
     private val intakeTalon = TalonSRX(RobotMap.frontIntakeTalonId)
-    private val rampSolenoid = DoubleSolenoid(1, 2)
+    private val rampSolenoid = DoubleSolenoid(RobotMap.rampSolenoidIds[0], RobotMap.rampSolenoidIds[1])
 
     init {
         // turn on brake mode and set directions for elevator wheels
@@ -50,7 +50,7 @@ object CargoIntake : Subsystem() {
     var speedIntake: Double = 0.0
         set(value) {
             shooterTalon.set(ControlMode.PercentOutput, value * 0.5)
-            intakeTalon.set(ControlMode.PercentOutput, value)
+            intakeTalon.set(ControlMode.PercentOutput, -value)
         }
     var speedShooter: Double = 0.0
         set(value) {

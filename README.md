@@ -7,12 +7,14 @@ FYI: Touching `build.gradle` or `Main.kt` will probably break things.
 - Drivetrain
   - Drive straight assist
   - Velocity drive
+  - Vision (coming soon)
   - On-RIO characterization (kV and kS)
-  - Ramsete-based spline following (in theory)
+  - Ramsete spline following
 - Elevator
   - Trapezoidal height control for maximum smoothness
+  - Minimal driver control (elevator knows what game piece it has and moves accordingly)
 - Cargo intake
   - Automatic shutoff when cargo has been acquired
-  - Three point turn rocket level 3 scoring with vision
 - Hatch intake
-  - Moves hatch panels around. 'Nuff said.
+  - Moves hatch panels around.
+  - Coordinated autonomous elevator movement to pick up and place panels with one button

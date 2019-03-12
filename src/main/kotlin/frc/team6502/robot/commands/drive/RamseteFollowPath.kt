@@ -2,20 +2,13 @@ package frc.team6502.robot.commands.drive
 
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.*
-import frc.team6502.robot.DrivetrainMode
-import frc.team6502.robot.Odometry
-import frc.team6502.robot.Pose
-import frc.team6502.robot.TIMESTEP
+import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
-import jaci.pathfinder.Pathfinder
-import jaci.pathfinder.Trajectory
+import jaci.pathfinder.*
 import java.io.File
 import java.lang.Math.sin
-import kotlin.math.absoluteValue
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 /**
  * Ramsete path follower
@@ -25,12 +18,22 @@ import kotlin.math.sqrt
  */
 class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
 
+    // PULL YOUR CODE IDOIT
+
+    constructor(name: String, b: Double, zeta: Double) : this(PathfinderFRC.getTrajectory(name), b, zeta)
+
     private var currentIndex = 0
     private val drivebase = 29.inches
-    private val logFile = File("/U/ramsetelog_${System.currentTimeMillis()}.csv")
+    private val logFile = File("/ramsetelog_${System.currentTimeMillis()}.csv")
 
     init {
         requires(Drivetrain)
+        val xOffset = traj[0].x
+        val yOffset = traj[0].y
+        for (t in traj.segments.indices) {
+            traj[t].x -= xOffset
+            traj[t].y -= yOffset
+        }
     }
 
     override fun initialize() {
@@ -56,8 +59,8 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         )
 
         Drivetrain.set(
-                (commanded.first / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-1.0, 1.0),
-                (commanded.second / Drivetrain.maxSpeed.feetPerSecond).coerceIn(-1.0, 1.0),
+                (commanded.first / DRIVETRAIN_MAXSPEED.feetPerSecond).coerceIn(-1.0, 1.0),
+                (commanded.second / DRIVETRAIN_MAXSPEED.feetPerSecond).coerceIn(-1.0, 1.0),
                 DrivetrainMode.CLOSED_LOOP)
 
         currentIndex++
@@ -111,6 +114,14 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     fun boundHalf(ang: Double): Double {
         return Pathfinder.boundHalfDegrees(ang.radians.degrees).degrees.radians
+    }
+
+    companion object {
+
+        fun loadFromFile() {
+            PathfinderFRC.getTrajectory("CenterToLeftCargo")
+        }
+
     }
 
 }

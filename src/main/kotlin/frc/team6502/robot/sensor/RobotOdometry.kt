@@ -8,10 +8,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 object RobotOdometry {
+
     private val odometryNotifier = Notifier { update() }
 
     init {
         odometryNotifier.startPeriodic(TIMESTEP_ODOMETRY)
+//        SmartDashboard.putData(this)
     }
     val odometry = Odometry(Pose(0.feet, 0.feet, 0.radians), 0.feetPerSecond, 0.radiansPerSecond)
 
@@ -20,7 +22,8 @@ object RobotOdometry {
         addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
     }
 
-    fun addPose(theta: Angle, vel: LinearVelocity) {
+    private fun addPose(theta: Angle, vel: LinearVelocity) {
+        odometry.velocity = vel
         odometry.angularVelocity = ((theta.radians - odometry.pose.theta.radians) / TIMESTEP_ODOMETRY).radiansPerSecond
         odometry.pose.theta = theta
         odometry.pose.x += (cos(theta.radians) * vel.feetPerSecond * TIMESTEP_ODOMETRY).feet

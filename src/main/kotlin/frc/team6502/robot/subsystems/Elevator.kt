@@ -1,31 +1,22 @@
 
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
-import frc.team6502.robot.commands.manip.DefaultElevator
 
 /**
  * Robot's elevator
  */
 object Elevator : Subsystem() {
 
-
-
     val elevatorTalon = WPI_TalonSRX(RobotMap.elevatorTalonId)
 
-
-
-    val wheelRatio = (Math.PI * 1.0).inches.meters / 1.rotations.radians
-    var setpoint = 0.0
-    var zeroing = false
+    private val wheelRatio = (Math.PI * 1.0).inches.meters / 1.rotations.radians
+    private var setpoint = 0.0
 
     init {
         // configure the elevator talon
@@ -49,7 +40,7 @@ object Elevator : Subsystem() {
             // set PID
             config_kP(0, ELEVATOR_GAINS.p)
             config_kI(0, ELEVATOR_GAINS.i)
-            config_IntegralZone(0, 64)
+            config_IntegralZone(0, 16)
             config_kD(0, ELEVATOR_GAINS.d)
 
 //            configPeak
@@ -86,8 +77,8 @@ object Elevator : Subsystem() {
     fun zeroHeight() {
 //        zeroing = true
         // start the zero elevator cmd
-        elevatorTalon.selectedSensorPosition = 0
-        println("ZEROED ELEVATOR")
+//        elevatorTalon.selectedSensorPosition = 0
+        println("ZEROED ELEVATOR (NOT)")
     }
 
     fun testElevatorOk() {
@@ -116,7 +107,7 @@ object Elevator : Subsystem() {
     /**
      * Elevator offset from base level
      */
-    var offset: ElevatorOffset = ElevatorOffset.CARRY
+    var offset: ElevatorOffset = ElevatorOffset.INTAKE
 
     /**
      * Percent voltage motors driven by
@@ -128,15 +119,21 @@ object Elevator : Subsystem() {
         }
 
     fun updateSetpoint() {
-        val offsetAmount = when (offset) {
-            ElevatorOffset.CARRY -> 0.0
-            ElevatorOffset.CARGO_DELIVERY -> -CARGO_DELIVERY_OFFSET
-            ElevatorOffset.CARGO_L3_DELIVERY -> -CARGO_DELIVERY_L3_OFFSET
+        var offsetAmount = when (offset) {
+            ElevatorOffset.INTAKE -> 0.0
+            ElevatorOffset.CARGO_DELIVERY -> CARGO_DELIVERY_OFFSET
+            ElevatorOffset.CARGO_L3_DELIVERY -> CARGO_DELIVERY_L3_OFFSET
             ElevatorOffset.HATCH_DELIVERY -> HATCH_DELIVERY_OFFSET
         }
 
+        // prevent elevator from overrunning
+        if (OI.selectedElevatorHeight == 2 && offset == ElevatorOffset.CARGO_DELIVERY) {
+            offsetAmount = CARGO_DELIVERY_L3_OFFSET
+            println("I AM GOING TO CARGO DELIVERY L3")
+        }
+
         // calculate desired encoder position for height
-        val desired = ((setpoint - offsetAmount - GROUND_DISTANCE).coerceAtLeast(0.0).feet.meters / wheelRatio).radians.encoder1024
+        val desired = ((setpoint + offsetAmount).coerceAtLeast(0.0).feet.meters / wheelRatio).radians.encoder1024
 
         // if elevator wants to go up, use upwards vel and accel, else use downwards ones
         if (desired > elevatorTalon.selectedSensorPosition) {
@@ -144,13 +141,13 @@ object Elevator : Subsystem() {
             elevatorTalon.configMotionAcceleration(ACCEL_UP.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
         } else {
             elevatorTalon.configMotionCruiseVelocity(CRUISE_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
-            elevatorTalon.configMotionAcceleration(CRUISE_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
+            elevatorTalon.configMotionAcceleration(ACCEL_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
         }
 
         elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, HOLD_VOLTAGE / 12.0)
     }
     override fun initDefaultCommand() {
-        defaultCommand = DefaultElevator()
+        defaultCommand = null
     }
 
 }

@@ -1,7 +1,10 @@
 package frc.team6502.robot
 
 import com.ctre.phoenix.sensors.PigeonIMU
-import frc.team6502.kyberlib.util.units.*
+import frc.team6502.kyberlib.util.units.Angle
+import frc.team6502.kyberlib.util.units.AngularVelocity
+import frc.team6502.kyberlib.util.units.Length
+import frc.team6502.kyberlib.util.units.LinearVelocity
 import jaci.pathfinder.Pathfinder
 import jaci.pathfinder.Trajectory
 
@@ -36,5 +39,25 @@ enum class ElevatorOffset {
     HATCH_DELIVERY,
     CARGO_DELIVERY,
     CARGO_L3_DELIVERY,
-    CARRY
+    INTAKE
+}
+
+enum class Station {
+    LEFT,
+    CENTER,
+    RIGHT
+}
+
+enum class LightingCommand(val cmd: Int) {
+    OFF(-1),
+    CHASE_RED(0),
+    CHASE_BLUE(1),
+    PANEL(2),
+    CARGO(3)
+}
+
+enum class GamePiece {
+    NONE,
+    CARGO,
+    HATCH
 }
