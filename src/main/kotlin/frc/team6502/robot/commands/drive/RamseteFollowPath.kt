@@ -5,10 +5,15 @@ import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
-import jaci.pathfinder.*
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.PathfinderFRC
+import jaci.pathfinder.Trajectory
 import java.io.File
 import java.lang.Math.sin
-import kotlin.math.*
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * Ramsete path follower
@@ -18,8 +23,12 @@ import kotlin.math.*
  */
 class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
 
-    // PULL YOUR CODE IDOIT
-
+    /**
+     * Follows a path read from a file in /home/lvuser/deploy/paths (src/main/deploy/paths on local codebase)
+     * @param name the name of the path to follow
+     * @param b Ramsete tuning value (similar to P in PID)
+     * @param zeta Ramsete tuning value (similar to D in PID)
+     */
     constructor(name: String, b: Double, zeta: Double) : this(PathfinderFRC.getTrajectory(name), b, zeta)
 
     private var currentIndex = 0
@@ -94,14 +103,14 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         return vc - wc * drivebase.feet / 2.0 to vc + wc * drivebase.feet / 2.0
     }
 
-    fun k13gains(vd: Double, wd: Double) = 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))
-    fun sinc(theta: Double, thetad: Double): Double {
+    private fun k13gains(vd: Double, wd: Double) = 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))
+    private fun sinc(theta: Double, thetad: Double): Double {
         return if ((thetad - theta).absoluteValue > 0.01) sin(thetad - theta) / (thetad - theta) else 1.0
     }
 
     override fun isFinished(): Boolean {
 //        println("checked")
-        return currentIndex == traj.segments.size
+        return currentIndex == traj.segments.size || OI.controller.yButton
     }
 
     override fun end() {
@@ -114,14 +123,6 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     fun boundHalf(ang: Double): Double {
         return Pathfinder.boundHalfDegrees(ang.radians.degrees).degrees.radians
-    }
-
-    companion object {
-
-        fun loadFromFile() {
-            PathfinderFRC.getTrajectory("CenterToLeftCargo")
-        }
-
     }
 
 }
