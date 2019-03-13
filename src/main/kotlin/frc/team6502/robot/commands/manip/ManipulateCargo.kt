@@ -15,8 +15,8 @@ class ManipulateCargo(val cargoShip: Boolean) : InstantCommand() {
 
     override fun execute() {
         when {
-            RobotStatus.currentGamePiece == GamePiece.CARGO -> ShootCargo(OI.selectedElevatorHeight == 2, cargoShip).start()
-            RobotStatus.currentGamePiece == GamePiece.NONE -> IntakeCargo().start()
+            RobotStatus.currentGamePiece == GamePiece.CARGO -> ShootCargo(cargoShip).start()
+            RobotStatus.currentGamePiece == GamePiece.NONE -> IntakeCargo(OI.selectedElevatorHeight == 1).start()
         }
     }
 }

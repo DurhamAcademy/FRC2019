@@ -27,6 +27,8 @@ val CARGO_DELIVERY_OFFSET = 12.inches.feet
 val CARGO_DELIVERY_L3_OFFSET = 0.inches.feet
 val HATCH_DELIVERY_OFFSET = 2.5.inches.feet
 
+val LOADING_STATION_HEIGHT = 28.inches
+
 val CRUISE_UP = 2.feetPerSecond
 val ACCEL_UP = 1.feetPerSecond // ^2
 val CRUISE_DOWN = 1.feetPerSecond
