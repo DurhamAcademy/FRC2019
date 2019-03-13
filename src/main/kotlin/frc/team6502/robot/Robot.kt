@@ -103,8 +103,8 @@ class Robot : TimedRobot(TIMESTEP) {
         OI.poll()
 
         //TODO investigate this
-        SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
-        SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
+//        SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
+//        SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 
     override fun teleopPeriodic() {
