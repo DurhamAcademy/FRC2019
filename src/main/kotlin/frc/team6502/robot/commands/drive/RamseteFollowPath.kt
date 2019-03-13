@@ -55,7 +55,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     }
 
     override fun execute() {
-        println("Segment $currentIndex/${traj.segments.size}")
+//        println("Segment $currentIndex/${traj.segments.size}")
 
         val seg = traj.segments[currentIndex]
         val w = if (currentIndex > 0) {
@@ -118,7 +118,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     override fun isFinished(): Boolean {
 //        println("checked")
-        return currentIndex == traj.segments.size || OI.controller.yButton
+        return currentIndex == traj.segments.size || OI.controller.aButton
     }
 
     override fun end() {
