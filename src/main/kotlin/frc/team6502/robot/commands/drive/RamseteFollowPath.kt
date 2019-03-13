@@ -1,5 +1,6 @@
 package frc.team6502.robot.commands.drive
 
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
@@ -21,7 +22,7 @@ import kotlin.math.sqrt
  * @property b Ramsete tuning value (similar to P in PID)
  * @property zeta Ramsete tuning value (similar to D in PID)
  */
-class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
+class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double, private val visionSeconds: Double = 0.0) : Command() {
 
     /**
      * Follows a path read from a file in /home/lvuser/deploy/paths (src/main/deploy/paths on local codebase)
@@ -34,6 +35,8 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     private var currentIndex = 0
     private val drivebase = 29.inches
     private val logFile = File("/ramsetelog_${System.currentTimeMillis()}.csv")
+    private val visionSamples = visionSeconds / TIMESTEP
+    private val lt = NetworkTableInstance.getDefault().getTable("limelight")
 
     init {
         requires(Drivetrain)
@@ -47,7 +50,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     override fun initialize() {
         println("Staring ramsete follow")
-        logFile.writeText("t, vel_a, vel_d, avel_a, avel_d, x_a, x_d, y_a, y_d, th_a, th_d, k1k3, k2, vel_c, avel_c, x_e, y_e, th_e\n")
+        logFile.writeText("t, vel_a, vel_d, avel_a, avel_d, x_a, x_d, y_a, y_d, th_a, th_d, k1k3, k2, vel_c, avel_c, x_e, y_e, th_e, vision\n")
         RobotOdometry.zero()
     }
 
@@ -60,11 +63,11 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         } else {
             0.0
         }
-        println(w)
+
         val commanded = ramsete(
                 RobotOdometry.odometry,
                 Odometry(Pose(seg.x.feet, seg.y.feet, boundHalf(seg.heading).radians), seg.velocity.feetPerSecond, w.radiansPerSecond),
-                false
+                traj.segments.size - currentIndex < visionSamples
         )
 
         Drivetrain.set(
@@ -75,7 +78,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         currentIndex++
     }
 
-    private fun ramsete(odometry: Odometry, desired: Odometry, disableTurn: Boolean): Pair<Double, Double> {
+    private fun ramsete(odometry: Odometry, desired: Odometry, useVision: Boolean): Pair<Double, Double> {
 
         // actual
         val v = odometry.velocity.feetPerSecond
@@ -96,8 +99,13 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
 //        println(thd - th)
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
-        var wc = wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
-        logFile.appendText("$currentIndex, $v, $vd, $w, $wd, $x, $xd, $y, $yd, $th, $thd, $k1, $k2, $vc, $wc, ${xd - x}, ${yd - y}, ${thd - th}\n")
+
+        val wc = if (useVision && lt.getEntry("tv").getNumber(0) as Int > 0)
+            lt.getEntry("tx").getDouble(0.0) * k1
+        else
+            wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
+
+        logFile.appendText("$currentIndex, $v, $vd, $w, $wd, $x, $xd, $y, $yd, $th, $thd, $k1, $k2, $vc, $wc, ${xd - x}, ${yd - y}, ${thd - th}, $useVision\n")
 //        val difference = 0.feetPerSecond
 //        val difference = wc.radiansPerSecond.toLinearVelocity((PI * drivebase.meters) / 1.rotations.radians)
         return vc - wc * drivebase.feet / 2.0 to vc + wc * drivebase.feet / 2.0

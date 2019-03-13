@@ -101,6 +101,8 @@ class Robot : TimedRobot(TIMESTEP) {
         Scheduler.getInstance().run()
 
         OI.poll()
+
+        //TODO investigate this
         SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
