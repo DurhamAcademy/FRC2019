@@ -11,7 +11,6 @@ class VisionPIDSource : PIDSource {
     }
 
     override fun setPIDSourceType(pidSource: PIDSourceType?) {
-
     }
 
     override fun pidGet(): Double {

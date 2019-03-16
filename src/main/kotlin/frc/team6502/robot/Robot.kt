@@ -7,6 +7,7 @@ import edu.wpi.first.hal.HAL
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.Scheduler
+import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commands.drive.RamseteFollowPath
@@ -52,6 +53,7 @@ class Robot : TimedRobot(TIMESTEP) {
         }
 
         SmartDashboard.putData(autoChooser)
+        LiveWindow.disableAllTelemetry()
 
         // zero elevator height on boot
         Elevator.elevatorTalon.selectedSensorPosition = 0
