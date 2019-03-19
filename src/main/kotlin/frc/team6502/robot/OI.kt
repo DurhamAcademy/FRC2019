@@ -123,10 +123,10 @@ object OI {
         // Y (4) - Cargo ship ball
         // LB (5) - Cycle down
         // RB (6) - Cycle up
-        JoystickButton(controller, 4).whenPressed(ManipulateCargo(true))
+        JoystickButton(controller, 1).whenPressed(CancelOperation())
         JoystickButton(controller, 2).whenPressed(ManipulateCargo(false))
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
-        JoystickButton(controller, 1).whenPressed(CancelOperation())
+        JoystickButton(controller, 4).whenPressed(ManipulateCargo(true))
         JoystickButton(controller, 7).whenPressed(DeployWedges())
     }
 }
