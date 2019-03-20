@@ -34,7 +34,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     // FRONT TOGGLE
     private var frontIsFront = true
 
-    private var jevoisController = PIDController(0.01, 0.0, 0.01, VisionPIDSource()) {
+    private var visionPIDController = PIDController(0.01, 0.0, 0.01, VisionPIDSource()) {
         visionCorrection = if (OI.commandedVC) it else 0.0
     }
 
@@ -46,7 +46,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         println("STARTING DRIVETRAIN")
         RobotMap.kIMU.zero()
         yawTimer.start()
-//        jevoisController.enable()
+        visionPIDController.enable()
         yawCorrection = 0.0
         yawCorrecting = true
 //        println("reset pigeon")
@@ -77,16 +77,14 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         if (!OI.commandedVC) visionCorrection = 0.0
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
+        SmartDashboard.putNumber("Vision Correction", visionCorrection)
+
 //        println("t=$throttle r=$rotation")
         if (yawCorrecting) {
-//            println("t=$throttle r=$rotation")
-            val totalCorrection = (yawCorrection + visionCorrection).coerceIn(-correctionLimit, correctionLimit)
-            Drivetrain.set(throttle - totalCorrection, throttle + totalCorrection, DrivetrainMode.CLOSED_LOOP)
+            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, DrivetrainMode.CLOSED_LOOP)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
-//            println(rotation)
-//            println("t=$throttle r=$rotation")
-            curvatureDrive(throttle, rotation, true)
+            curvatureDrive(throttle, rotation - visionCorrection, true)
             SmartDashboard.putNumber("Heading Correction", 0.0)
         }
 

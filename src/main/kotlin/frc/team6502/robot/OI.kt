@@ -46,7 +46,7 @@ object OI {
     }
 
     val commandingStraight: Boolean
-        get() = deadband(controller.x, 0.1) == 0.0
+        get() = !commandedVC && deadband(controller.x, 0.1) == 0.0
 
     val commandedY: Double
         get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.05).pow(3) * 0.75
