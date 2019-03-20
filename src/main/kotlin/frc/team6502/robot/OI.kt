@@ -54,8 +54,8 @@ object OI {
     val commandedX: Double
         get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.05).pow(3) * 0.25
 
-    val commandedVC: Double
-        get() = 0.0//controller.getTriggerAxis(GenericHID.Hand.kRight)
+    val commandedVC: Boolean
+        get() = controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.2
 
     /**
      * Applies a deadband to an input
@@ -123,10 +123,10 @@ object OI {
         // Y (4) - Cargo ship ball
         // LB (5) - Cycle down
         // RB (6) - Cycle up
-        JoystickButton(controller, 4).whenPressed(ManipulateCargo(true))
+        JoystickButton(controller, 1).whenPressed(CancelOperation())
         JoystickButton(controller, 2).whenPressed(ManipulateCargo(false))
         JoystickButton(controller, 3).whenPressed(ManipulatePanel())
-        JoystickButton(controller, 1).whenPressed(CancelOperation())
+        JoystickButton(controller, 4).whenPressed(ManipulateCargo(true))
         JoystickButton(controller, 7).whenPressed(DeployWedges())
     }
 }

@@ -35,7 +35,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     private var frontIsFront = true
 
     private var jevoisController = PIDController(0.01, 0.0, 0.01, VisionPIDSource()) {
-        visionCorrection = it * OI.commandedVC
+        visionCorrection = if (OI.commandedVC) it else 0.0
     }
 
     init {
@@ -61,8 +61,8 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
         }
-        yawCorrection = 0.0
-        visionCorrection = 0.0
+//        yawCorrection = 0.0
+//        visionCorrection = 0.0
 //        println(throttle)
 //        if (yawCorrection.absoluteValue < 0.05 && throttle < 0.15 && throttle > 0.0){
 //            yawCorrection = 0.0
@@ -73,14 +73,14 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
             RobotMap.kIMU.zero()
         }
 
-
-        if (OI.commandedVC < 0.05) visionCorrection = 0.0
+        // redundancy department of redundancy
+        if (!OI.commandedVC) visionCorrection = 0.0
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
 //        println("t=$throttle r=$rotation")
         if (yawCorrecting) {
 //            println("t=$throttle r=$rotation")
-            val totalCorrection = 0.0//(yawCorrection + visionCorrection).coerceIn(-correctionLimit, correctionLimit)
+            val totalCorrection = (yawCorrection + visionCorrection).coerceIn(-correctionLimit, correctionLimit)
             Drivetrain.set(throttle - totalCorrection, throttle + totalCorrection, DrivetrainMode.CLOSED_LOOP)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
