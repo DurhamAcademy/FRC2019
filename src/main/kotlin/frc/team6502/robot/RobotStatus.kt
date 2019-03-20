@@ -22,6 +22,12 @@ object RobotStatus {
             .withWidget("Toggle Button")
             .entry
 
+    init {
+        none.setBoolean(false)
+        hatch.setBoolean(false)
+        cargo.setBoolean(false)
+    }
+
     fun setGamePiece(gp: GamePiece) {
         none.setBoolean(false)
         hatch.setBoolean(false)

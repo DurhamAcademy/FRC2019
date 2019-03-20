@@ -61,6 +61,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
     override fun disabledInit() {
 
+        OI.setElevatorHeight(0)
         OI.createElevatorButtons()
 
         SmartDashboard.putBoolean("Correcting", false)
@@ -70,9 +71,6 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
 
         RobotStatus.setGamePiece(startingGamePiece)
-        SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
-        SmartDashboard.putBoolean("Has Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
-        SmartDashboard.putBoolean("Has Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
     }
 
     /**
@@ -103,6 +101,10 @@ class Robot : TimedRobot(TIMESTEP) {
         Scheduler.getInstance().run()
 
         OI.poll()
+
+        SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
+        SmartDashboard.putBoolean("Has Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
+        SmartDashboard.putBoolean("Has Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
 
         //TODO investigate this
 //        SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
