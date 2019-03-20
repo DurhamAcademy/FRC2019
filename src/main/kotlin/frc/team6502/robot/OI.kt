@@ -54,8 +54,8 @@ object OI {
     val commandedX: Double
         get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.05).pow(3) * 0.25
 
-    val commandedVC: Double
-        get() = 0.0//controller.getTriggerAxis(GenericHID.Hand.kRight)
+    val commandedVC: Boolean
+        get() = controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.2
 
     /**
      * Applies a deadband to an input
