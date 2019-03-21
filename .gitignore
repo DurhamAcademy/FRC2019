@@ -111,4 +111,5 @@ gradle-app.setting
 ### Gradle Patch ###
 **/build/
 
+src/main/deploy/paths/*
 # End of https://www.gitignore.io/api/java,gradle,kotlin,intellij

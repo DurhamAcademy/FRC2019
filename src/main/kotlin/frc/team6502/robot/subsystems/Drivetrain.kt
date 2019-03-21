@@ -7,7 +7,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.kyberlib.util.units.LinearVelocity
 import frc.team6502.kyberlib.util.units.encoder1024PerDecisecond
 import frc.team6502.kyberlib.util.units.feetPerSecond
@@ -115,8 +114,8 @@ object Drivetrain :  Subsystem() {
     private fun setDriveVelocities(l: Double, r: Double) {
 
         // logging
-        SmartDashboard.putNumber("Left Error", leftTalon.closedLoopError.toDouble())
-        SmartDashboard.putNumber("Right Error", rightTalon.closedLoopError.toDouble())
+//        SmartDashboard.putNumber("Left Error", leftTalon.closedLoopError.toDouble())
+//        SmartDashboard.putNumber("Right Error", rightTalon.closedLoopError.toDouble())
 
         // convert % to fps
         val left = (l * DRIVETRAIN_MAXSPEED.feetPerSecond).feetPerSecond
@@ -126,11 +125,11 @@ object Drivetrain :  Subsystem() {
         val leftNative = left.toAngularVelocity(DRIVETRAIN_WHEEL_RATIO).encoder1024PerDecisecond
         val rightNative = right.toAngularVelocity(DRIVETRAIN_WHEEL_RATIO).encoder1024PerDecisecond
 
+        val lFF = if (l != 0.0) (kV_L * left.feetPerSecond + kS_L * left.feetPerSecond.sign) / 12.0 else 0.0
+        val rFF = if (r != 0.0) (kV_R * right.feetPerSecond + kS_R * right.feetPerSecond.sign) / 12.0 else 0.0
         // set speeds
-        leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward,
-                (kV_L * left.feetPerSecond + kS_L * left.feetPerSecond.sign) / 12.0)
-        rightTalon.set(ControlMode.Velocity, rightNative, DemandType.ArbitraryFeedForward,
-                (kV_R * right.feetPerSecond + kS_R * right.feetPerSecond.sign) / 12.0)
+        leftTalon.set(ControlMode.Velocity, leftNative, DemandType.ArbitraryFeedForward, lFF)
+        rightTalon.set(ControlMode.Velocity, rightNative, DemandType.ArbitraryFeedForward, rFF)
 
         // logging
 //        SmartDashboard.putNumber("LEFT DESIRED", left.feetPerSecond)

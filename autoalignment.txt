@@ -1,0 +1,2 @@
+center: 8.5in from hab3 edge to inside of bumper area
+side: 2.5in from hab3 edge to inside of bumper (bumper will slightly overlap hab3 front)

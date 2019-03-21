@@ -1,14 +1,20 @@
 package frc.team6502.robot.commands.drive
 
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.Drivetrain
-import jaci.pathfinder.*
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.PathfinderFRC
+import jaci.pathfinder.Trajectory
 import java.io.File
 import java.lang.Math.sin
-import kotlin.math.*
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * Ramsete path follower
@@ -16,15 +22,21 @@ import kotlin.math.*
  * @property b Ramsete tuning value (similar to P in PID)
  * @property zeta Ramsete tuning value (similar to D in PID)
  */
-class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double) : Command() {
+class RamseteFollowPath(private val traj: Trajectory, private val b: Double, private val zeta: Double, private val visionSeconds: Double = 0.0) : Command() {
 
-    // PULL YOUR CODE IDOIT
-
+    /**
+     * Follows a path read from a file in /home/lvuser/deploy/paths (src/main/deploy/paths on local codebase)
+     * @param name the name of the path to follow
+     * @param b Ramsete tuning value (similar to P in PID)
+     * @param zeta Ramsete tuning value (similar to D in PID)
+     */
     constructor(name: String, b: Double, zeta: Double) : this(PathfinderFRC.getTrajectory(name), b, zeta)
 
     private var currentIndex = 0
     private val drivebase = 29.inches
-    private val logFile = File("/ramsetelog_${System.currentTimeMillis()}.csv")
+    private val logFile = File("/home/lvuser/ramsetelog_${System.currentTimeMillis()}.csv")
+    private val visionSamples = visionSeconds / TIMESTEP
+    private val lt = NetworkTableInstance.getDefault().getTable("limelight")
 
     init {
         requires(Drivetrain)
@@ -38,12 +50,13 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     override fun initialize() {
         println("Staring ramsete follow")
-        logFile.writeText("t, vel_a, vel_d, avel_a, avel_d, x_a, x_d, y_a, y_d, th_a, th_d, k1k3, k2, vel_c, avel_c, x_e, y_e, th_e\n")
+        if(!logFile.exists()) logFile.createNewFile()
+        logFile.writeText("t, vel_a, vel_d, avel_a, avel_d, x_a, x_d, y_a, y_d, th_a, th_d, k1k3, k2, vel_c, avel_c, x_e, y_e, th_e, vision\n")
         RobotOdometry.zero()
     }
 
     override fun execute() {
-        println("Segment $currentIndex/${traj.segments.size}")
+//        println("Segment $currentIndex/${traj.segments.size}")
 
         val seg = traj.segments[currentIndex]
         val w = if (currentIndex > 0) {
@@ -51,11 +64,11 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         } else {
             0.0
         }
-        println(w)
+
         val commanded = ramsete(
                 RobotOdometry.odometry,
                 Odometry(Pose(seg.x.feet, seg.y.feet, boundHalf(seg.heading).radians), seg.velocity.feetPerSecond, w.radiansPerSecond),
-                false
+                traj.segments.size - currentIndex < visionSamples
         )
 
         Drivetrain.set(
@@ -66,7 +79,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         currentIndex++
     }
 
-    private fun ramsete(odometry: Odometry, desired: Odometry, disableTurn: Boolean): Pair<Double, Double> {
+    private fun ramsete(odometry: Odometry, desired: Odometry, useVision: Boolean): Pair<Double, Double> {
 
         // actual
         val v = odometry.velocity.feetPerSecond
@@ -87,21 +100,26 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
 //        println(thd - th)
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
-        var wc = wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
-        logFile.appendText("$currentIndex, $v, $vd, $w, $wd, $x, $xd, $y, $yd, $th, $thd, $k1, $k2, $vc, $wc, ${xd - x}, ${yd - y}, ${thd - th}\n")
+
+        val wc = if (useVision && lt.getEntry("tv").getNumber(0) as Int > 0)
+            lt.getEntry("tx").getDouble(0.0) * k1
+        else
+            wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
+
+        logFile.appendText("$currentIndex, $v, $vd, $w, $wd, $x, $xd, $y, $yd, $th, $thd, $k1, $k2, $vc, $wc, ${xd - x}, ${yd - y}, ${thd - th}, $useVision\n")
 //        val difference = 0.feetPerSecond
 //        val difference = wc.radiansPerSecond.toLinearVelocity((PI * drivebase.meters) / 1.rotations.radians)
         return vc - wc * drivebase.feet / 2.0 to vc + wc * drivebase.feet / 2.0
     }
 
-    fun k13gains(vd: Double, wd: Double) = 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))
-    fun sinc(theta: Double, thetad: Double): Double {
+    private fun k13gains(vd: Double, wd: Double) = 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))
+    private fun sinc(theta: Double, thetad: Double): Double {
         return if ((thetad - theta).absoluteValue > 0.01) sin(thetad - theta) / (thetad - theta) else 1.0
     }
 
     override fun isFinished(): Boolean {
 //        println("checked")
-        return currentIndex == traj.segments.size
+        return currentIndex == traj.segments.size || OI.controller.aButton
     }
 
     override fun end() {
@@ -114,14 +132,6 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     fun boundHalf(ang: Double): Double {
         return Pathfinder.boundHalfDegrees(ang.radians.degrees).degrees.radians
-    }
-
-    companion object {
-
-        fun loadFromFile() {
-            PathfinderFRC.getTrajectory("CenterToLeftCargo")
-        }
-
     }
 
 }
