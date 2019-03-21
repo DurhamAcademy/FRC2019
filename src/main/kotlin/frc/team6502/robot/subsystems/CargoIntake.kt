@@ -28,6 +28,8 @@ object CargoIntake : Subsystem() {
         shooterVictor.inverted = false
 
         intakeTalon.configContinuousCurrentLimit(12)
+        intakeTalon.setNeutralMode(NeutralMode.Brake)
+
         intakeTalon.inverted = true
 
         rampSolenoid.set(DoubleSolenoid.Value.kReverse)

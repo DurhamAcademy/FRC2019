@@ -98,11 +98,11 @@ object OI {
         }
 
         // game piece overrides
-        if (RobotStatus.cargo.getBoolean(false))
+        if (RobotStatus.cargo)
             RobotStatus.setGamePiece(GamePiece.CARGO)
-        if (RobotStatus.hatch.getBoolean(false))
+        if (RobotStatus.hatch)
             RobotStatus.setGamePiece(GamePiece.HATCH)
-        if (RobotStatus.none.getBoolean(false))
+        if (RobotStatus.none)
             RobotStatus.setGamePiece(GamePiece.NONE)
     }
 

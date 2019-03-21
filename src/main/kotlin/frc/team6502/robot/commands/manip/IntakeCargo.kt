@@ -25,8 +25,8 @@ class IntakeCargo(val loadingStation: Boolean = false) : Command() {
             cancel()
         }
         if (loadingStation) {
-            SetElevatorHeight(LOADING_STATION_HEIGHT)
-            SetElevatorOffset(ElevatorOffset.INTAKE)
+            SetElevatorHeight(LOADING_STATION_HEIGHT).start()
+            SetElevatorOffset(ElevatorOffset.INTAKE).start()
         }
         intakeCurrentTimer.reset()
         intakeCurrentTimer.start()
@@ -35,14 +35,14 @@ class IntakeCargo(val loadingStation: Boolean = false) : Command() {
     override fun execute() {
         if (!loadingStation) {
             if (Elevator.elevatorTalon.selectedSensorPosition < 2048) {
-                CargoIntake.speedIntake = 0.4
+                CargoIntake.speedIntake = -0.4
                 CargoIntake.speedShooter = 0.2
             } else {
                 CargoIntake.speedIntake = 0.0
                 CargoIntake.speedShooter = 0.0
             }
         } else {
-            CargoIntake.speedShooter = 0.2
+            CargoIntake.speedShooter = -0.2
             CargoIntake.speedIntake = 0.0
         }
 //        println("RUNNING RUNNING RUNNING")
@@ -52,11 +52,12 @@ class IntakeCargo(val loadingStation: Boolean = false) : Command() {
     override fun end() {
         CargoIntake.speedIntake = 0.0
         CargoIntake.speedShooter = 0.0
+
         singleton = null
         if (!loadingStation) ZeroCargo().start()
         else {
             OI.setElevatorHeight(OI.selectedElevatorHeight)
-            SetGamePiece(GamePiece.CARGO).start()
+            SetGamePiece(GamePiece.NONE).start()
         }
     }
 

@@ -10,7 +10,7 @@ class ZeroCargo : TimedCommand(1.0) {
 
     override fun initialize() {
         //Make the shooter reverse
-        CargoIntake.speedShooter = -0.25
+        CargoIntake.speedShooter = -0.2
     }
 
     override fun end() {

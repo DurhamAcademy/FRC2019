@@ -14,7 +14,7 @@ class CharacterizeDrivetrain() : TimedCommand(5.9) {
     private val leftPoints = arrayListOf<Pair<Double, Double>>()
     private val rightPoints = arrayListOf<Pair<Double, Double>>()
 
-    val f = File("/characterizationData.txt")
+    val f = File("/home/lvuser/characterizationData.txt")
 
     init {
         requires(Drivetrain)
@@ -22,6 +22,7 @@ class CharacterizeDrivetrain() : TimedCommand(5.9) {
 
     override fun initialize() {
         Drivetrain.set(0.0, 0.0, DrivetrainMode.OPEN_LOOP)
+        if(!f.exists()) f.createNewFile()
         f.writeText("")
     }
 

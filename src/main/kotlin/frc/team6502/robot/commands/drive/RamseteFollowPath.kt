@@ -34,7 +34,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     private var currentIndex = 0
     private val drivebase = 29.inches
-    private val logFile = File("/ramsetelog_${System.currentTimeMillis()}.csv")
+    private val logFile = File("/home/lvuser/ramsetelog_${System.currentTimeMillis()}.csv")
     private val visionSamples = visionSeconds / TIMESTEP
     private val lt = NetworkTableInstance.getDefault().getTable("limelight")
 
@@ -50,6 +50,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     override fun initialize() {
         println("Staring ramsete follow")
+        if(!logFile.exists()) logFile.createNewFile()
         logFile.writeText("t, vel_a, vel_d, avel_a, avel_d, x_a, x_d, y_a, y_d, th_a, th_d, k1k3, k2, vel_c, avel_c, x_e, y_e, th_e, vision\n")
         RobotOdometry.zero()
     }

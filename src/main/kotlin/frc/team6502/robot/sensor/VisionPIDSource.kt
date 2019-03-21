@@ -14,7 +14,7 @@ class VisionPIDSource : PIDSource {
     }
 
     override fun pidGet(): Double {
-        return if (lt.getEntry("tv").getNumber(0) as Int > 0)
+        return if (lt.getEntry("tv").getNumber(0).toInt() > 0)
             lt.getEntry("tx").getDouble(0.0)
         else 0.0
     }

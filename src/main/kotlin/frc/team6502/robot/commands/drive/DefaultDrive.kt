@@ -18,8 +18,8 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     }
 
     override fun usePIDOutput(output: Double) {
-        yawCorrection = output
-//        yawCorrection = OI.deadband(yawCorrection, 0.025)
+//        yawCorrection = output
+        yawCorrection = 0.0//OI.deadband(yawCorrection, 0.015)
     }
 
     // YAW CORRECTION

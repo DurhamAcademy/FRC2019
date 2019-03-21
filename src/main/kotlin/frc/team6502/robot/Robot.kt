@@ -4,12 +4,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.cameraserver.CameraServer
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.Scheduler
 import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team6502.robot.commands.drive.CharacterizeDrivetrain
 import frc.team6502.robot.commands.drive.RamseteFollowPath
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.*
@@ -42,7 +44,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
         RobotMap.kCompressor.closedLoopControl = true
 
-//        SmartDashboard.putData(CharacterizeDrivetrain())
+        SmartDashboard.putData(CharacterizeDrivetrain())
 
         CameraServer.getInstance().startAutomaticCapture()
 
@@ -52,7 +54,7 @@ class Robot : TimedRobot(TIMESTEP) {
                 autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA))
         }
 
-        SmartDashboard.putData(autoChooser)
+        SmartDashboard.putData("Auto",autoChooser)
         LiveWindow.disableAllTelemetry()
 
         // zero elevator height on boot
@@ -67,6 +69,7 @@ class Robot : TimedRobot(TIMESTEP) {
         SmartDashboard.putBoolean("Correcting", false)
         SmartDashboard.putNumber("Heading Correction", 0.0)
 
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1)
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
 
@@ -81,7 +84,7 @@ class Robot : TimedRobot(TIMESTEP) {
     override fun autonomousInit() {
         RobotOdometry.zero()
         Elevator.updateSetpoint()
-
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
         autoCommand = autoChooser.selected
         autoCommand?.start()
     }
@@ -90,7 +93,7 @@ class Robot : TimedRobot(TIMESTEP) {
         // if auto is still running for some reason, stop it
         autoCommand?.cancel()
         Elevator.updateSetpoint()
-
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
         // make elevator go to level 1
 
         //TODO: if autos are going to level 2+ remove this!!!
