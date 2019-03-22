@@ -51,7 +51,7 @@ class Robot : TimedRobot(TIMESTEP) {
         autoChooser.addOption("Hybrid", null)
         File("/home/lvuser/deploy/paths").listFiles().forEach {
             if (!it.name.endsWith(".left.pf1.csv") && !it.name.endsWith(".right.pf1.csv"))
-                autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA))
+                autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA, 1.5))
         }
 
         SmartDashboard.putData("Auto",autoChooser)
