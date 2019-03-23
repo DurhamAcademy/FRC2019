@@ -46,7 +46,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
         SmartDashboard.putData(CharacterizeDrivetrain())
 
-        CameraServer.getInstance().startAutomaticCapture()
+//        CameraServer.getInstance().startAutomaticCapture()
 
         autoChooser.addOption("Hybrid", null)
         File("/home/lvuser/deploy/paths").listFiles().forEach {
@@ -69,7 +69,7 @@ class Robot : TimedRobot(TIMESTEP) {
         SmartDashboard.putBoolean("Correcting", false)
         SmartDashboard.putNumber("Heading Correction", 0.0)
 
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1)
+
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
 
@@ -102,7 +102,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
     override fun robotPeriodic() {
         Scheduler.getInstance().run()
-
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(OI.commandedVC) 0 else 1)
         OI.poll()
 
         SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
@@ -120,6 +120,7 @@ class Robot : TimedRobot(TIMESTEP) {
     override fun autonomousPeriodic() {}
 
     override fun disabledPeriodic() {
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1)
         // make elevator not go sicko mode on enable (constantly set setpoint to current position)
         Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())
     }

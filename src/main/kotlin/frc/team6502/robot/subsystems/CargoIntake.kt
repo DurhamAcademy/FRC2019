@@ -27,7 +27,7 @@ object CargoIntake : Subsystem() {
         shooterVictor.follow(shooterTalon)
         shooterVictor.inverted = false
 
-        intakeTalon.configContinuousCurrentLimit(12)
+        intakeTalon.configContinuousCurrentLimit(18)
         intakeTalon.setNeutralMode(NeutralMode.Brake)
 
         intakeTalon.inverted = true

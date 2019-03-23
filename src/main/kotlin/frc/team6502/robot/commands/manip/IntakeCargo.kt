@@ -35,7 +35,7 @@ class IntakeCargo(val loadingStation: Boolean = false) : Command() {
     override fun execute() {
         if (!loadingStation) {
             if (Elevator.elevatorTalon.selectedSensorPosition < 2048) {
-                CargoIntake.speedIntake = -0.4
+                CargoIntake.speedIntake = -0.5
                 CargoIntake.speedShooter = 0.2
             } else {
                 CargoIntake.speedIntake = 0.0
