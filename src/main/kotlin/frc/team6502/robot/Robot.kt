@@ -120,7 +120,7 @@ class Robot : TimedRobot(TIMESTEP) {
     override fun autonomousPeriodic() {}
 
     override fun disabledPeriodic() {
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1)
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(if(OI.commandedVC) 0 else 1)
         // make elevator not go sicko mode on enable (constantly set setpoint to current position)
         Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())
     }
