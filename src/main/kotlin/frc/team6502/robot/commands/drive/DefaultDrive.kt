@@ -1,5 +1,6 @@
 package frc.team6502.robot.commands.drive
 
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.PIDController
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
@@ -100,6 +101,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
         SmartDashboard.putNumber("pitch", RobotMap.kIMU.getPitch())
 
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(OI.commandedVC) 0 else 1)
         /*if (OI.controller.xButtonPressed) {
             frontIsFront = true
         }

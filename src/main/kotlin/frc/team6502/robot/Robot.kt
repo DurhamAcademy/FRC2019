@@ -102,7 +102,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
     override fun robotPeriodic() {
         Scheduler.getInstance().run()
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(OI.commandedVC) 0 else 1)
+
         OI.poll()
 
         SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
@@ -115,11 +115,15 @@ class Robot : TimedRobot(TIMESTEP) {
     }
 
     override fun teleopPeriodic() {
+
         Wedges.unlock = true
     }
-    override fun autonomousPeriodic() {}
+    override fun autonomousPeriodic() {
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
+    }
 
     override fun disabledPeriodic() {
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(OI.commandedVC) 0 else 1)
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(if(OI.commandedVC) 0 else 1)
         // make elevator not go sicko mode on enable (constantly set setpoint to current position)
         Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())

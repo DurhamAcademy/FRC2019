@@ -1,5 +1,6 @@
 package frc.team6502.robot.commands.drive
 
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.PIDController
 import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.*
@@ -29,8 +30,8 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     constructor(name: String, b: Double, zeta: Double, visionSeconds: Double = 0.0) : this(PathfinderFRC.getTrajectory(name), b, zeta, visionSeconds)
 
     private var currentIndex = 0
-    private val drivebase = 29.inches
-    private val logFile = File("/home/lvuser/logs/ramsetelog_${System.currentTimeMillis()}.csv")
+    private val drivebase = 14.5.inches
+    private val logFile = File("/home/lvuser/ramsetelog_${System.currentTimeMillis()}.csv")
     private val visionSamples = visionSeconds / TIMESTEP
     private var visionCorrection = 0.0
     private val visionPID = PIDController(0.01, 0.0, 0.01, VisionPIDSource()) {
@@ -97,6 +98,8 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
         val k1 = k13gains(desired.velocity.feetPerSecond, desired.angularVelocity.radiansPerSecond)
         val k2 = b * vd.absoluteValue
+
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(useVision) 0 else 1)
 
 //        println(thd - th)
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
