@@ -40,6 +40,9 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 
     init {
         requires(Drivetrain)
+        for (t in traj.segments.indices) {
+            traj[t].y = 27 - traj[t].y
+        }
         val xOffset = traj[0].x
         val yOffset = traj[0].y
         visionPID.enable()
