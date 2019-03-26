@@ -1,6 +1,7 @@
 package frc.team6502.robot
 
 import com.ctre.phoenix.sensors.PigeonIMU
+import edu.wpi.first.wpilibj.command.Command
 import frc.team6502.kyberlib.util.units.Angle
 import frc.team6502.kyberlib.util.units.AngularVelocity
 import frc.team6502.kyberlib.util.units.Length
@@ -60,4 +61,8 @@ enum class GamePiece {
     NONE,
     CARGO,
     HATCH
+}
+
+class WaitForCommand(val condition: () -> Boolean, val timeout: Double = 10.0) : Command(timeout) {
+    override fun isFinished() = condition()
 }

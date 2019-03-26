@@ -107,7 +107,7 @@ object Elevator : Subsystem() {
     /**
      * Elevator offset from base level
      */
-    var offset: ElevatorOffset = ElevatorOffset.INTAKE
+    var offset: Double = 0.0
 
     /**
      * Percent voltage motors driven by
@@ -119,16 +119,11 @@ object Elevator : Subsystem() {
         }
 
     fun updateSetpoint() {
-        var offsetAmount = when (offset) {
-            ElevatorOffset.INTAKE -> 0.0
-            ElevatorOffset.CARGO_DELIVERY -> CARGO_DELIVERY_OFFSET
-            ElevatorOffset.CARGO_L3_DELIVERY -> CARGO_DELIVERY_L3_OFFSET
-            ElevatorOffset.HATCH_DELIVERY -> HATCH_DELIVERY_OFFSET
-        }
+        var offsetAmount = offset
 
         // prevent elevator from overrunning
-        if (OI.selectedElevatorHeight == 2 && offset == ElevatorOffset.CARGO_DELIVERY) {
-            offsetAmount = CARGO_DELIVERY_L3_OFFSET
+        if (OI.selectedElevatorHeight == 2 && RobotStatus.cargoStatus != CargoStatus.NONE) {
+            offsetAmount = 0.0
             println("I AM GOING TO CARGO DELIVERY L3")
         }
 
