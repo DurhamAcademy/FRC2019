@@ -26,6 +26,12 @@ object CargoIntake : Subsystem() {
         shooterVictor.setNeutralMode(NeutralMode.Brake)
         shooterVictor.follow(shooterTalon)
         shooterVictor.inverted = false
+
+        intakeTalon.configContinuousCurrentLimit(18)
+        intakeTalon.setNeutralMode(NeutralMode.Brake)
+
+        intakeTalon.inverted = true
+
         rampSolenoid.set(DoubleSolenoid.Value.kReverse)
     }
 
@@ -33,28 +39,16 @@ object CargoIntake : Subsystem() {
         defaultCommand = null
     }
 
-    fun shooterDrection(reverse: Boolean) {
-        if(reverse) {
-            shooterTalon.inverted = false
-            shooterVictor.inverted = true
-        }
-        else {
-            shooterTalon.inverted = true
-            shooterVictor.inverted = false
-        }
-    }
-    /**
-     * Roller speed, to be tested
-     */
-    //TODO
     var speedIntake: Double = 0.0
         set(value) {
-            shooterTalon.set(ControlMode.PercentOutput, value * 0.5)
             intakeTalon.set(ControlMode.PercentOutput, -value)
+            field = value
         }
+
     var speedShooter: Double = 0.0
         set(value) {
             shooterTalon.set(ControlMode.PercentOutput, value)
+            field = value
         }
 
     /**

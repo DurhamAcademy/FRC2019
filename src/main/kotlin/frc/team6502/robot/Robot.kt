@@ -4,13 +4,15 @@ import com.ctre.phoenix.motorcontrol.ControlMode
 import edu.wpi.first.cameraserver.CameraServer
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.TimedRobot
 import edu.wpi.first.wpilibj.command.Command
 import edu.wpi.first.wpilibj.command.Scheduler
+import edu.wpi.first.wpilibj.livewindow.LiveWindow
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
+import frc.team6502.robot.commands.drive.CharacterizeDrivetrain
 import frc.team6502.robot.commands.drive.RamseteFollowPath
-import frc.team6502.robot.commands.vision.SetLEDRing
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.subsystems.*
 import java.io.File
@@ -41,41 +43,37 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Lighting
 
         RobotMap.kCompressor.closedLoopControl = true
-//        RobotMap.kJevois
-        RobotMap.kJevois.runCommand("setcam absexp 500")
 
-//        SmartDashboard.putData(CharacterizeDrivetrain())
+        SmartDashboard.putData(CharacterizeDrivetrain())
 
-        CameraServer.getInstance().startAutomaticCapture()
+//        CameraServer.getInstance().startAutomaticCapture()
 
         autoChooser.addOption("Hybrid", null)
-
-
-
         File("/home/lvuser/deploy/paths").listFiles().forEach {
             if (!it.name.endsWith(".left.pf1.csv") && !it.name.endsWith(".right.pf1.csv"))
-                autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA))
+                autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA, 1.5))
         }
 
-        SmartDashboard.putData(autoChooser)
+        SmartDashboard.putData("Auto",autoChooser)
+        LiveWindow.disableAllTelemetry()
+
+        // zero elevator height on boot
         Elevator.elevatorTalon.selectedSensorPosition = 0
     }
 
     override fun disabledInit() {
 
+        OI.setElevatorHeight(0)
         OI.createElevatorButtons()
 
         SmartDashboard.putBoolean("Correcting", false)
         SmartDashboard.putNumber("Heading Correction", 0.0)
 
+
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
 
-        SetLEDRing(false).start()
         RobotStatus.setGamePiece(startingGamePiece)
-        SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
-        SmartDashboard.putBoolean("Has Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
-        SmartDashboard.putBoolean("Has Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
     }
 
     /**
@@ -86,19 +84,7 @@ class Robot : TimedRobot(TIMESTEP) {
     override fun autonomousInit() {
         RobotOdometry.zero()
         Elevator.updateSetpoint()
-
-        /*println("Generating spline")
-        val cfg = Trajectory.Config(Trajectory.FitMethod.HERMITE_QUINTIC, Trajectory.Config.SAMPLES_LOW, TIMESTEP, 5.0, 2.0, 18.0)
-         val waypoints = arrayOf(
-                 Waypoint(0.0,0.0, Pathfinder.d2r(0.0)),
-                 Waypoint(5.05, 0.471, -0.08)
-         )
-         val t = Pathfinder.generate(waypoints, cfg)
-        Pathfinder.writeToCSV(File("/U/traj.csv"), t)
-         println("Running path")
-        autoCommand = RamseteFollowPath(t, 0.7, 0.2)
-        autoCommand?.start()*/
-
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
         autoCommand = autoChooser.selected
         autoCommand?.start()
     }
@@ -106,38 +92,40 @@ class Robot : TimedRobot(TIMESTEP) {
     override fun teleopInit() {
         // if auto is still running for some reason, stop it
         autoCommand?.cancel()
-
-        // zero everything
-        RobotOdometry.zero()
-
-
         Elevator.updateSetpoint()
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
+        // make elevator go to level 1
 
-        // make elevator go to level 1 idle height
+        //TODO: if autos are going to level 2+ remove this!!!
         OI.setElevatorHeight(0)
     }
 
     override fun robotPeriodic() {
-        // do everything
-//        Scheduler.getInstance().run()
         Scheduler.getInstance().run()
 
         OI.poll()
-        RobotMap.kJevois.periodic()
 
-//        SmartDashboard.putBoolean("None", false)
-//        SmartDashboard.putBoolean("Cargo", false)
-//        SmartDashboard.putBoolean("Panel", false)
+        SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
+        SmartDashboard.putBoolean("Has Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
+        SmartDashboard.putBoolean("Has Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
+
+        //TODO investigate this
         SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
-        SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
+//        SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 
     override fun teleopPeriodic() {
+
         Wedges.unlock = true
     }
-    override fun autonomousPeriodic() {}
+    override fun autonomousPeriodic() {
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
+    }
 
     override fun disabledPeriodic() {
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(OI.commandedVC) 0 else 1)
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(if(OI.commandedVC) 0 else 1)
+        // make elevator not go sicko mode on enable (constantly set setpoint to current position)
         Elevator.elevatorTalon.set(ControlMode.Position, Elevator.elevatorTalon.selectedSensorPosition.toDouble())
     }
 

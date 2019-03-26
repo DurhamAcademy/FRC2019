@@ -1,12 +1,12 @@
 package frc.team6502.robot.commands.drive
 
+import edu.wpi.first.networktables.NetworkTableInstance
 import edu.wpi.first.wpilibj.PIDController
 import edu.wpi.first.wpilibj.Timer
 import edu.wpi.first.wpilibj.command.PIDCommand
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.*
-import frc.team6502.robot.commands.vision.SetLEDRing
-import frc.team6502.robot.sensor.JevoisPIDSource
+import frc.team6502.robot.sensor.VisionPIDSource
 import frc.team6502.robot.subsystems.Drivetrain
 import kotlin.math.absoluteValue
 
@@ -19,8 +19,8 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     }
 
     override fun usePIDOutput(output: Double) {
-        yawCorrection = output
-//        yawCorrection = OI.deadband(yawCorrection, 0.025)
+//        yawCorrection = output
+        yawCorrection = 0.0//OI.deadband(yawCorrection, 0.015)
     }
 
     // YAW CORRECTION
@@ -35,8 +35,8 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
     // FRONT TOGGLE
     private var frontIsFront = true
 
-    private var jevoisController = PIDController(0.01, 0.0, 0.01, JevoisPIDSource()) {
-        visionCorrection = it * OI.commandedVC
+    private var visionPIDController = PIDController(0.01, 0.0, 0.01, VisionPIDSource()) {
+        visionCorrection = if (OI.commandedVC) it else 0.0
     }
 
     init {
@@ -47,7 +47,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         println("STARTING DRIVETRAIN")
         RobotMap.kIMU.zero()
         yawTimer.start()
-//        jevoisController.enable()
+        visionPIDController.enable()
         yawCorrection = 0.0
         yawCorrecting = true
 //        println("reset pigeon")
@@ -62,8 +62,8 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
         if (yawCorrection.absoluteValue < 0.05 && throttle == 0.0) {
             yawCorrection = 0.0
         }
-        yawCorrection = 0.0
-        visionCorrection = 0.0
+//        yawCorrection = 0.0
+//        visionCorrection = 0.0
 //        println(throttle)
 //        if (yawCorrection.absoluteValue < 0.05 && throttle < 0.15 && throttle > 0.0){
 //            yawCorrection = 0.0
@@ -74,22 +74,18 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
             RobotMap.kIMU.zero()
         }
 
-        // turn on the ring if vision is about to happen
-        SetLEDRing(OI.commandedVC > 0.01).start()
-
-        if (OI.commandedVC < 0.05) visionCorrection = 0.0
+        // redundancy department of redundancy
+        if (!OI.commandedVC) visionCorrection = 0.0
 
         SmartDashboard.putBoolean("Correcting", yawCorrecting)
+        SmartDashboard.putNumber("Vision Correction", visionCorrection)
+
 //        println("t=$throttle r=$rotation")
         if (yawCorrecting) {
-//            println("t=$throttle r=$rotation")
-            val totalCorrection = 0.0//(yawCorrection + visionCorrection).coerceIn(-correctionLimit, correctionLimit)
-            Drivetrain.set(throttle - totalCorrection, throttle + totalCorrection, DrivetrainMode.CLOSED_LOOP)
+            Drivetrain.set(throttle - yawCorrection, throttle + yawCorrection, DrivetrainMode.CLOSED_LOOP)
             SmartDashboard.putNumber("Heading Correction", yawCorrection)
         } else {
-//            println(rotation)
-//            println("t=$throttle r=$rotation")
-            curvatureDrive(throttle, rotation, true)
+            curvatureDrive(throttle, rotation - visionCorrection, true)
             SmartDashboard.putNumber("Heading Correction", 0.0)
         }
 
@@ -105,6 +101,7 @@ class DefaultDrive : PIDCommand(0.01, 0.0, 0.01) {
 
         SmartDashboard.putNumber("pitch", RobotMap.kIMU.getPitch())
 
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(OI.commandedVC) 0 else 1)
         /*if (OI.controller.xButtonPressed) {
             frontIsFront = true
         }
