@@ -97,13 +97,14 @@ object OI {
             }
         }
 
-        // game piece overrides
-        if (RobotStatus.cargo)
-            RobotStatus.setGamePiece(GamePiece.CARGO)
-        if (RobotStatus.hatch)
-            RobotStatus.setGamePiece(GamePiece.HATCH)
-        if (RobotStatus.none)
-            RobotStatus.setGamePiece(GamePiece.NONE)
+        if (SmartDashboard.getBoolean("CargoStatusNone", false)) RobotStatus.setStatusCargo(CargoStatus.NONE)
+        if (SmartDashboard.getBoolean("CargoStatusIdle", false)) RobotStatus.setStatusCargo(CargoStatus.IDLE)
+        if (SmartDashboard.getBoolean("CargoStatusArmedShip", false)) RobotStatus.setStatusCargo(CargoStatus.ARMED_SHIP)
+        if (SmartDashboard.getBoolean("CargoStatusArmedRocket", false)) RobotStatus.setStatusCargo(CargoStatus.ARMED_ROCKET)
+
+        if (SmartDashboard.getBoolean("HatchStatusNone", false)) RobotStatus.setStatusHatch(HatchStatus.NONE)
+        if (SmartDashboard.getBoolean("HatchStatusArmed", false)) RobotStatus.setStatusHatch(HatchStatus.ARMED)
+
     }
 
     /**

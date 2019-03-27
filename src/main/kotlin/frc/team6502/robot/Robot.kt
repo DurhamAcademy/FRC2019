@@ -1,7 +1,6 @@
 package frc.team6502.robot
 
 import com.ctre.phoenix.motorcontrol.ControlMode
-import edu.wpi.first.cameraserver.CameraServer
 import edu.wpi.first.hal.FRCNetComm
 import edu.wpi.first.hal.HAL
 import edu.wpi.first.networktables.NetworkTableInstance
@@ -22,7 +21,7 @@ class Robot : TimedRobot(TIMESTEP) {
     private val autoChooser = SendableChooser<Command?>()
     private var autoCommand: Command? = null
 
-    private val startingGamePiece = GamePiece.HATCH
+    private val preloadChooser = SendableChooser<GamePiece>()
 
     override fun robotInit() {
         // report kotlin as the language (unofficially)
@@ -48,13 +47,22 @@ class Robot : TimedRobot(TIMESTEP) {
 
 //        CameraServer.getInstance().startAutomaticCapture()
 
-        autoChooser.addOption("Hybrid", null)
+        autoChooser.setDefaultOption("Hybrid", null)
         File("/home/lvuser/deploy/paths").listFiles().forEach {
             if (!it.name.endsWith(".left.pf1.csv") && !it.name.endsWith(".right.pf1.csv"))
                 autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA, 1.5))
         }
 
+        preloadChooser.setDefaultOption("None", GamePiece.NONE)
+        preloadChooser.addOption("Hatch", GamePiece.HATCH)
+        preloadChooser.addOption("Cargo", GamePiece.CARGO)
+
         SmartDashboard.putData("Auto",autoChooser)
+        SmartDashboard.putData("Preload", preloadChooser)
+
+        SmartDashboard.setPersistent("Auto")
+        SmartDashboard.setPersistent("Preload")
+
         LiveWindow.disableAllTelemetry()
 
         // zero elevator height on boot
@@ -73,7 +81,6 @@ class Robot : TimedRobot(TIMESTEP) {
 //        Elevator.setpoint = 0.0
 //        Elevator.elevatorTalon.set(ControlMode.Position, 0.0)
 
-        RobotStatus.setGamePiece(startingGamePiece)
     }
 
     /**
@@ -83,10 +90,25 @@ class Robot : TimedRobot(TIMESTEP) {
 
     override fun autonomousInit() {
         RobotOdometry.zero()
+        when (preloadChooser.selected) {
+            GamePiece.NONE -> {
+                RobotStatus.setStatusCargo(CargoStatus.NONE)
+                RobotStatus.setStatusHatch(HatchStatus.NONE)
+            }
+            GamePiece.CARGO -> {
+                RobotStatus.setStatusCargo(CargoStatus.IDLE)
+            }
+            GamePiece.HATCH -> {
+                RobotStatus.setStatusHatch(HatchStatus.ARMED)
+            }
+            else -> {
+            }
+        }
         Elevator.updateSetpoint()
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
         autoCommand = autoChooser.selected
         autoCommand?.start()
+
     }
 
     override fun teleopInit() {
@@ -105,9 +127,13 @@ class Robot : TimedRobot(TIMESTEP) {
 
         OI.poll()
 
-        SmartDashboard.putBoolean("Has None", RobotStatus.currentGamePiece == GamePiece.NONE)
-        SmartDashboard.putBoolean("Has Cargo", RobotStatus.currentGamePiece == GamePiece.CARGO)
-        SmartDashboard.putBoolean("Has Panel", RobotStatus.currentGamePiece == GamePiece.HATCH)
+        SmartDashboard.putBoolean("IsCargoStatusNone", RobotStatus.cargoStatus == CargoStatus.NONE)
+        SmartDashboard.putBoolean("IsCargoStatusIdle", RobotStatus.cargoStatus == CargoStatus.IDLE)
+        SmartDashboard.putBoolean("IsCargoStatusArmedShip", RobotStatus.cargoStatus == CargoStatus.ARMED_SHIP)
+        SmartDashboard.putBoolean("IsCargoStatusArmedRocket", RobotStatus.cargoStatus == CargoStatus.ARMED_ROCKET)
+
+        SmartDashboard.putBoolean("IsHatchStatusNone", RobotStatus.hatchStatus == HatchStatus.NONE)
+        SmartDashboard.putBoolean("IsHatchStatusArmed", RobotStatus.hatchStatus == HatchStatus.ARMED)
 
         //TODO investigate this
         SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
