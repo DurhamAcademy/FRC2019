@@ -30,7 +30,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     constructor(name: String, b: Double, zeta: Double, visionSeconds: Double = 0.0) : this(PathfinderFRC.getTrajectory(name), b, zeta, visionSeconds)
 
     private var currentIndex = 0
-    private val drivebase = 14.5.inches
+    private val drivebase = 29.inches
     private val logFile = File("/home/lvuser/ramsetelog_${System.currentTimeMillis()}.csv")
     private val visionSamples = visionSeconds / TIMESTEP
     private var visionCorrection = 0.0
@@ -75,6 +75,8 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
                 traj.segments.size - currentIndex < visionSamples
         )
 
+//        NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(traj.segments.size - currentIndex < visionSamples) 1 else 0)
+
         Drivetrain.set(
                 (commanded.first / DRIVETRAIN_MAXSPEED.feetPerSecond).coerceIn(-1.0, 1.0),
                 (commanded.second / DRIVETRAIN_MAXSPEED.feetPerSecond).coerceIn(-1.0, 1.0),
@@ -107,7 +109,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
 //        println(thd - th)
         val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
 
-        val wc = if (!useVision) wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th) else 0.0
+        val wc = if (!useVision) wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th) else wd
         val corr = if (!useVision) 0.0 else visionCorrection
         logFile.appendText("$currentIndex, $v, $vd, $w, $wd, $x, $xd, $y, $yd, $th, $thd, $k1, $k2, $vc, $wc, ${xd - x}, ${yd - y}, ${thd - th}, $useVision\n")
 //        val difference = 0.feetPerSecond
