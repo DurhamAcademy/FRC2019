@@ -8,6 +8,7 @@ import frc.team6502.robot.OI
 import frc.team6502.robot.RobotStatus
 import frc.team6502.robot.subsystems.CargoIntake
 import frc.team6502.robot.subsystems.Elevator
+import kotlin.math.absoluteValue
 
 class IntakeCargo(val loadingStation: Boolean = false) : Command() {
 
@@ -30,7 +31,7 @@ class IntakeCargo(val loadingStation: Boolean = false) : Command() {
     }
 
     override fun execute() {
-        if (Elevator.elevatorTalon.closedLoopError < 512) {
+        if (Elevator.elevatorTalon.closedLoopError.absoluteValue < 512) {
             if (!loadingStation) {
                 CargoIntake.speedIntake = -0.5
                 CargoIntake.speedShooter = 0.2

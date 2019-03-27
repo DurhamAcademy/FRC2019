@@ -58,7 +58,7 @@ object RobotStatus {
 
 enum class CargoStatus(val heightOffset: Length) {
     NONE(0.inches),
-    IDLE(0.inches),
+    IDLE(2.5.inches),
     INTAKING_GROUND(0.inches),
     INTAKING_STATION(28.inches),
     ARMED_SHIP(28.inches),
