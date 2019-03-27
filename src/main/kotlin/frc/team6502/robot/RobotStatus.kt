@@ -10,17 +10,17 @@ object RobotStatus {
     var cargoStatus = CargoStatus.NONE
         set(value) {
             field = value
-            SmartDashboard.putBoolean("IsCargoStatusNone", false)
-            SmartDashboard.putBoolean("IsCargoStatusIdle", false)
-            SmartDashboard.putBoolean("IsCargoStatusArmedShip", false)
-            SmartDashboard.putBoolean("IsCargoStatusArmedRocket", false)
+            SmartDashboard.putBoolean("CargoStatusNone", false)
+            SmartDashboard.putBoolean("CargoStatusIdle", false)
+            SmartDashboard.putBoolean("CargoStatusArmedShip", false)
+            SmartDashboard.putBoolean("CargoStatusArmedRocket", false)
         }
 
     var hatchStatus = HatchStatus.NONE
         set(value) {
             field = value
-            SmartDashboard.putBoolean("IsHatchStatusNone", false)
-            SmartDashboard.putBoolean("IsHatchStatusArmed", false)
+            SmartDashboard.putBoolean("HatchStatusNone", false)
+            SmartDashboard.putBoolean("HatchStatusArmed", false)
         }
 
     init {
@@ -30,11 +30,13 @@ object RobotStatus {
 
     fun setStatusCargo(status: CargoStatus) {
         hatchStatus = HatchStatus.NONE
+        cargoStatus = status
         updateElevatorOffset()
     }
 
     fun setStatusHatch(status: HatchStatus) {
         cargoStatus = CargoStatus.NONE
+        hatchStatus = status
         updateElevatorOffset()
     }
 
@@ -47,7 +49,7 @@ object RobotStatus {
                 SetElevatorOffset(hatchStatus.heightOffset).start()
             }
             else -> {
-                SetElevatorOffset(cargoStatus.heightOffset).start()
+                SetElevatorOffset(0.inches).start()
             }
         }
     }
