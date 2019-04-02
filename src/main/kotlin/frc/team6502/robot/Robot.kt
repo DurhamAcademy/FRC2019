@@ -18,7 +18,7 @@ import java.io.File
 
 class Robot : TimedRobot(TIMESTEP) {
 
-    private val autoChooser = SendableChooser<Command?>()
+    private val autoChooser = SendableChooser<String?>()
     private var autoCommand: Command? = null
 
     private val preloadChooser = SendableChooser<GamePiece>()
@@ -50,7 +50,7 @@ class Robot : TimedRobot(TIMESTEP) {
         autoChooser.setDefaultOption("Hybrid", null)
         File("/home/lvuser/deploy/paths").listFiles().forEach {
             if (!it.name.endsWith(".left.pf1.csv") && !it.name.endsWith(".right.pf1.csv"))
-                autoChooser.addOption(it.name.replace(".pf1.csv", ""), RamseteFollowPath(it.name.replace(".pf1.csv", ""), B, ZETA, 1.5))
+                autoChooser.addOption(it.name.replace(".pf1.csv", ""), it.name.replace(".pf1.csv", ""))
         }
 
         preloadChooser.setDefaultOption("None", GamePiece.NONE)
@@ -90,6 +90,7 @@ class Robot : TimedRobot(TIMESTEP) {
 
     override fun autonomousInit() {
         RobotOdometry.zero()
+        println("PRELOAD: " + preloadChooser.selected.name)
         when (preloadChooser.selected) {
             GamePiece.NONE -> {
                 RobotStatus.setStatusCargo(CargoStatus.NONE)
@@ -106,8 +107,11 @@ class Robot : TimedRobot(TIMESTEP) {
         }
         Elevator.updateSetpoint()
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
-        autoCommand = autoChooser.selected
-        autoCommand?.start()
+
+        if (autoChooser.selected != null) {
+            autoCommand = RamseteFollowPath(autoChooser.selected!!, B, ZETA, 0.0)
+            autoCommand?.start()
+        }
 
     }
 
@@ -137,7 +141,6 @@ class Robot : TimedRobot(TIMESTEP) {
 
         //TODO investigate this
         SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
-//        SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
     }
 
     override fun teleopPeriodic() {

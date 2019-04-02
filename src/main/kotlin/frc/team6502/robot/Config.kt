@@ -1,17 +1,15 @@
 package frc.team6502.robot
 
 import frc.team6502.kyberlib.motorcontrol.PIDConfig
-import frc.team6502.kyberlib.util.units.feetPerSecond
-import frc.team6502.kyberlib.util.units.inches
-import frc.team6502.kyberlib.util.units.rotations
+import frc.team6502.kyberlib.util.units.*
 
 // Timings
 const val TIMESTEP = 0.02
 const val TIMESTEP_ODOMETRY = 0.01
 
 // Auton
-const val B = 0.5
-const val ZETA = 0.5
+const val B = 3.0
+const val ZETA = 0.8
 
 // Elevator
 val GROUND_DISTANCE = 6.inches.feet
@@ -20,7 +18,7 @@ val HEIGHTS = arrayListOf(
         25.5.inches to "Level 2",
         51.inches to "Level 3"
 )
-val ELEVATOR_GAINS = PIDConfig(0.5, 0.0, 0.08)
+val ELEVATOR_GAINS = PIDConfig(0.3, 0.0, 0.08)
 val HOLD_VOLTAGE = 1.1
 
 val CARGO_DELIVERY_OFFSET = 12.inches.feet
@@ -29,8 +27,8 @@ val HATCH_DELIVERY_OFFSET = 2.5.inches.feet
 
 val LOADING_STATION_HEIGHT = 27.5.inches
 
-val CRUISE_UP = 4.feetPerSecond
-val ACCEL_UP = 2.feetPerSecond // ^2
+val CRUISE_UP = 6.feetPerSecond
+val ACCEL_UP = 3.feetPerSecond // ^2
 val CRUISE_DOWN = 2.feetPerSecond
 val ACCEL_DOWN = 1.feetPerSecond // ^2
 

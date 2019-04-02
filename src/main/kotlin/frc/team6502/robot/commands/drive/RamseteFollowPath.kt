@@ -102,7 +102,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         val thd = boundHalf(desired.pose.theta.radians)
 
         val k1 = k13gains(desired.velocity.feetPerSecond, desired.angularVelocity.radiansPerSecond)
-        val k2 = b * vd.absoluteValue
+        val k2 = b //* vd.absoluteValue
 
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(useVision) 0 else 1)
 

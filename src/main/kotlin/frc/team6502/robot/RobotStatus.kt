@@ -52,6 +52,11 @@ object RobotStatus {
                 SetElevatorOffset(0.inches).start()
             }
         }
+        when (cargoStatus) {
+            CargoStatus.ARMED_SHIP, CargoStatus.INTAKING_GROUND, CargoStatus.INTAKING_STATION -> OI.setElevatorHeight(0)
+            else -> {
+            }
+        }
     }
 
 }

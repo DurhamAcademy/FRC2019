@@ -12,16 +12,16 @@ deploy {
         }
     }
     artifacts {
-        frcJavaArtifact('frcJava') {
-            targets << "roborio"
-            debug = frc.getDebugOrDefault(false)
-        }
         fileTreeArtifact('frcStaticFileDeploy') {
             // The directory below is the local directory to deploy
             files = fileTree(dir: 'src/main/deploy')
             // Deploy to RoboRIO target, into /home/lvuser/deploy
             targets << "roborio"
             directory = '/home/lvuser/deploy'
+        }
+        frcJavaArtifact('frcJava') {
+            targets << "roborio"
+            debug = frc.getDebugOrDefault(false)
         }
     }
 }

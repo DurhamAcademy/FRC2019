@@ -26,7 +26,7 @@ object OI {
         println("SET TO $index")
 
         // if you are intaking, stop it
-        IntakeCargo.singleton?.cancel()
+        if (index > 0) IntakeCargo.singleton?.cancel()
 
         // update backing field
         selectedElevatorHeight = index
@@ -49,7 +49,7 @@ object OI {
         get() = !commandedVC && deadband(controller.x, 0.1) == 0.0
 
     val commandedY: Double
-        get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.05).pow(3) * 0.75
+        get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.05).pow(3) * 1.0
 
     val commandedX: Double
         get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.05).pow(3) * 0.25
