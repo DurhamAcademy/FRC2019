@@ -1,7 +1,6 @@
 package frc.team6502.robot
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import frc.team6502.kyberlib.util.units.Length
 import frc.team6502.kyberlib.util.units.inches
 import frc.team6502.robot.commands.manip.SetElevatorOffset
 
@@ -61,16 +60,3 @@ object RobotStatus {
 
 }
 
-enum class CargoStatus(val heightOffset: Length) {
-    NONE(0.inches),
-    IDLE(2.5.inches),
-    INTAKING_GROUND(0.inches),
-    INTAKING_STATION(28.inches),
-    ARMED_SHIP(28.inches),
-    ARMED_ROCKET(12.inches)
-}
-
-enum class HatchStatus(val heightOffset: Length) {
-    NONE(0.inches),
-    ARMED(2.5.inches)
-}

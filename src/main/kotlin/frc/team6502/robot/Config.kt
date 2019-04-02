@@ -21,11 +21,19 @@ val HEIGHTS = arrayListOf(
 val ELEVATOR_GAINS = PIDConfig(0.3, 0.0, 0.08)
 val HOLD_VOLTAGE = 1.1
 
-val CARGO_DELIVERY_OFFSET = 12.inches.feet
-val CARGO_DELIVERY_L3_OFFSET = 0.inches.feet
-val HATCH_DELIVERY_OFFSET = 2.5.inches.feet
+enum class CargoStatus(val heightOffset: Length) {
+    NONE(0.inches),
+    IDLE(2.5.inches),
+    INTAKING_GROUND(0.inches),
+    INTAKING_STATION(27.5.inches),
+    ARMED_SHIP(28.inches),
+    ARMED_ROCKET(12.inches)
+}
 
-val LOADING_STATION_HEIGHT = 27.5.inches
+enum class HatchStatus(val heightOffset: Length) {
+    NONE(0.inches),
+    ARMED(2.5.inches)
+}
 
 val CRUISE_UP = 6.feetPerSecond
 val ACCEL_UP = 3.feetPerSecond // ^2
