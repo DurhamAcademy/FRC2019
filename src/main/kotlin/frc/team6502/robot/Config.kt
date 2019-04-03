@@ -5,7 +5,7 @@ import frc.team6502.kyberlib.util.units.*
 
 // Timings
 const val TIMESTEP = 0.02
-const val TIMESTEP_ODOMETRY = 0.01
+const val TIMESTEP_ODOMETRY = 0.02
 
 // Auton
 const val B = 3.0

@@ -82,6 +82,8 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
                 (commanded.second / DRIVETRAIN_MAXSPEED.feetPerSecond).coerceIn(-1.0, 1.0),
                 DrivetrainMode.CLOSED_LOOP)
 
+        RobotOdometry.update()
+
         currentIndex++
     }
 

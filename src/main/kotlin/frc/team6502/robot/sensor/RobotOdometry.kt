@@ -1,6 +1,5 @@
 package frc.team6502.robot.sensor
 
-import edu.wpi.first.wpilibj.Notifier
 import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
 import frc.team6502.robot.subsystems.Drivetrain
@@ -9,16 +8,9 @@ import kotlin.math.sin
 
 object RobotOdometry {
 
-    private val odometryNotifier = Notifier { update() }
-
-    init {
-        odometryNotifier.startPeriodic(TIMESTEP_ODOMETRY)
-//        SmartDashboard.putData(this)
-    }
     val odometry = Odometry(Pose(0.feet, 0.feet, 0.radians), 0.feetPerSecond, 0.radiansPerSecond)
 
-
-    private fun update() {
+    fun update() {
         addPose(RobotMap.kIMU.getYaw().degrees, (Drivetrain.getVelocities().first + Drivetrain.getVelocities().second) / 2.0)
     }
 
