@@ -140,10 +140,26 @@ class Robot : TimedRobot(TIMESTEP) {
         SmartDashboard.putBoolean("IsHatchStatusArmed", RobotStatus.hatchStatus == HatchStatus.ARMED)
 
         //TODO investigate this
-        SmartDashboard.putNumber("elev height", Elevator.elevatorTalon.selectedSensorPosition.toDouble())
+        SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
+
+        SmartDashboard.putNumber("Pressure", RobotMap.pressureSensor.voltage)
     }
 
+    var maxElevatorSpeed = 0
+    var maxElevatorPercent = 0.0
     override fun teleopPeriodic() {
+
+
+//        val elevatorSpeed = Elevator.elevatorTalon.selectedSensorVelocity
+//        val elevatorPercent = Elevator.elevatorTalon.motorOutputPercent
+
+//        if(elevatorSpeed > maxElevatorSpeed){
+//            maxElevatorSpeed = elevatorSpeed
+//            maxElevatorPercent = elevatorPercent
+//        }
+
+//        SmartDashboard.putNumber("espeed", maxElevatorSpeed.toDouble())
+//        SmartDashboard.putNumber("epercent", maxElevatorPercent)
 
         Wedges.unlock = true
     }

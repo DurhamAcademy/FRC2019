@@ -18,8 +18,8 @@ val HEIGHTS = arrayListOf(
         25.5.inches to "Level 2",
         51.inches to "Level 3"
 )
-val ELEVATOR_GAINS = PIDConfig(0.3, 0.0, 0.08)
-val HOLD_VOLTAGE = 1.1
+val ELEVATOR_GAINS = PIDConfig(0.15, 0.0, 0.2)
+val HOLD_VOLTAGE = 0.0
 
 enum class CargoStatus(val heightOffset: Length) {
     NONE(0.inches),
@@ -35,10 +35,10 @@ enum class HatchStatus(val heightOffset: Length) {
     ARMED(2.5.inches)
 }
 
-val CRUISE_UP = 6.feetPerSecond
-val ACCEL_UP = 3.feetPerSecond // ^2
+val CRUISE_UP = 15.feetPerSecond
+val ACCEL_UP = 5.feetPerSecond // ^2
 val CRUISE_DOWN = 2.feetPerSecond
-val ACCEL_DOWN = 1.feetPerSecond // ^2
+val ACCEL_DOWN = 2.feetPerSecond // ^2
 
 val DRIVETRAIN_MAXSPEED = 13.458.feetPerSecond
 val DRIVETRAIN_WHEEL_RATIO = ((Math.PI * 6.0).inches.meters / 1.rotations.radians) / 0.9

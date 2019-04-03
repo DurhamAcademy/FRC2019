@@ -43,6 +43,8 @@ object Elevator : Subsystem() {
             config_IntegralZone(0, 16)
             config_kD(0, ELEVATOR_GAINS.d)
 
+            config_kF(0, 0.167726816)
+
 //            configPeak
 
             // limits and ramps
@@ -139,7 +141,7 @@ object Elevator : Subsystem() {
             elevatorTalon.configMotionAcceleration(ACCEL_DOWN.toAngularVelocity(wheelRatio).encoder1024PerDecisecond.toInt())
         }
 
-        elevatorTalon.set(ControlMode.MotionMagic, desired, DemandType.ArbitraryFeedForward, HOLD_VOLTAGE / 12.0)
+        elevatorTalon.set(ControlMode.MotionMagic, desired)
     }
     override fun initDefaultCommand() {
         defaultCommand = null

@@ -1,8 +1,7 @@
 package frc.team6502.robot
 
 import com.ctre.phoenix.sensors.PigeonIMU
-import edu.wpi.first.wpilibj.Compressor
-import edu.wpi.first.wpilibj.DigitalOutput
+import edu.wpi.first.wpilibj.*
 
 /**
  * This contains actual robot components and indices
@@ -35,4 +34,6 @@ object RobotMap {
     val hatchSolenoidId = 0
     val rampSolenoidIds = arrayOf(1, 2)
     val wedgeSolenoidIds = arrayOf(3, 4, 5, 6)
+
+    val pressureSensor = AnalogInput(0)
 }
