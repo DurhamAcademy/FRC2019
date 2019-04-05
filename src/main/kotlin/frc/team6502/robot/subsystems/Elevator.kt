@@ -48,7 +48,11 @@ object Elevator : Subsystem() {
 //            configPeak
 
             // limits and ramps
-            configContinuousCurrentLimit(2)
+            configContinuousCurrentLimit(3)
+            configPeakCurrentLimit(4)
+            configPeakCurrentDuration(500)
+            enableCurrentLimit(true)
+
             configOpenloopRamp(0.5)
             configClosedloopRamp(0.5)
 

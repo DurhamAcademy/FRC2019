@@ -1,15 +1,10 @@
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.ControlMode
-import com.ctre.phoenix.motorcontrol.DemandType
-import com.ctre.phoenix.motorcontrol.FeedbackDevice
-import com.ctre.phoenix.motorcontrol.NeutralMode
+import com.ctre.phoenix.motorcontrol.*
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
-import frc.team6502.kyberlib.util.units.LinearVelocity
-import frc.team6502.kyberlib.util.units.encoder1024PerDecisecond
-import frc.team6502.kyberlib.util.units.feetPerSecond
+import frc.team6502.kyberlib.util.units.*
 import frc.team6502.robot.*
 import frc.team6502.robot.commands.drive.DefaultDrive
 import kotlin.math.sign
@@ -48,7 +43,6 @@ object Drivetrain :  Subsystem() {
                 configFactoryDefault()
                 configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 5)
                 setSensorPhase(true)
-                configContinuousCurrentLimit(30)
 
                 // THE DANGER ZONE
                 config_kP(0, 0.1)
@@ -62,7 +56,12 @@ object Drivetrain :  Subsystem() {
 
                 // ramping
                 configClosedloopRamp(0.5)
+
+                // current limiting
+                configPeakCurrentLimit(40)
+                configPeakCurrentDuration(500)
                 configContinuousCurrentLimit(30)
+                enableCurrentLimit(true)
 
                 // neutral mode
                 setNeutralMode(NeutralMode.Brake)
