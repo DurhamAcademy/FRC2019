@@ -87,7 +87,6 @@ class Robot : TimedRobot(TIMESTEP) {
      * Do not delete me or bad things will happen.
      */
 
-
     override fun autonomousInit() {
         RobotOdometry.zero()
         println("PRELOAD: " + preloadChooser.selected.name)

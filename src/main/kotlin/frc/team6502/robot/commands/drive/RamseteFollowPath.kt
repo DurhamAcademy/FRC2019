@@ -8,10 +8,15 @@ import frc.team6502.robot.*
 import frc.team6502.robot.sensor.RobotOdometry
 import frc.team6502.robot.sensor.VisionPIDSource
 import frc.team6502.robot.subsystems.Drivetrain
-import jaci.pathfinder.*
+import jaci.pathfinder.Pathfinder
+import jaci.pathfinder.PathfinderFRC
+import jaci.pathfinder.Trajectory
 import java.io.File
 import java.lang.Math.sin
-import kotlin.math.*
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * Ramsete path follower
@@ -109,14 +114,20 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
         NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(if(useVision) 0 else 1)
 
 //        println(thd - th)
-        val vc = vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
+        val vc = if (!useVision)
+            vd * cos(thd - th) + k1 * ((xd - x) * cos(th) + (yd - y) * sin(th))
+        else
+            3.0
 
-        val wc = if (!useVision) wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th) else wd
-        val corr = if (!useVision) 0.0 else visionCorrection
+        val wc = if (!useVision)
+            wd + k2 * vd * sinc(th, thd) * ((yd - y) * cos(th) - (xd - x) * sin(th)) + k1 * (thd - th)
+        else
+            wd + visionCorrection
+
         logFile.appendText("$currentIndex, $v, $vd, $w, $wd, $x, $xd, $y, $yd, $th, $thd, $k1, $k2, $vc, $wc, ${xd - x}, ${yd - y}, ${thd - th}, $useVision\n")
 //        val difference = 0.feetPerSecond
 //        val difference = wc.radiansPerSecond.toLinearVelocity((PI * drivebase.meters) / 1.rotations.radians)
-        return vc - corr - wc * drivebase.feet / 2.0 to vc + corr + wc * drivebase.feet / 2.0
+        return vc - wc * drivebase.feet / 2.0 to vc + wc * drivebase.feet / 2.0
     }
 
     private fun k13gains(vd: Double, wd: Double) = 2 * zeta * sqrt(wd.pow(2) + b * vd.pow(2))

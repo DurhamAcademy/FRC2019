@@ -1,7 +1,9 @@
 
 package frc.team6502.robot.subsystems
 
-import com.ctre.phoenix.motorcontrol.*
+import com.ctre.phoenix.motorcontrol.ControlMode
+import com.ctre.phoenix.motorcontrol.FeedbackDevice
+import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX
 import edu.wpi.first.wpilibj.command.Subsystem
@@ -130,7 +132,6 @@ object Elevator : Subsystem() {
         // prevent elevator from overrunning
         if (OI.selectedElevatorHeight == 2 && RobotStatus.cargoStatus != CargoStatus.NONE) {
             offsetAmount = 0.0
-            println("I AM GOING TO CARGO DELIVERY L3")
         }
 
         // calculate desired encoder position for height
