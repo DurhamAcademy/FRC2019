@@ -8,8 +8,8 @@ const val TIMESTEP = 0.02
 const val TIMESTEP_ODOMETRY = 0.02
 
 // Auton
-const val B = 3.0
-const val ZETA = 0.8
+const val B = 2.0
+const val ZETA = 0.5
 
 // Elevator
 val GROUND_DISTANCE = 6.inches.feet
@@ -41,7 +41,7 @@ val CRUISE_DOWN = 2.feetPerSecond
 val ACCEL_DOWN = 2.feetPerSecond // ^2
 
 val DRIVETRAIN_MAXSPEED = 13.458.feetPerSecond
-val DRIVETRAIN_WHEEL_RATIO = ((Math.PI * 6.0).inches.meters / 1.rotations.radians) / 0.9
+val DRIVETRAIN_WHEEL_RATIO = ((Math.PI * 6.14).inches.meters / 1.rotations.radians)
 
 // kV -> Volts per foot/sec
 // kS -> Volts required to start moving

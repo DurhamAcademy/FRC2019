@@ -35,7 +35,7 @@ class RamseteFollowPath(private val traj: Trajectory, private val b: Double, pri
     constructor(name: String, b: Double, zeta: Double, visionSeconds: Double = 0.0) : this(PathfinderFRC.getTrajectory(name), b, zeta, visionSeconds)
 
     private var currentIndex = 0
-    private val drivebase = 29.inches
+    private val drivebase = 28.83.inches
     private val logFile = File("/home/lvuser/ramsetelog_${System.currentTimeMillis()}.csv")
     private val visionSamples = visionSeconds / TIMESTEP
     private var visionCorrection = 0.0
