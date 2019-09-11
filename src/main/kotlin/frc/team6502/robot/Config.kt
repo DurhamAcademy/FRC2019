@@ -27,7 +27,7 @@ enum class CargoStatus(val heightOffset: Length) {
     INTAKING_GROUND(0.inches),
     INTAKING_STATION(27.5.inches),
     ARMED_SHIP(28.inches),
-    ARMED_ROCKET(12.inches)
+    ARMED_ROCKET(14.inches)
 }
 
 enum class HatchStatus(val heightOffset: Length) {

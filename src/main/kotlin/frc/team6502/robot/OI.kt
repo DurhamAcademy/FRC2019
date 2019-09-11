@@ -6,8 +6,10 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.commandgroups.DeployWedges
 import frc.team6502.robot.commands.manip.*
+import frc.team6502.robot.subsystems.CargoIntake
 import frc.team6502.robot.subsystems.Elevator
 import java.lang.Math.abs
+import kotlin.math.absoluteValue
 import kotlin.math.pow
 
 object OI {
@@ -50,10 +52,10 @@ object OI {
         get() = !commandedVC && deadband(controller.x, 0.1) == 0.0
 
     val commandedY: Double
-        get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.05).pow(3) * if(controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5) 1.0 else (40/(Elevator.height * 12 + 40))
+        get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.05).pow(3) * (if(CargoIntake.speedIntake.absoluteValue > 0.0) -1 else 1) * if(controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5) 1.0 else (40/(Elevator.height.coerceIn(0.0..10.0) * 12 + 40))
 
     val commandedX: Double
-        get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.05).pow(3) * 0.25
+        get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.05).pow(3) * 0.4
     val commandedVC: Boolean
         get() = controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.2
 
