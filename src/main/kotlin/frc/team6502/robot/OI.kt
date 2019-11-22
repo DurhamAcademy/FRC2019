@@ -55,7 +55,7 @@ object OI {
         get() = deadband(controller.getY(GenericHID.Hand.kLeft), 0.05).pow(3) * (if(CargoIntake.speedIntake.absoluteValue > 0.0) -1 else 1) * if(controller.getTriggerAxis(GenericHID.Hand.kLeft) > 0.5) 1.0 else (40/(Elevator.height.coerceIn(0.0..10.0) * 12 + 40))
 
     val commandedX: Double
-        get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.05).pow(3) * 0.4
+        get() = deadband(controller.getX(GenericHID.Hand.kRight), 0.05).pow(3) * 1.0
     val commandedVC: Boolean
         get() = controller.getTriggerAxis(GenericHID.Hand.kRight) > 0.2
 

@@ -48,7 +48,7 @@ class Robot : TimedRobot(TIMESTEP) {
 //        CameraServer.getInstance().startAutomaticCapture()
 
         autoChooser.setDefaultOption("Hybrid", null)
-        File("/home/lvuser/deploy/paths").listFiles().forEach {
+        File("/home/lvuser/deploy/paths").listFiles()?.forEach {
             if (!it.name.endsWith(".left.pf1.csv") && !it.name.endsWith(".right.pf1.csv"))
                 autoChooser.addOption(it.name.replace(".pf1.csv", ""), it.name.replace(".pf1.csv", ""))
         }
@@ -118,7 +118,7 @@ class Robot : TimedRobot(TIMESTEP) {
         // if auto is still running for some reason, stop it
         autoCommand?.cancel()
         Elevator.updateSetpoint()
-        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(0)
+        NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1)
         // make elevator go to level 1
 
         //TODO: if autos are going to level 2+ remove this!!!
@@ -140,7 +140,8 @@ class Robot : TimedRobot(TIMESTEP) {
 
         //TODO investigate this
         SmartDashboard.putNumber("elev error", Elevator.elevatorTalon.closedLoopError.toDouble())
-
+        SmartDashboard.putNumber("left_dt", Drivetrain.getVelocities().first.feetPerSecond)
+        SmartDashboard.putNumber("right_dt", Drivetrain.getVelocities().second.feetPerSecond)
         SmartDashboard.putNumber("Pressure", RobotMap.pressureSensor.voltage)
     }
 

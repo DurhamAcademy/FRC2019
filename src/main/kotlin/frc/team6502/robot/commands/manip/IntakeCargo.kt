@@ -45,7 +45,7 @@ class IntakeCargo(val loadingStation: Boolean = false) : Command() {
         }
 
 //        println("RUNNING RUNNING RUNNING")
-        SmartDashboard.putNumber("shooterCurrent", CargoIntake.shooterCurrent)
+
     }
 
     override fun end() {
@@ -70,6 +70,6 @@ class IntakeCargo(val loadingStation: Boolean = false) : Command() {
     }
 
     override fun isFinished(): Boolean {
-        return (CargoIntake.shooterCurrent > 1.6 && intakeCurrentTimer.get() > 0.2 && timeSinceInitialized() > 0.2)
+        return !OI.controller.bButton//(CargoIntake.shooterCurrent > 1.6 && intakeCurrentTimer.get() > 0.2 && timeSinceInitialized() > 0.2)
     }
 }

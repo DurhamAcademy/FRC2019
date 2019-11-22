@@ -5,7 +5,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode
 import com.ctre.phoenix.motorcontrol.can.TalonSRX
 import com.ctre.phoenix.motorcontrol.can.VictorSPX
 import edu.wpi.first.wpilibj.DoubleSolenoid
+import edu.wpi.first.wpilibj.PowerDistributionPanel
 import edu.wpi.first.wpilibj.command.Subsystem
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
 import frc.team6502.robot.RobotMap
 
 /**
@@ -22,10 +24,10 @@ object CargoIntake : Subsystem() {
     init {
         // turn on brake mode and set directions for elevator wheels
         shooterTalon.setNeutralMode(NeutralMode.Brake)
-        shooterTalon.inverted = true
+        shooterTalon.inverted = false
         shooterVictor.setNeutralMode(NeutralMode.Brake)
         shooterVictor.follow(shooterTalon)
-        shooterVictor.inverted = false
+        shooterVictor.inverted = true
 
         intakeTalon.configContinuousCurrentLimit(18)
         intakeTalon.setNeutralMode(NeutralMode.Brake)
@@ -68,4 +70,8 @@ object CargoIntake : Subsystem() {
                 DoubleSolenoid.Value.kReverse
             })
         }
+
+    override fun periodic() {
+        SmartDashboard.putNumber("shooterCurrent", shooterCurrent)
+    }
 }
